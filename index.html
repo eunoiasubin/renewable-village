@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>도토리 마을 이야기 2 · 재생 에너지가 궁금해!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:#9fdcff;font-family:'Jua','Apple SD Gothic Neo','Malgun Gothic',sans-serif;color:#6b5434;touch-action:manipulation;overscroll-behavior:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%}
+*{touch-action:manipulation}
+canvas,#joyZone,#btnA{touch-action:none}
+.card,#tdash{touch-action:pan-y}
+canvas{display:block;position:fixed;inset:0}
+#ov{pointer-events:none}
+.hidden{display:none!important}
+#clock{position:fixed;left:22px;top:16px;color:#fff;text-shadow:0 2px 0 rgba(90,70,40,.45),0 0 6px rgba(90,70,40,.25);pointer-events:none;z-index:5}
+#clock .t{font-size:40px;line-height:1}
+#clock .d{font-size:18px;margin-top:4px}
+#clock .m{font-size:16px;margin-top:6px;background:rgba(255,251,234,.9);color:#8a6d45;display:inline-block;border-radius:999px;padding:2px 12px;text-shadow:none}
+.hbtn{position:fixed;top:16px;width:46px;height:46px;border-radius:50%;background:#fff8e6;border:none;box-shadow:0 3px 0 #d9c9a3;font-family:inherit;font-size:22px;color:#8a6d45;z-index:8;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#menuBtn{right:18px}
+#bookBtn{right:72px}
+#bookBtn .dot{position:absolute;right:-2px;top:-2px;width:16px;height:16px;border-radius:50%;background:#ff5a3c;border:2px solid #fff}
+#menu{position:fixed;right:18px;top:70px;background:#fff8e6;border-radius:22px;padding:10px;box-shadow:0 6px 18px rgba(80,60,30,.25);z-index:9;display:flex;flex-direction:column;gap:6px;min-width:210px}
+#menu button{font-family:inherit;font-size:17px;border:none;background:#f3e6c4;color:#6b5434;border-radius:14px;padding:10px 14px;text-align:left;cursor:pointer}
+#quest{position:fixed;right:130px;top:16px;width:300px;background:#fffaf0;border-radius:24px;box-shadow:0 4px 0 #e2d3ad,0 8px 18px rgba(80,60,30,.18);padding:12px 16px;z-index:6;transition:transform .25s}
+#quest.pop{transform:scale(1.06)}
+#quest .qh{display:flex;align-items:center;gap:8px;font-size:18px;color:#fff;background:#7cc46a;border-radius:14px;padding:4px 12px;margin:-2px -4px 8px}
+#quest .qh span{margin-left:auto;font-size:15px;background:rgba(255,255,255,.3);border-radius:10px;padding:1px 8px}
+#quest ul{list-style:none;margin:0;padding:0}
+#quest li{display:flex;align-items:center;gap:8px;font-size:18px;padding:4px 2px}
+#quest li img{width:28px;height:28px}
+#quest li b{margin-left:auto;font-weight:normal;background:#f3e6c4;border-radius:10px;padding:0 8px;font-size:17px}
+#quest li.done{color:#a99a7c}
+#quest li.done b{background:#c7e8b8;color:#3f7a2f}
+#quest li .ck{width:22px;height:22px;border-radius:7px;border:3px solid #d8c69a;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
+#quest li.done .ck{background:#7cc46a;border-color:#7cc46a}
+#quest li.go{color:#e0832b}
+#pocket{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:6px;background:rgba(255,250,236,.94);padding:8px 14px;border-radius:30px;box-shadow:0 4px 0 #e2d3ad;z-index:5;min-height:66px;align-items:center}
+#pocket .lab{font-size:15px;color:#a08a60;margin-right:4px}
+#pocket .slot{position:relative;width:50px;height:50px;border-radius:50%;background:#f3e6c4;display:flex;align-items:center;justify-content:center}
+#pocket .slot img{width:40px;height:40px}
+#pocket .slot i{position:absolute;right:-4px;bottom:-4px;font-style:normal;background:#fff;border-radius:10px;font-size:14px;padding:0 6px;box-shadow:0 1px 0 #d9c9a3}
+#pocket .empty{font-size:15px;color:#b6a37d;padding:0 6px}
+#pocket .lab{text-align:center;line-height:1.1}#pocket .lab small{font-size:12px}
+#pocket .slot[data-k]{cursor:pointer}#pocket .slot.full i{background:#ffd9cf;color:#c0523a}
+#pocket .slot.empty-slot{background:transparent;border:3px dashed #e6d6a8}
+#pocket .slot i{font-size:12px}
+body.talking #pocket,body.talking #ctrl{opacity:0;pointer-events:none}
+#dialog{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);width:min(780px,94vw);min-height:150px;background:#fffbea;border-radius:70px;padding:34px 64px 30px;box-shadow:0 6px 0 #eadcb4,0 10px 30px rgba(70,50,20,.25);z-index:20;font-size:25px;line-height:1.55;cursor:pointer;word-break:keep-all}
+#dialog .tag{position:absolute;left:46px;top:-22px;padding:6px 22px;border-radius:999px;font-size:22px;color:#fff;transform:rotate(-4deg);box-shadow:0 3px 0 rgba(0,0,0,.12)}
+#dialog.narr{background:rgba(40,36,30,.84);color:#f4ead2;box-shadow:none}
+#dialog.narr .tag{display:none}
+#dialog .nx{position:absolute;right:46px;bottom:16px;color:#f59b2b;font-size:22px;animation:bob .6s infinite alternate}
+@keyframes bob{to{transform:translateY(5px)}}
+#choices{position:fixed;right:max(4vw,calc(50% - 380px));bottom:200px;background:#fffbea;border-radius:30px;padding:12px 18px;box-shadow:0 5px 0 #eadcb4,0 10px 24px rgba(70,50,20,.22);z-index:21;display:flex;flex-direction:column;gap:2px}
+#choices div{font-size:23px;padding:8px 14px 8px 38px;border-radius:16px;position:relative;cursor:pointer}
+#choices div.sel{background:#fff0c4}
+#choices div.sel::before{content:'▶';position:absolute;left:12px;color:#f59b2b;font-size:18px;top:12px}
+.modal{position:fixed;inset:0;background:rgba(60,45,25,.38);z-index:30;display:flex;align-items:center;justify-content:center}
+.card{background:#fffbea;border-radius:36px;padding:26px 30px;box-shadow:0 8px 0 #eadcb4,0 16px 40px rgba(60,40,10,.3);width:min(560px,92vw);max-height:90vh;overflow:auto;position:relative}
+.btn{font-family:inherit;font-size:22px;border:none;border-radius:999px;padding:12px 34px;background:#7cc46a;color:#fff;box-shadow:0 4px 0 #5a9e4a;cursor:pointer}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #5a9e4a}
+.btn.or{background:#f2a046;box-shadow:0 4px 0 #c97d2a}
+.btn:disabled{background:#d8d0bd;box-shadow:0 4px 0 #bdb39b;cursor:default}
+.x{position:absolute;right:18px;top:16px;width:40px;height:40px;border-radius:50%;border:none;background:#f3e6c4;font-size:20px;color:#8a6d45;cursor:pointer;font-family:inherit}
+#note .card{background:#fdf8e8;background-image:repeating-linear-gradient(transparent 0 37px,#e9ddbd 37px 39px);text-align:center}
+.chip{display:inline-block;color:#fff;border-radius:999px;padding:4px 16px;font-size:17px}
+#note h2,#book h3{margin:12px 0 6px;font-weight:normal;font-size:30px;color:#5d4630}
+#note img{width:84px;height:84px;margin-top:6px}
+#note p,#book p{font-size:22px;line-height:39px;margin:6px 0 18px;text-align:left;word-break:keep-all}
+#note .head{font-size:18px;color:#a08a60}
+#note .saved{font-size:16px;color:#7cb46a;margin-bottom:10px}
+#book{z-index:80}
+#book .card{width:min(720px,94vw);background:#fdf8e8}
+#book h2{margin:0 0 4px;font-weight:normal;font-size:30px;color:#5d4630}
+#book .sub{color:#a08a60;font-size:17px;margin-bottom:14px}
+#bGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.bt{background:#fff;border-radius:22px;padding:12px 8px;text-align:center;box-shadow:0 3px 0 #efe3c4;cursor:pointer;position:relative}
+.bt img{width:52px;height:52px}
+.bt .c{font-size:13px;color:#fff;border-radius:999px;padding:1px 10px;display:inline-block;margin:4px 0 2px}
+.bt .t{font-size:19px;color:#5d4630}
+.bt.lock{background:#efe7d3;cursor:default;color:#b3a487}
+.bt.lock .t{color:#b3a487}
+.bt .q{font-size:40px;line-height:52px;color:#cbbd98}
+#bDetail{text-align:center;background-image:repeating-linear-gradient(transparent 0 37px,#e9ddbd 37px 39px)}
+#bDetail img{width:84px;height:84px}
+#craft h2{margin:0 0 4px;font-weight:normal;font-size:28px;color:#5d4630}
+#craft .sub{color:#a08a60;font-size:17px;margin-bottom:14px}
+.rc{display:flex;align-items:center;gap:14px;background:#fff;border-radius:22px;padding:10px 14px;margin-bottom:10px;box-shadow:0 3px 0 #efe3c4}
+.rc.need{outline:3px solid #ffc95e}
+.rc img.big{width:56px;height:56px}
+.rc .nm{font-size:22px;color:#5d4630}
+.rc .mats{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+.rc .m{display:flex;align-items:center;gap:3px;font-size:17px;background:#f3e6c4;border-radius:10px;padding:1px 8px 1px 3px}
+.rc .m img{width:24px;height:24px}
+.rc .m.no{background:#ffd9cf;color:#c0523a}
+.rc .btn{margin-left:auto;font-size:19px;padding:9px 20px}
+.rc .tagq{font-size:14px;background:#ffc95e;color:#fff;border-radius:8px;padding:0 6px;margin-left:6px}
+#title{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(rgba(140,215,255,.35),rgba(255,255,255,.05) 60%,rgba(120,200,90,.2))}
+#title .logo{font-size:min(84px,13vw);color:#fff;letter-spacing:2px;text-shadow:0 5px 0 #6aa84f,3px 3px 0 #6aa84f,-3px 3px 0 #6aa84f,0 10px 20px rgba(40,90,30,.35);transform:rotate(-2deg)}
+#title .logo span{color:#ffd76a}
+#title .sub{margin-top:10px;font-size:min(24px,5vw);color:#5d4630;background:#fffbea;padding:6px 22px;border-radius:999px;box-shadow:0 4px 0 #eadcb4}
+#title .box{margin-top:28px;background:#fffbea;border-radius:34px;padding:22px 28px;box-shadow:0 6px 0 #eadcb4;display:flex;flex-direction:column;align-items:center;gap:14px;width:min(420px,90vw)}
+#title label{font-size:21px}
+#title input{font-family:inherit;font-size:24px;text-align:center;border:3px solid #e6d6a8;border-radius:18px;padding:8px 12px;width:100%;color:#6b5434;background:#fff;outline:none;user-select:text;-webkit-user-select:text}
+#title .hint{font-size:15px;color:#a08a60;text-align:center;line-height:1.5}
+#fade{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:50;transition:opacity 1s}
+#caption{position:fixed;left:50%;bottom:5vh;transform:translateX(-50%);width:min(900px,92vw);text-align:center;font-size:min(30px,5.2vw);line-height:1.5;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.85);z-index:45;opacity:0;transition:opacity .6s;pointer-events:none;word-break:keep-all}
+#caption.now{color:#dfe3e8}
+#toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);background:rgba(255,251,234,.96);border-radius:999px;padding:10px 26px;font-size:20px;box-shadow:0 4px 0 #eadcb4;z-index:25;transition:opacity .4s;pointer-events:none;white-space:nowrap}
+#end{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#3b4048,#1d2026)}
+#end .card{text-align:center;width:min(680px,94vw)}
+#end h1{font-weight:normal;font-size:min(38px,7vw);margin:4px 0;color:#5d4630}
+#end .k{font-size:17px;color:#a08a60}
+#end .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+#end .st{background:#fff;border-radius:20px;padding:10px 4px;box-shadow:0 3px 0 #efe3c4}
+#end .st img{width:46px;height:46px}
+#end .st div{font-size:20px;color:#5d4630}
+#end .st small{font-size:14px;color:#a08a60}
+#end .sum{font-size:21px;line-height:1.6;background:#eef7e6;border-radius:20px;padding:14px 18px;color:#4c6b3a;text-align:left;word-break:keep-all}
+#end .q{font-size:21px;line-height:1.6;background:#fff0c4;border-radius:20px;padding:14px 18px;margin-top:12px;text-align:left;word-break:keep-all}
+#end .row{margin-top:18px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+#ctrl{position:fixed;inset:0;z-index:7;pointer-events:none}
+#joyZone{position:absolute;left:0;bottom:0;width:45%;height:60%;pointer-events:auto}
+#joyBase{position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(255,251,234,.45);border:4px solid rgba(255,255,255,.7);display:none}
+#joyKnob{position:absolute;left:35px;top:35px;width:52px;height:52px;border-radius:50%;background:#fffbea;box-shadow:0 3px 0 #d9c9a3}
+#btnA{position:absolute;right:28px;bottom:34px;width:96px;height:96px;border-radius:50%;background:#58b84a;color:#fff;font-size:44px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 #3e8e33;pointer-events:auto}
+#btnA:active{transform:translateY(4px);box-shadow:0 2px 0 #3e8e33}
+#craft .sec{font-size:21px;color:#5d4630;margin:14px 0 8px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+#craft .sec small{font-size:15px;color:#a08a60}
+#craft .none{font-size:17px;color:#b6a37d;background:#f6eedb;border-radius:16px;padding:10px 14px}
+#cConfirm{text-align:center}
+#cConfirm img{width:96px;height:96px}
+#cConfirm .ask{font-size:27px;color:#5d4630;margin:6px 0 10px;word-break:keep-all}
+#cConfirm .mats{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0 12px}
+#cConfirm .lab{font-size:16px;color:#a08a60}
+#cConfirm .warn{background:#ffe7c2;color:#b5651d;border-radius:16px;padding:10px 14px;font-size:18px;margin:6px 0 14px;word-break:keep-all}
+#cConfirm .ok{background:#e4f4da;color:#4c7a3a;border-radius:16px;padding:10px 14px;font-size:18px;margin:6px 0 14px}
+#cConfirm .btns{display:flex;gap:12px;justify-content:center}
+.btn.gray{background:#cbbd98;box-shadow:0 4px 0 #a99a74}
+#quiz{z-index:70;background:radial-gradient(circle at 50% 30%,rgba(59,64,72,.92),rgba(29,32,38,.96))}
+#quiz .card{width:min(680px,94vw)}
+#quiz .top{display:flex;align-items:center;gap:10px;color:#a08a60;font-size:17px;margin-bottom:6px}
+#quiz .bar{flex:1;height:12px;background:#f0e6cc;border-radius:999px;overflow:hidden}
+#quiz .bar i{display:block;height:100%;background:#7cc46a;border-radius:999px;transition:width .3s}
+#quiz .qq{font-size:26px;color:#5d4630;line-height:1.5;margin:10px 0 16px;word-break:keep-all}
+#quiz .qq b{color:#e07a3f;font-weight:normal}
+#quiz .op{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font-family:inherit;font-size:21px;color:#5d4630;background:#fff;border:3px solid #efe3c4;border-radius:20px;padding:12px 16px;margin-bottom:10px;cursor:pointer;word-break:keep-all;box-shadow:0 3px 0 #efe3c4}
+#quiz .op span{flex:none;width:34px;height:34px;border-radius:50%;background:#f3e6c4;display:flex;align-items:center;justify-content:center;font-size:18px;color:#8a6d45}
+#quiz .op.right{border-color:#7cc46a;background:#eaf7e2}#quiz .op.right span{background:#7cc46a;color:#fff}
+#quiz .op.wrong{border-color:#ef8a6f;background:#ffece6}#quiz .op.wrong span{background:#ef8a6f;color:#fff}
+#quiz .op:disabled{cursor:default}
+#quiz .ex{border-radius:20px;padding:12px 16px;font-size:19px;line-height:1.55;margin:4px 0 14px;word-break:keep-all;text-align:left}
+#quiz .ex.r{background:#eaf7e2;color:#3f6b2f}#quiz .ex.w{background:#fff0c4;color:#8a5a1d}
+#quiz .res{text-align:center}
+#quiz .res .big{font-size:64px;margin:6px 0}
+#quiz .res .sc{font-size:34px;color:#5d4630}
+#quiz .res p{font-size:20px;color:#6b5434;word-break:keep-all}
+#bFoot{margin-top:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#fff0c4;border-radius:20px;padding:10px 14px}
+#bFoot .pg{flex:1;font-size:18px;color:#8a5a1d;min-width:200px;word-break:keep-all}
+.bt .rd{position:absolute;right:8px;top:8px;width:26px;height:26px;border-radius:50%;background:#7cc46a;color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center}
+.bt.unread{outline:3px dashed #ffc95e}
+#pass{z-index:95}
+#pass .card{text-align:center;width:min(400px,92vw)}
+#pass h3{font-weight:normal;font-size:23px;color:#5d4630;margin:6px 0 12px;word-break:keep-all}
+#pass input{font-family:inherit;font-size:30px;letter-spacing:10px;text-align:center;border:3px solid #e6d6a8;border-radius:18px;padding:8px;width:200px;color:#6b5434;outline:none;user-select:text;-webkit-user-select:text}
+#pass .err{color:#d0563a;font-size:17px;min-height:24px;margin:6px 0}
+#title .tlink{position:fixed;right:18px;bottom:18px;font-family:inherit;font-size:16px;border:none;border-radius:999px;padding:9px 16px;background:rgba(255,251,234,.92);color:#8a6d45;box-shadow:0 3px 0 #d9c9a3;cursor:pointer}
+body.teacher>*:not(#tdash):not(#pass){display:none!important}
+#tdash{position:fixed;inset:0;overflow:auto;background:#f6eedb;background-image:radial-gradient(#efe3c4 1.5px,transparent 1.5px);background-size:22px 22px;z-index:90;padding:20px 22px 40px;color:#5d4630}
+#tdash .hd{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+#tdash h1{font-weight:normal;font-size:30px;margin:0}
+#tdash .conn{font-size:15px;border-radius:999px;padding:4px 12px;color:#fff}
+#tdash .ctl{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#tdash .ctl input{font-family:inherit;font-size:18px;border:3px solid #e6d6a8;border-radius:14px;padding:6px 10px;width:130px;color:#6b5434;user-select:text;-webkit-user-select:text}
+#tdash .sbtn{font-family:inherit;font-size:16px;border:none;border-radius:999px;padding:9px 16px;background:#7cc46a;color:#fff;box-shadow:0 3px 0 #5a9e4a;cursor:pointer}
+#tdash .sbtn.red{background:#ef8a6f;box-shadow:0 3px 0 #c9654b}
+#tdash .sum{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+#tdash .chipS{background:#fffbea;border-radius:18px;padding:10px 16px;box-shadow:0 3px 0 #e2d3ad;font-size:17px;display:flex;align-items:center;gap:8px}
+#tdash .chipS b{font-weight:normal;font-size:26px}
+#tdash .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+#tdash .sc{background:#fffbea;border-radius:24px;padding:14px 16px;box-shadow:0 4px 0 #e2d3ad;position:relative}
+#tdash .sc.off{opacity:.55}
+#tdash .sc .nm{font-size:23px;display:flex;align-items:center;gap:8px}
+#tdash .sc .st{font-size:15px;color:#fff;border-radius:999px;padding:3px 11px;display:inline-block;margin:6px 0 4px}
+#tdash .sc .dt{font-size:16px;color:#7a6446;min-height:44px;line-height:1.4;word-break:keep-all}
+#tdash .sc .pb{height:10px;background:#efe3c4;border-radius:999px;overflow:hidden;margin:8px 0}
+#tdash .sc .pb i{display:block;height:100%;background:#7cc46a}
+#tdash .sc .ft{display:flex;gap:10px;font-size:15px;color:#8a7350;flex-wrap:wrap}
+#tdash .sc .dots{display:flex;gap:3px;margin-top:6px}
+#tdash .sc .dots span{width:16px;height:16px;border-radius:5px;background:#e6dcc3;font-size:10px;color:#fff;display:flex;align-items:center;justify-content:center}
+#tdash .sc .dots span.qo{background:#7cc46a}#tdash .sc .dots span.qx{background:#ef8a6f}
+#tdash h2{font-weight:normal;font-size:22px;margin:22px 0 10px}
+#tdash .qr{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+#tdash .qi{background:#fffbea;border-radius:16px;padding:8px 12px;font-size:15px;box-shadow:0 2px 0 #e2d3ad}
+#tdash .qi .b{height:10px;border-radius:999px;background:#efe3c4;overflow:hidden;margin-top:5px}
+#tdash .qi .b i{display:block;height:100%;background:#5c9bd5}
+#tdash .empty{font-size:19px;color:#a08a60;background:#fffbea;border-radius:20px;padding:24px;text-align:center}
+#glerr{position:fixed;inset:0;z-index:99;background:#fffbea;display:flex;align-items:center;justify-content:center;font-size:22px;text-align:center;padding:30px}
+#title .logo em{font-style:normal;color:#7ec8e3;font-size:.8em}
+#title{background:linear-gradient(rgba(140,215,255,.3),rgba(255,255,255,.05) 60%,rgba(120,200,90,.15))}
+#quest{right:18px;top:72px;width:290px}
+#quest .run{width:100%;margin-top:8px;font-size:19px;padding:10px 12px;background:#5c9bd5;box-shadow:0 4px 0 #3f78ad}
+#quest .run:disabled{background:#d8d0bd;box-shadow:0 4px 0 #bdb39b}
+#toast{top:118px}
+#bookBtn{right:72px;font-size:24px}
+#hud{position:fixed;left:50%;top:12px;transform:translateX(-50%);width:min(420px,46vw);background:rgba(255,250,236,.96);border-radius:22px;padding:8px 14px 8px;box-shadow:0 4px 0 #e2d3ad,0 8px 18px rgba(80,60,30,.18);z-index:6;cursor:pointer}
+#hud .hr{display:flex;align-items:center;gap:8px}#hud .ht{font-size:16px;color:#6b5434}#hud b{margin-left:auto;font-weight:normal;font-size:32px;line-height:1;color:#3f9e46}
+.hbar{display:flex;height:16px;border-radius:999px;overflow:hidden;background:#b9b3a6;margin:5px 0 4px}.hbar i{display:block;height:100%;transition:width .5s}.hbar i.coal{background:repeating-linear-gradient(45deg,#b9b3a6 0 6px,#a9a294 6px 12px)}
+#hud .hsub{display:flex;gap:8px;font-size:13px;color:#8a7350;flex-wrap:wrap;align-items:center}#hud .money{margin-left:auto;background:#f3e6c4;border-radius:999px;padding:0 8px;display:flex;align-items:center;gap:3px;font-size:15px;color:#6b5434}#hud .money img{width:18px;height:18px}
+#hdet table.dt{width:100%;border-collapse:collapse;font-size:18px;margin:8px 0}#hdet td,#hdet th{padding:6px 4px;border-bottom:2px dashed #efe3c4;text-align:left}#hdet th{font-weight:normal;color:#a08a60;font-size:15px}#hdet td img{width:24px;height:24px;vertical-align:-6px;margin-right:4px}
+#hdet h3{margin:0 0 2px;font-weight:normal;font-size:26px;color:#5d4630}#hdet .sub{color:#a08a60;font-size:16px}#hdet .tot{background:#eef7e6;border-radius:16px;padding:10px 14px;font-size:18px;color:#4c6b3a;margin:8px 0}#hdet .tot b{font-weight:normal;font-size:24px}
+.leg{display:flex;gap:10px;flex-wrap:wrap;font-size:14px;color:#8a7350;margin:6px 0}.leg i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:4px;vertical-align:-2px}
+.none{font-size:17px;color:#a08a60;background:#f6eedb;border-radius:16px;padding:10px 14px;margin:6px 0}
+#note p,#bDetail p{font-size:21px;line-height:1.75;text-align:left;word-break:keep-all}
+.cs{display:grid;gap:8px;text-align:left;margin:8px 0 14px}.ck_{background:#fff;border-radius:16px;padding:8px 12px;font-size:18px;line-height:1.5;color:#5d4630;word-break:keep-all;box-shadow:0 2px 0 #efe3c4}.ck_ span{display:block;font-size:15px;color:#a08a60}.ck_.g{background:#eef7e6}.ck_.b{background:#fff0e4}
+#note .card{background:#fdf8e8;background-image:none}#bDetail{background-image:none}
+#exp{z-index:32}#exp .card{width:min(720px,96vw);padding:18px 22px}
+.ehd{display:flex;align-items:center;gap:10px;font-size:23px;color:#5d4630;margin-bottom:8px}.ehd img{width:42px;height:42px}
+#eCv{position:static;inset:auto;height:auto;width:100%;border-radius:20px;background:#dff3ff;display:block}
+.emeter{display:flex;align-items:center;gap:10px;font-size:18px;margin:10px 0 6px;color:#6b5434}.mbar{flex:1;height:18px;background:#efe3c4;border-radius:999px;overflow:hidden}.mbar i{display:block;height:100%;background:linear-gradient(90deg,#ffd23f,#f2a046);transition:width .3s}.emeter b{font-weight:normal;min-width:96px;text-align:right}
+.ebtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.eb{font-family:inherit;font-size:18px;border:3px solid #efe3c4;background:#fff;border-radius:16px;padding:8px 14px;color:#5d4630;cursor:pointer;box-shadow:0 3px 0 #efe3c4}.eb.on{border-color:#f2a046;background:#fff3d6}
+.emsg{background:#eef7e6;border-radius:16px;padding:10px 14px;font-size:18px;color:#4c6b3a;margin:10px 0 6px;min-height:48px;word-break:keep-all;line-height:1.5}
+.echk{font-size:16px;color:#a08a60;margin-bottom:10px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}.echk span{background:#f6eedb;border-radius:999px;padding:2px 10px}.echk span.ok{background:#c7e8b8;color:#3f7a2f}
+#inst .card{width:min(600px,94vw)}#inst h2{margin:0 0 4px;font-weight:normal;font-size:26px;color:#5d4630;padding-right:40px}#inst .sub{color:#8a7350;font-size:17px;margin-bottom:10px;word-break:keep-all}
+.meas{background:#fff;border-radius:20px;padding:10px 14px;box-shadow:0 3px 0 #efe3c4;display:grid;grid-template-columns:1fr 1fr;gap:4px 14px}.meas .mh{grid-column:1/-1;font-size:17px;color:#6b5434}.meas .mh small{font-size:13px;color:#a08a60}
+.mr{display:flex;justify-content:space-between;font-size:17px;padding:3px 0;border-bottom:2px dashed #f3ead2;animation:pop .35s both}.mr b{font-weight:normal;color:#e0a020;letter-spacing:1px}.mr.na{color:#c2b493}.mr.na b{color:#c2b493}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#inst .sec{font-size:20px;color:#5d4630;margin:14px 0 8px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}#inst .sec small{font-size:15px;color:#a08a60}
+#inst .rc.off{opacity:.6}#inst .rc .nm small{font-size:14px;color:#a08a60}#inst .rc .btn small{font-size:13px}
+#inst .ask{font-size:26px;color:#5d4630;margin:6px 0;word-break:keep-all}#inst .ask b{font-weight:normal;color:#e0832b}#inst .lab{font-size:16px;color:#a08a60;margin-bottom:10px}
+#inst .warn{background:#ffe7c2;color:#b5651d;border-radius:16px;padding:10px 14px;font-size:19px;margin:6px 0 14px;word-break:keep-all}#inst .btns{display:flex;gap:12px;justify-content:center}
+#res .card{width:min(760px,96vw)}#res h2{margin:0;font-weight:normal;font-size:30px;color:#5d4630}#res .sub{color:#a08a60;font-size:16px;margin-bottom:6px}
+.chart{position:relative;display:flex;gap:8px;align-items:flex-end;height:240px;padding:8px 6px 0;background:#fff;border-radius:20px;box-shadow:0 3px 0 #efe3c4}
+.chart .yl{position:absolute;right:10px;top:6px;font-size:13px;color:#d0563a}
+.wc{flex:1;display:flex;flex-direction:column;align-items:center;height:100%}.wc .col{position:relative;flex:1;width:70%;display:flex;flex-direction:column-reverse;border-radius:8px 8px 0 0;overflow:visible;background:#f6eedb}
+.wc .col i{display:block;width:100%}.wc .dl{position:absolute;left:-12%;right:-12%;border-top:3px dashed #d0563a}.wc .wl{font-size:14px;color:#8a7350}.wc .we{font-size:18px;line-height:1.2}.wc .wp{font-size:15px;color:#3f9e46;min-height:20px}
+.wc.hi .col{outline:3px solid #7cc46a}.wc.lo .col{outline:3px solid #ef8a6f}.wc.now .wl{color:#e0832b}
+#res .big{text-align:center;font-size:22px;margin:10px 0;border-radius:18px;padding:10px}#res .big b{font-weight:normal;font-size:40px}#res .big.ok{background:#eaf7e2;color:#3f6b2f}#res .big.no{background:#fff0c4;color:#8a5a1d}#res .big small{font-size:17px}
+#res .rows{display:grid;gap:6px;font-size:17px;color:#5d4630;word-break:keep-all}#res .rows div{background:#fff;border-radius:14px;padding:8px 12px;box-shadow:0 2px 0 #efe3c4}#res .rows b{font-weight:normal;color:#e0832b}
+#wk{position:fixed;left:16px;bottom:16px;width:min(380px,44vw);background:rgba(255,250,236,.95);border-radius:22px;padding:10px 12px;z-index:8;box-shadow:0 4px 0 #e2d3ad}
+#wk .wh{display:flex;align-items:center;font-size:18px;color:#5d4630;margin-bottom:6px}#wk .wh button{margin-left:auto;font-family:inherit;font-size:15px;border:none;border-radius:999px;padding:6px 12px;background:#5c9bd5;color:#fff;box-shadow:0 3px 0 #3f78ad;cursor:pointer}
+#wk .chart{height:150px;box-shadow:none;background:#fffdf6}#wk .wc .we{font-size:15px}#wk .wc .wp{font-size:13px}
+#caption{bottom:3vh;font-size:min(26px,4.6vw);background:rgba(40,36,30,.6);border-radius:24px;padding:10px 18px;width:min(760px,90vw);left:calc(50% + min(190px,22vw))}
+#caption .say{font-size:.85em;color:#ffe9a8}
+#end .gens{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:0 0 12px}#end .gens span{background:#fff;border-radius:999px;padding:4px 12px 4px 6px;font-size:16px;box-shadow:0 2px 0 #efe3c4;display:flex;align-items:center;gap:4px}#end .gens img{width:24px;height:24px}
+#end .card{padding:20px 26px}#end .row .btn{font-size:19px;padding:10px 22px}#end .sum,#end .q{font-size:19px;padding:10px 16px}#end .stats{margin:10px 0}
+#end{background:radial-gradient(circle at 50% 30%,#8fd6ff,#5fa8d3)}
+#quiz .op.oxb{justify-content:center;font-size:26px}#quiz .op.oxb span{display:none}
+#tdash .setb{background:#fffbea;border-radius:18px;padding:10px 14px;box-shadow:0 3px 0 #e2d3ad;font-size:17px;margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#tdash .setb input,#tdash .setb select{font-family:inherit;font-size:17px;border:3px solid #e6d6a8;border-radius:12px;padding:4px 8px;color:#6b5434;background:#fff}
+#tdash .setb .hint{font-size:14px;color:#a08a60}
+#tdash h2 small{font-size:15px;color:#a08a60}
+#tdash table.rk{width:100%;border-collapse:collapse;background:#fffbea;border-radius:18px;overflow:hidden;box-shadow:0 3px 0 #e2d3ad;font-size:16px}#tdash .rk th{background:#f3e6c4;font-weight:normal;padding:8px;text-align:left}#tdash .rk td{padding:8px;border-top:2px dashed #efe3c4;vertical-align:top}#tdash .rk td.cb{font-size:14px;line-height:1.5}#tdash .rk b{font-weight:normal;font-size:20px;color:#3f9e46}
+@media (max-width:900px){#hud{width:min(360px,44vw)}#hud .ht{font-size:13px}#hud b{font-size:26px}#quest{width:240px}}
+@media (max-width:760px){#hud{left:auto;right:126px;transform:none;top:12px;width:220px}#quest{top:140px}#caption{left:50%}}
+#toast{max-width:min(620px,calc(100vw - 620px));white-space:normal;text-align:center;border-radius:24px;line-height:1.4}
+#caption{left:auto;right:16px;transform:none;width:calc(100vw - 430px);max-width:760px}
+@media (max-width:1100px){#hud{width:400px}#quest{width:270px}}
+@media (max-width:760px){#toast{max-width:90vw;top:180px}#caption{width:92vw;right:4vw}}
+.hl{color:#e8590c;background:linear-gradient(transparent 58%,#ffe58a 58%);padding:0 2px;border-radius:3px}
+#dialog.narr .hl{color:#ffd166;background:none}
+#end .sum b,#quiz .ex b{color:#e8590c}
+
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<canvas id="ov"></canvas>
+
+<div id="clock" class="hidden"><div class="t" id="clkT"></div><div class="d" id="clkD"></div><div class="m" id="clkM">🏡 도토리 마을</div></div>
+<button id="bookBtn" class="hbtn hidden" aria-label="에너지 카드">⚡</button>
+<button id="menuBtn" class="hbtn hidden" aria-label="메뉴">≡</button>
+<div id="menu" class="hidden">
+  <button id="mSound">🔊 소리 끄기</button>
+  <button id="mRestart">🔄 처음부터 다시 하기</button>
+  <button id="mEnding">🎬 엔딩 미리 보기 (교사용)</button>
+</div>
+<div id="hud" class="hidden">
+  <div class="hr"><span class="ht">🌱 마을 전기 중 재생 에너지 비율</span><b id="hPct">0%</b></div>
+  <div class="hbar" id="hBar"></div>
+  <div class="hsub"><span id="hWx"></span><span id="hKwh"></span><span id="hMoney" class="money"></span></div>
+</div>
+<div id="quest" class="hidden"></div>
+<div id="ctrl" class="hidden"><div id="joyZone"><div id="joyBase"><div id="joyKnob"></div></div></div><div id="btnA">A</div></div>
+
+<div id="dialog" class="hidden"><div class="tag" id="dTag"></div><div id="dText"></div><div class="nx" id="dNx">▼</div></div>
+<div id="choices" class="hidden"></div>
+
+<div id="note" class="modal hidden"><div class="card">
+  <div class="head" id="nHead">⚡ 에너지 카드</div>
+  <img id="nImg" alt="">
+  <div><span class="chip" id="nChip"></span></div>
+  <h2 id="nTitle"></h2>
+  <div id="nBody"></div>
+  <div class="saved" id="nSaved">✔ 에너지 카드에 저장했어요. 오른쪽 위 ⚡ 버튼으로 언제든 다시 볼 수 있어요.</div>
+  <button class="btn" id="nOk">알겠어!</button>
+</div></div>
+
+<div id="book" class="modal hidden"><div class="card">
+  <button class="x" id="bX">✕</button>
+  <div id="bList"><h2>⚡ 에너지 카드</h2><div class="sub" id="bSub"></div><div id="bGrid"></div></div>
+  <div id="bDetail" class="hidden"><img id="bdImg" alt=""><div><span class="chip" id="bdChip"></span></div><h3 id="bdTitle"></h3><div id="bdText"></div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn gray" id="bBack">◀ 목록으로</button><button class="btn or" id="bNext">다음 카드 ▶</button></div></div>
+  <div id="bFoot" class="hidden"><div class="pg" id="bPg"></div><button class="btn" id="bQuiz" style="background:#5c9bd5;box-shadow:0 4px 0 #3f78ad">🧠 퀴즈 풀러 가기</button></div>
+</div></div>
+
+<div id="exp" class="modal hidden"><div class="card">
+  <div class="ehd"><img id="eImg" alt=""><span id="eTitle"></span></div>
+  <canvas id="eCv" width="640" height="300"></canvas>
+  <div class="emeter">⚡ 지금 만드는 전기<div class="mbar"><i id="eBar"></i></div><b id="eVal"></b></div>
+  <div id="eBtns" class="ebtns"></div>
+  <div id="eMsg" class="emsg"></div>
+  <div id="eChk" class="echk"></div>
+  <div style="text-align:center"><button class="btn" id="eDone" disabled>⚡ 에너지 카드 받기</button></div>
+</div></div>
+
+<div id="inst" class="modal hidden"><div class="card" id="instCard"></div></div>
+<div id="hDet" class="modal hidden"><div class="card" id="hdet"></div></div>
+<div id="res" class="modal hidden"><div class="card" id="resCard"></div></div>
+<div id="wk" class="hidden"><div class="wh">📅 일주일 운영 중 <button id="wkSpd"></button></div><div class="chart" id="wkBars"></div></div>
+<div id="quiz" class="modal hidden"><div class="card" id="qzCard"></div></div>
+
+<div id="toast" style="opacity:0"></div>
+
+<div id="title">
+  <div class="logo">도토리 <span>마을</span> 이야기 <em>2</em></div>
+  <div class="sub">바람과 햇살의 마을 · 재생 에너지가 궁금해!</div>
+  <div class="box">
+    <label for="nameIn">너의 이름을 알려 줘!</label>
+    <input id="nameIn" maxlength="6" placeholder="이름" autocomplete="off">
+    <div style="display:flex;gap:8px;width:100%"><input id="schIn" maxlength="14" placeholder="학교 이름 (예: 평대초)" autocomplete="off" style="font-size:18px;flex:1.4;min-width:0"><input id="clsIn" maxlength="10" placeholder="반 (예: 5-1)" autocomplete="off" style="font-size:18px;flex:1;min-width:0"></div>
+    <button class="btn" id="startBtn">시작하기</button>
+    <div class="hint">이동: 방향키 / WASD · 행동: 스페이스 또는 엔터 · 에너지 카드: N<br>태블릿: 왼쪽 화면을 끌어 이동 · Ⓐ 버튼으로 행동</div>
+  </div>
+  <button class="tlink" id="tBtn">👩‍🏫 교사 현황판</button>
+</div>
+
+<div id="caption"></div>
+<div id="fade"></div>
+<div id="end" class="hidden"><div class="card" id="endCard"></div></div>
+<div id="pass" class="modal hidden"><div class="card"><div style="font-size:40px">🔒</div><h3 id="psT"></h3><input id="psIn" type="password" inputmode="numeric" maxlength="8" autocomplete="off"><div class="err" id="psE"></div><div style="display:flex;gap:10px;justify-content:center"><button class="btn" id="psOk">확인</button><button class="btn gray" id="psNo">취소</button></div></div></div>
+<div id="tdash" class="hidden"></div>
+<div id="glerr" class="hidden">이 기기에서는 3D(WebGL)를 사용할 수 없어요.<br>크롬이나 사파리 최신 버전으로 열어 주세요.</div>
+
+<script>
+'use strict';
+/* ===== 태블릿 두 번 터치 확대·두 손가락 확대 막기 ===== */
+(function(){
+  const isInput=t=>t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA');
+  let lastEnd=0;
+  document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastEnd<400&&!isInput(e.target)){e.preventDefault();const el=e.target.closest&&e.target.closest('button,.bt,.op,a');if(el&&!el.disabled)el.click();}lastEnd=now;},{passive:false});
+  document.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+  document.addEventListener('touchmove',e=>{if(e.touches.length>1||(e.scale&&e.scale!==1))e.preventDefault();},{passive:false});
+  ['gesturestart','gesturechange','gestureend'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault(),{passive:false}));
+  document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+})();
+/* ============ 기본 ============ */
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const hex=h=>[parseInt(h.slice(1,3),16)/255,parseInt(h.slice(3,5),16)/255,parseInt(h.slice(5,7),16)/255];
+const mixc=(a,b,t)=>[lerp(a[0],b[0],t),lerp(a[1],b[1],t),lerp(a[2],b[2],t)];
+function hash2(x,y){const s=Math.sin(x*127.1+y*311.7)*43758.5453;return s-Math.floor(s);}
+function vnoise(x,y){const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;const u=fx*fx*(3-2*fx),v=fy*fy*(3-2*fy);return lerp(lerp(hash2(ix,iy),hash2(ix+1,iy),u),lerp(hash2(ix,iy+1),hash2(ix+1,iy+1),u),v);}
+const U=40; // 픽셀 → 3D 단위
+/* ============ 오디오 ============ */
+let AC=null,master,musicG,sfxG,noiseBuf,muted=false;
+function initAudio(){
+  if(AC)return;try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return}
+  master=AC.createGain();master.gain.value=.9;master.connect(AC.destination);
+  musicG=AC.createGain();musicG.gain.value=.55;musicG.connect(master);
+  sfxG=AC.createGain();sfxG.gain.value=.9;sfxG.connect(master);
+  noiseBuf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+}
+function tone(f,t0,dur,type='sine',vol=.1,dest,att=.006,fEnd){
+  if(!AC)return;dest=dest||sfxG;const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t0);
+  if(fEnd)o.frequency.exponentialRampToValueAtTime(fEnd,t0+dur);
+  g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+att);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(dest);o.start(t0);o.stop(t0+dur+.05);
+}
+function noise(t0,dur,vol,ft,freq,q=1,dest){
+  if(!AC)return;dest=dest||sfxG;const s=AC.createBufferSource();s.buffer=noiseBuf;const f=AC.createBiquadFilter();f.type=ft;f.frequency.value=freq;f.Q.value=q;
+  const g=AC.createGain();g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+.01);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  s.connect(f);f.connect(g);g.connect(dest);s.start(t0,Math.random());s.stop(t0+dur+.05);
+}
+const mtof=m=>440*Math.pow(2,(m-69)/12);
+function sfx(k){
+  if(!AC)return;const t=AC.currentTime;
+  switch(k){
+    case 'chop':noise(t,.12,.5,'bandpass',1100,2);tone(170,t,.14,'sine',.25,null,.003,90);break;
+    case 'splash':noise(t,.35,.35,'lowpass',1400,.7);noise(t+.06,.25,.2,'bandpass',2600,1.5);break;
+    case 'mine':tone(1500,t,.25,'triangle',.18);tone(2250,t,.18,'sine',.08);noise(t,.08,.3,'highpass',3000);break;
+    case 'pick':tone(520,t,.12,'sine',.2,null,.004,900);break;
+    case 'get':tone(mtof(79),t,.12,'triangle',.12);tone(mtof(84),t+.09,.2,'triangle',.12);break;
+    case 'quest':[72,76,79].forEach((m,i)=>tone(mtof(m),t+i*.1,.25,'triangle',.12));break;
+    case 'done':[72,76,79,84].forEach((m,i)=>tone(mtof(m),t+i*.09,.35,'triangle',.13));tone(mtof(88),t+.4,.6,'sine',.1);break;
+    case 'fall':tone(110,t,.5,'sine',.4,null,.005,45);noise(t,.6,.25,'lowpass',500);break;
+    case 'empty':tone(330,t,.25,'sine',.12,null,.01,220);break;
+    case 'open':tone(660,t,.08,'sine',.1);tone(990,t+.06,.1,'sine',.08);break;
+    case 'page':noise(t,.15,.15,'highpass',2500);break;
+    case 'hammer':noise(t,.07,.4,'bandpass',1800,3);tone(300,t,.08,'square',.05);break;
+    case 'step':noise(t,.05,.03,'lowpass',700);break;
+    case 'door':noise(t,.4,.2,'lowpass',400);tone(220,t,.3,'sine',.1,null,.02,160);break;
+    case 'gloom':tone(mtof(45),t,3,'sine',.18,null,.4);tone(mtof(52),t+.2,3,'sine',.1,null,.4);tone(mtof(48),t+.4,3,'sine',.1,null,.4);break;
+  }
+}
+function blip(p){if(!AC)return;tone(p*(1+Math.random()*.3),AC.currentTime,.055,'triangle',.06);}
+const BGM={on:false,step:0,next:0,mode:'happy'};
+const PROG={happy:[[60,64,67],[57,60,64],[53,57,60],[55,59,62]],sad:[[57,60,64],[53,57,60],[50,53,57],[52,56,59]],cave:[[57,60,64],[55,59,62],[53,57,60],[52,56,59]]};
+const MEL={happy:[76,0,79,0,81,0,79,76,74,0,72,0,74,0,0,0,72,0,74,0,76,0,79,76,74,0,72,0,69,0,0,0],
+ sad:[72,0,0,0,71,0,0,0,69,0,0,0,0,0,0,0,65,0,0,0,64,0,0,0,62,0,0,0,64,0,0,0],
+ cave:[69,0,0,72,0,0,76,0,0,0,74,0,0,0,0,0,69,0,0,71,0,0,72,0,0,0,68,0,0,0,0,0]};
+function bgmStart(){if(!AC)return;BGM.on=true;BGM.next=AC.currentTime+.1;musicG.gain.cancelScheduledValues(AC.currentTime);musicG.gain.setValueAtTime(.55,AC.currentTime);}
+function bgmStop(fade=2){if(!AC)return;BGM.on=false;musicG.gain.cancelScheduledValues(AC.currentTime);musicG.gain.setValueAtTime(musicG.gain.value,AC.currentTime);musicG.gain.linearRampToValueAtTime(.0001,AC.currentTime+fade);}
+function bgmTick(){
+  if(!AC||!BGM.on)return;
+  const md=BGM.mode,spb=60/(md==='happy'?100:md==='cave'?84:76)/2;
+  while(BGM.next<AC.currentTime+.25){
+    const s=BGM.step,t=BGM.next,bar=Math.floor(s/8)%4,ch=PROG[md][bar];
+    if(s%8===0){ch.forEach(m=>tone(mtof(m),t,spb*7.5,'triangle',md==='happy'?.026:.03,musicG,.08));tone(mtof(ch[0]-12),t,spb*3.5,'sine',.07,musicG,.02);}
+    if(s%8===4)tone(mtof(ch[0]-12),t,spb*3,'sine',.05,musicG,.02);
+    const m=MEL[md][s%32];if(m)tone(mtof(m),t,md==='happy'?spb*1.6:spb*3,'sine',md==='happy'?.055:.05,musicG,.01);
+    if(md==='happy'&&s%2===1&&Math.random()<.35)tone(mtof(ch[1]+12),t,.12,'triangle',.018,musicG);
+    if(md==='cave'&&s%16===10)tone(mtof(88),t,.8,'sine',.02,musicG,.01);
+    BGM.step++;BGM.next+=spb;
+  }
+}
+let sadTimer=null;
+function sadMusic(on){
+  if(sadTimer){clearInterval(sadTimer);sadTimer=null}
+  if(!on||!AC)return;musicG.gain.cancelScheduledValues(AC.currentTime);musicG.gain.setValueAtTime(.6,AC.currentTime);
+  const seq=[[57,64,69,72],[53,60,65,69],[48,55,60,64],[52,59,64,68]];let i=0;
+  const play=()=>{const t=AC.currentTime+.05,ch=seq[Math.floor(i/4)%4],n=ch[i%4];tone(mtof(n),t,2.2,'sine',.08,musicG,.01);tone(mtof(n+12),t,1.2,'triangle',.012,musicG,.01);if(i%4===0)tone(mtof(ch[0]-12),t,3,'sine',.07,musicG,.05);i++;};
+  play();sadTimer=setInterval(play,640);
+}
+function wind(dur=4){if(!AC)return;const t=AC.currentTime;const s=AC.createBufferSource();s.buffer=noiseBuf;s.loop=true;const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.setValueAtTime(400,t);f.frequency.linearRampToValueAtTime(900,t+dur/2);f.frequency.linearRampToValueAtTime(350,t+dur);f.Q.value=.8;const g=AC.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.12,t+dur*.4);g.gain.linearRampToValueAtTime(.0001,t+dur);s.connect(f);f.connect(g);g.connect(sfxG);s.start(t);s.stop(t+dur+.1);}
+function ell(c,x,y,rx,ry){c.beginPath();c.ellipse(x,y,Math.max(.1,rx),Math.max(.1,ry),0,0,Math.PI*2);}
+function rr(c,x,y,w,h,r){r=Math.min(r,w/2,h/2);c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function circ(c,x,y,r){c.beginPath();c.arc(x,y,Math.max(.1,r),0,Math.PI*2);}
+/* ============ 행렬 ============ */
+const F32=Float32Array;
+const m4={
+  I(){const m=new F32(16);m[0]=m[5]=m[10]=m[15]=1;return m},
+  mul(a,b){const o=new F32(16);for(let i=0;i<4;i++)for(let j=0;j<4;j++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+j]*b[i*4+k];o[i*4+j]=s;}return o},
+  T(x,y,z){const m=m4.I();m[12]=x;m[13]=y;m[14]=z;return m},
+  S(x,y,z){const m=m4.I();m[0]=x;m[5]=y===undefined?x:y;m[10]=z===undefined?x:z;return m},
+  RX(a){const m=m4.I(),c=Math.cos(a),s=Math.sin(a);m[5]=c;m[6]=s;m[9]=-s;m[10]=c;return m},
+  RY(a){const m=m4.I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[2]=-s;m[8]=s;m[10]=c;return m},
+  RZ(a){const m=m4.I(),c=Math.cos(a),s=Math.sin(a);m[0]=c;m[1]=s;m[4]=-s;m[5]=c;return m},
+  persp(fov,asp,n,f){const t=1/Math.tan(fov/2),m=new F32(16);m[0]=t/asp;m[5]=t;m[10]=(f+n)/(n-f);m[11]=-1;m[14]=2*f*n/(n-f);return m},
+  look(e,t,u){let z=[e[0]-t[0],e[1]-t[1],e[2]-t[2]];let l=Math.hypot(...z);z=z.map(v=>v/l);
+    let x=[u[1]*z[2]-u[2]*z[1],u[2]*z[0]-u[0]*z[2],u[0]*z[1]-u[1]*z[0]];l=Math.hypot(...x);x=x.map(v=>v/l);
+    const y=[z[1]*x[2]-z[2]*x[1],z[2]*x[0]-z[0]*x[2],z[0]*x[1]-z[1]*x[0]];
+    const m=new F32(16);m[0]=x[0];m[4]=x[1];m[8]=x[2];m[1]=y[0];m[5]=y[1];m[9]=y[2];m[2]=z[0];m[6]=z[1];m[10]=z[2];
+    m[12]=-(x[0]*e[0]+x[1]*e[1]+x[2]*e[2]);m[13]=-(y[0]*e[0]+y[1]*e[1]+y[2]*e[2]);m[14]=-(z[0]*e[0]+z[1]*e[1]+z[2]*e[2]);m[15]=1;return m},
+  xf(m,x,y,z){return[m[0]*x+m[4]*y+m[8]*z+m[12],m[1]*x+m[5]*y+m[9]*z+m[13],m[2]*x+m[6]*y+m[10]*z+m[14],m[3]*x+m[7]*y+m[11]*z+m[15]]}
+};
+const C=(...ms)=>ms.reduce((a,b)=>m4.mul(a,b));
+const {T:Tm,S:Sm,RX,RY,RZ}=m4;
+function nmat(m){
+  const A=[[m[0],m[4],m[8]],[m[1],m[5],m[9]],[m[2],m[6],m[10]]];const cof=[[0,0,0],[0,0,0],[0,0,0]];
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++)cof[r][c]=A[(r+1)%3][(c+1)%3]*A[(r+2)%3][(c+2)%3]-A[(r+1)%3][(c+2)%3]*A[(r+2)%3][(c+1)%3];
+  const det=A[0][0]*cof[0][0]+A[0][1]*cof[0][1]+A[0][2]*cof[0][2]||1e-6;const o=new F32(9);
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++)o[c*3+r]=cof[r][c]/det;return o;
+}
+
+/* ============ 프리미티브 ============ */
+function pushTri(P,N,a,b,c,na,nb,nc){P.push(...a,...b,...c);N.push(...na,...nb,...nc);}
+function flatN(a,b,c){const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],v=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];let n=[u[1]*v[2]-u[2]*v[1],u[2]*v[0]-u[0]*v[2],u[0]*v[1]-u[1]*v[0]];const l=Math.hypot(...n)||1;return n.map(x=>x/l);}
+function primSphere(ws,hs,half){
+  const P=[],N=[],pm=half?Math.PI/2:Math.PI;
+  const v=(i,j)=>{const th=i/ws*2*Math.PI,ph=j/hs*pm;return[Math.sin(ph)*Math.cos(th),Math.cos(ph),Math.sin(ph)*Math.sin(th)]};
+  for(let j=0;j<hs;j++)for(let i=0;i<ws;i++){const a=v(i,j),b=v(i+1,j),c=v(i+1,j+1),d=v(i,j+1);pushTri(P,N,a,c,b,a,c,b);pushTri(P,N,a,d,c,a,d,c);}
+  if(half)for(let i=0;i<ws;i++){const a=v(i,hs),b=v(i+1,hs);pushTri(P,N,[0,0,0],a,b,[0,-1,0],[0,-1,0],[0,-1,0]);}
+  return{p:P,n:N};
+}
+function primCyl(seg,rt,rb){
+  const P=[],N=[],sl=rb-rt;
+  for(let i=0;i<seg;i++){const a0=i/seg*Math.PI*2,a1=(i+1)/seg*Math.PI*2,c0=Math.cos(a0),s0=Math.sin(a0),c1=Math.cos(a1),s1=Math.sin(a1);
+    const n0=[c0,sl,s0],n1=[c1,sl,s1];const l0=Math.hypot(...n0),l1=Math.hypot(...n1);const N0=n0.map(x=>x/l0),N1=n1.map(x=>x/l1);
+    const b0=[c0*rb,0,s0*rb],b1=[c1*rb,0,s1*rb],t0=[c0*rt,1,s0*rt],t1=[c1*rt,1,s1*rt];
+    pushTri(P,N,b0,t0,b1,N0,N0,N1);pushTri(P,N,b1,t0,t1,N1,N0,N1);
+    if(rt>0)pushTri(P,N,[0,1,0],t1,t0,[0,1,0],[0,1,0],[0,1,0]);
+    pushTri(P,N,[0,0,0],b0,b1,[0,-1,0],[0,-1,0],[0,-1,0]);}
+  return{p:P,n:N};
+}
+function primBox(){
+  const P=[],N=[],h=.5;const f=(n,a,b,c,d)=>{pushTri(P,N,a,b,c,n,n,n);pushTri(P,N,a,c,d,n,n,n);};
+  f([0,0,1],[-h,-h,h],[h,-h,h],[h,h,h],[-h,h,h]);f([0,0,-1],[h,-h,-h],[-h,-h,-h],[-h,h,-h],[h,h,-h]);
+  f([1,0,0],[h,-h,h],[h,-h,-h],[h,h,-h],[h,h,h]);f([-1,0,0],[-h,-h,-h],[-h,-h,h],[-h,h,h],[-h,h,-h]);
+  f([0,1,0],[-h,h,h],[h,h,h],[h,h,-h],[-h,h,-h]);f([0,-1,0],[-h,-h,-h],[h,-h,-h],[h,-h,h],[-h,-h,h]);
+  return{p:P,n:N};
+}
+function primDisc(seg){const P=[],N=[];for(let i=0;i<seg;i++){const a0=i/seg*Math.PI*2,a1=(i+1)/seg*Math.PI*2;pushTri(P,N,[0,0,0],[Math.cos(a1),0,Math.sin(a1)],[Math.cos(a0),0,Math.sin(a0)],[0,1,0],[0,1,0],[0,1,0]);}return{p:P,n:N};}
+function primPrism(){
+  const P=[],N=[];const A=[-.5,0,-.5],B=[-.5,0,.5],Cc=[-.5,1,0],D=[.5,0,-.5],E=[.5,0,.5],Fp=[.5,1,0];
+  const tri=(a,b,c)=>{const n=flatN(a,b,c);pushTri(P,N,a,b,c,n,n,n);};
+  tri(A,Cc,B);tri(D,E,Fp);tri(B,Cc,Fp);tri(B,Fp,E);tri(A,D,Fp);tri(A,Fp,Cc);tri(A,B,E);tri(A,E,D);
+  return{p:P,n:N};
+}
+function primRock(seed){
+  const r=mulberry32(seed),key={},jit=(p)=>{const k=p.map(v=>v.toFixed(3)).join();if(!key[k])key[k]=.82+r()*.32;return p.map(v=>v*key[k]);};
+  const s=primSphere(7,5),P=[],N=[];
+  for(let i=0;i<s.p.length;i+=9){const a=jit(s.p.slice(i,i+3)),b=jit(s.p.slice(i+3,i+6)),c=jit(s.p.slice(i+6,i+9));const n=flatN(a,b,c);pushTri(P,N,a,b,c,n,n,n);}
+  return{p:P,n:N};
+}
+const PR={sph:primSphere(14,10),sphL:primSphere(7,5),hemi:primSphere(14,6,true),cyl:primCyl(14,1,1),cylT:primCyl(14,.78,1),cone:primCyl(12,0,1),box:primBox(),disc:primDisc(24),prism:primPrism(),rock:primRock(3),rock2:primRock(8)};
+
+/* ============ 지오메트리 빌더 ============ */
+class Geo{
+  constructor(){this.a=[]}
+  add(pr,m,col){const nm=nmat(m),p=pr.p,n=pr.n,a=this.a;
+    for(let i=0;i<p.length;i+=3){const x=p[i],y=p[i+1],z=p[i+2];a.push(m[0]*x+m[4]*y+m[8]*z+m[12],m[1]*x+m[5]*y+m[9]*z+m[13],m[2]*x+m[6]*y+m[10]*z+m[14]);
+      const nx=n[i],ny=n[i+1],nz=n[i+2];let ox=nm[0]*nx+nm[3]*ny+nm[6]*nz,oy=nm[1]*nx+nm[4]*ny+nm[7]*nz,oz=nm[2]*nx+nm[5]*ny+nm[8]*nz;const l=Math.hypot(ox,oy,oz)||1;a.push(ox/l,oy/l,oz/l,col[0],col[1],col[2]);}
+    return this;}
+  tri(p1,p2,p3,c1,c2,c3,n){n=n||flatN(p1,p2,p3);this.a.push(...p1,...n,...c1,...p2,...n,...c2,...p3,...n,...c3);}
+}
+
+/* ============ WebGL ============ */
+const cv=$('cv'),ov=$('ov'),o2=ov.getContext('2d');
+const gl=cv.getContext('webgl',{antialias:true,alpha:false})||cv.getContext('experimental-webgl');
+if(!gl)$('glerr').classList.remove('hidden');
+let DPR=1,VW=0,VH=0;
+function resize(){DPR=Math.min(1.6,window.devicePixelRatio||1);VW=innerWidth;VH=innerHeight;[cv,ov].forEach(c=>{c.width=Math.round(VW*DPR);c.height=Math.round(VH*DPR);c.style.width=VW+'px';c.style.height=VH+'px';});}
+addEventListener('resize',resize);resize();
+const VS=`attribute vec3 aP;attribute vec3 aN;attribute vec3 aC;uniform mat4 uM;uniform mat3 uNM;uniform mat4 uVP;uniform float uBend;uniform float uBendZ;
+varying vec3 vN;varying vec3 vC;varying vec3 vW;
+void main(){vec4 w=uM*vec4(aP,1.0);vW=w.xyz;float dz=w.z-uBendZ;w.y-=dz*dz*uBend;vN=normalize(uNM*aN);vC=aC;gl_Position=uVP*w;}`;
+const FS=`precision highp float;varying vec3 vN;varying vec3 vC;varying vec3 vW;
+uniform vec3 uTint;uniform vec3 uEmis;uniform vec3 uL;uniform vec3 uSun;uniform vec3 uSky;uniform vec3 uGnd;uniform vec3 uFog;uniform vec3 uCam;
+uniform float uAlpha;uniform float uFogN;uniform float uFogF;uniform float uGloom;uniform float uWarm;uniform vec4 uPL[4];uniform vec3 uPC[4];
+void main(){vec3 n=normalize(vN);vec3 base=vC*uTint;float d=dot(n,uL);float l=smoothstep(-0.05,0.5,d)*0.6+max(d,0.0)*0.4;
+vec3 col=base*(mix(uGnd,uSky,n.y*0.5+0.5)+uSun*l);
+for(int i=0;i<4;i++){vec3 L=uPL[i].xyz-vW;float dist=length(L)+0.001;float a=clamp(1.0-dist/uPL[i].w,0.0,1.0);col+=base*uPC[i]*a*a*(0.35+0.65*max(dot(n,L/dist),0.0));}
+col+=uEmis;float f=smoothstep(uFogN,uFogF,distance(vW,uCam));col=mix(col,uFog,f);
+col=mix(col,col*vec3(1.1,0.98,0.82),uWarm);float g=dot(col,vec3(0.299,0.587,0.114));col=mix(col,vec3(g)*vec3(0.82,0.86,0.95)*0.85,uGloom);
+gl_FragColor=vec4(col,uAlpha);}`;
+let PROG_,LOC={};
+function initGL(){
+  const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))console.error(gl.getShaderInfoLog(o));return o;};
+  PROG_=gl.createProgram();gl.attachShader(PROG_,sh(gl.VERTEX_SHADER,VS));gl.attachShader(PROG_,sh(gl.FRAGMENT_SHADER,FS));gl.linkProgram(PROG_);gl.useProgram(PROG_);
+  ['aP','aN','aC'].forEach(a=>LOC[a]=gl.getAttribLocation(PROG_,a));
+  ['uM','uNM','uVP','uBend','uBendZ','uTint','uEmis','uL','uSun','uSky','uGnd','uFog','uCam','uAlpha','uFogN','uFogF','uGloom','uWarm','uPL','uPC'].forEach(u=>LOC[u]=gl.getUniformLocation(PROG_,u));
+  gl.enable(gl.DEPTH_TEST);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
+}
+function mkMesh(geo){const d=new F32(geo.a);const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,d,gl.STATIC_DRAW);return{b,n:d.length/9};}
+function unitMesh(pr){return mkMesh(new Geo().add(pr,m4.I(),[1,1,1]));}
+let curBuf=null;
+const WHITE=[1,1,1],ZERO=[0,0,0];
+function draw(mesh,M,tint=WHITE,alpha=1,emis=ZERO){
+  if(curBuf!==mesh.b){gl.bindBuffer(gl.ARRAY_BUFFER,mesh.b);gl.enableVertexAttribArray(LOC.aP);gl.vertexAttribPointer(LOC.aP,3,gl.FLOAT,false,36,0);gl.enableVertexAttribArray(LOC.aN);gl.vertexAttribPointer(LOC.aN,3,gl.FLOAT,false,36,12);gl.enableVertexAttribArray(LOC.aC);gl.vertexAttribPointer(LOC.aC,3,gl.FLOAT,false,36,24);curBuf=mesh.b;}
+  gl.uniformMatrix4fv(LOC.uM,false,M);gl.uniformMatrix3fv(LOC.uNM,false,nmat(M));gl.uniform3fv(LOC.uTint,tint);gl.uniform1f(LOC.uAlpha,alpha);gl.uniform3fv(LOC.uEmis,emis);
+  gl.drawArrays(gl.TRIANGLES,0,mesh.n);
+}
+let MS={};
+let DLG=null;const dialogEl=$('dialog');
+const NARR={narr:true,pitch:200};
+const PLAYER={get name(){return S.name},tag:'#f2a046',pitch:360};
+const fmt=s=>s.replace(/\{name\}/g,S.name);
+function say(sp,lines,keep=false){return new Promise(res=>{lines=[].concat(lines).map(fmt);dialogEl.classList.remove('hidden');document.body.classList.add('talking');dialogEl.classList.toggle('narr',!!sp.narr);
+  const tag=$('dTag');tag.textContent=sp.name||'';tag.style.background=sp.tag||'#999';DLG={sp,lines,i:0,pos:0,typing:true,keep,res,acc:0};showLine();});}
+function showLine(){DLG.pos=0;DLG.typing=true;DLG.acc=0;$('dText').textContent='';$('dNx').style.visibility='hidden';}
+function dlgTick(dt){if(!DLG||!DLG.typing)return;const line=DLG.lines[DLG.i];DLG.acc+=dt*34;
+  while(DLG.acc>=1&&DLG.pos<line.length){DLG.acc-=1;DLG.pos++;const ch=line[DLG.pos-1];if(DLG.pos%2===1&&ch.trim()&&!'.…,!?'.includes(ch))blip(DLG.sp.pitch||300);}
+  $('dText').textContent=line.slice(0,DLG.pos);if(DLG.pos>=line.length)finishLine();}
+function finishLine(){DLG.typing=false;$('dText').textContent=DLG.lines[DLG.i];if(DLG.keep&&DLG.i===DLG.lines.length-1){DLG.waitingChoice=true;DLG.res();return;}$('dNx').style.visibility='visible';}
+function dlgAdvance(){if(!DLG||DLG.waitingChoice)return;if(DLG.typing){DLG.pos=DLG.lines[DLG.i].length;finishLine();return}
+  DLG.i++;if(DLG.i>=DLG.lines.length){closeDialog();const r=DLG.res;DLG=null;r();}else showLine();}
+function closeDialog(){dialogEl.classList.add('hidden');document.body.classList.remove('talking');}
+dialogEl.addEventListener('pointerdown',e=>{e.preventDefault();dlgAdvance();});
+let CHO=null;
+function choose(opts){return new Promise(res=>{const e=$('choices');e.innerHTML='';e.classList.remove('hidden');CHO={opts,sel:0,res};
+  opts.forEach((o,i)=>{const d=document.createElement('div');d.textContent=o;d.onpointerenter=()=>{CHO.sel=i;drawCho();};d.onpointerdown=ev=>{ev.preventDefault();pick(i);};e.appendChild(d);});drawCho();});}
+function drawCho(){[...$('choices').children].forEach((d,i)=>d.classList.toggle('sel',i===CHO.sel));}
+function pick(i){const r=CHO.res;CHO=null;$('choices').classList.add('hidden');sfx('open');DLG=null;closeDialog();r(i);}
+function showNote(n){return new Promise(res=>{$('nImg').src=ICONURL[n.icon];$('nChip').textContent=n.chip;$('nChip').style.background=n.col;$('nTitle').textContent=n.title;$('nText').textContent=n.text;
+  $('note').classList.remove('hidden');sfx('open');$('nOk').onclick=()=>{$('note').classList.add('hidden');res();};});}
+let toastT=null;
+function toast(t,ms=2600){const e=$('toast');e.textContent=t;e.style.opacity=1;clearTimeout(toastT);toastT=setTimeout(()=>e.style.opacity=0,ms);}
+/* ============ 캐릭터 3D ============ */
+const SKIN=hex('#ffe0c7'),HAIR=hex('#6b4428'),BLK=hex('#2b1d14'),PINK=hex('#ff9aa8');
+function swingA(a){
+  if(!a)return .35;const p=clamp(a.t/a.dur,0,1);
+  if(a.kind==='craft'){const ph=(a.t*3.3)%1;return ph<.5?-.6+ph*2*2.0:1.4-(ph-.5)*2*2.0;}
+  if(a.kind==='dipper')return p<.5?.35+p*2*1.5:1.85-(p-.5)*2*1.5;
+  if(a.kind==='hand')return .35+Math.sin(p*Math.PI)*1.2;
+  return p<.45?.35-p/.45*1.2:p<.6?-.85+(p-.45)/.15*2.6:1.75-(p-.6)/.4*1.4;
+}
+function drawToolM(G,kind){
+  if(kind==='axe'){draw(MS.cyl,C(G,Tm(0,-.15,0),Sm(.04,.85,.04)),hex('#8b5e34'));draw(MS.box,C(G,Tm(0,.6,.1),Sm(.05,.24,.24)),hex('#b8c0c8'));}
+  if(kind==='pick'){draw(MS.cyl,C(G,Tm(0,-.15,0),Sm(.04,.9,.04)),hex('#8b5e34'));draw(MS.box,C(G,Tm(0,.72,0),RX(.15),Sm(.06,.07,.62)),hex('#8d959d'));draw(MS.cone,C(G,Tm(0,.72,.3),RX(Math.PI/2),Sm(.05,.16,.05)),hex('#8d959d'));}
+  if(kind==='dipper'){draw(MS.cyl,C(G,Tm(0,-.1,0),Sm(.035,.5,.035)),hex('#a1773f'));draw(MS.hemi,C(G,Tm(0,.5,.12),RX(Math.PI),Sm(.2,.16,.2)),hex('#e8c27c'));}
+  if(kind==='hammer'){draw(MS.cyl,C(G,Tm(0,-.1,0),Sm(.035,.55,.035)),hex('#8b5e34'));draw(MS.box,C(G,Tm(0,.48,0),Sm(.1,.12,.26)),hex('#8d959d'));}
+}
+function face(H,o){ // H: 머리 중심 행렬, 앞쪽 +z
+  const ey=o.ey||0,ex=o.ex||.15,ez=o.ez||.38;
+  [-1,1].forEach(s=>{
+    if(o.sad){draw(MS.sph,C(H,Tm(s*ex,ey-.02,ez),Sm(.045,.045,.03)),BLK);draw(MS.box,C(H,Tm(s*ex,ey+.11,ez-.01),RZ(s*.4),Sm(.12,.025,.03)),o.brow||BLK);}
+    else{draw(MS.sph,C(H,Tm(s*ex,ey,ez),Sm(.055,.08,.035)),BLK);draw(MS.sph,C(H,Tm(s*ex+.02,ey+.03,ez+.025),Sm(.018)),WHITE);}
+    draw(MS.sph,C(H,Tm(s*(ex+.1),ey-.1,ez-.06),Sm(.07,.045,.025)),PINK,1);
+  });
+}
+function drawPlayer(o){
+  const h=groundH(S.map,o.x,o.y);
+  const bob=o.moving?Math.abs(Math.sin(o.walkT*11))*.06:0,sw=o.moving?Math.sin(o.walkT*11)*.6:0;
+  const B=C(Tm(o.x/U,h+bob,o.y/U),RY(o.ang),Sm(o.scale||1));
+  const a=o.action,tk=a?(a.kind==='craft'?'hammer':a.kind):null;
+  const bend=a&&(a.kind==='dipper'||a.kind==='hand')?Math.sin(clamp(a.t/a.dur,0,1)*Math.PI)*.45:0;
+  [-1,1].forEach(s=>{const L=C(B,Tm(s*.12,.38,0),RX(s*sw));draw(MS.cyl,C(L,Tm(0,-.3,0),Sm(.075,.3,.075)),SKIN);draw(MS.sph,C(L,Tm(0,-.3,.04),Sm(.1,.07,.14)),hex('#7a5236'));});
+  const U_=C(B,Tm(0,.36,0),RX(bend),Tm(0,-.36,0));
+  draw(MS.cylT,C(U_,Tm(0,.34,0),Sm(.27,.42,.24)),hex('#ffb74d'));
+  draw(MS.cyl,C(U_,Tm(0,.3,0),Sm(.29,.15,.26)),hex('#5b8fd6'));
+  draw(MS.box,C(U_,Tm(0,.62,.2),Sm(.16,.08,.05)),[1,1,1]);
+  draw(MS.sph,C(U_,Tm(-.31,.62,0),RX(-sw*.7),Tm(0,-.08,0),Sm(.09)),SKIN);
+  const G=C(U_,Tm(.31,.6,.06),RX(tk&&tk!=='hand'?swingA(a):(a?swingA(a):sw*.7)));
+  draw(MS.sph,C(G,Sm(.09)),SKIN);
+  if(tk&&tk!=='hand')drawToolM(G,tk);
+  const H=C(U_,Tm(0,1.12,0));
+  draw(MS.sph,C(H,Sm(.42,.4,.4)),SKIN);
+  draw(MS.hemi,C(H,Tm(0,.02,-.02),RX(-.38),Sm(.45,.44,.45)),HAIR);
+  draw(MS.sph,C(H,Tm(0,.22,.28),RX(.4),Sm(.32,.12,.14)),HAIR);
+  face(H,{sad:o.sad,ey:-.04,brow:HAIR});
+  draw(MS.box,C(H,Tm(0,-.17,.39),o.sad?RZ(0):RZ(0),Sm(o.sad?.07:.1,.025,.02)),hex('#8a4b33'));
+  // 그림자
+  SHADOWS.push([o.x,o.y,.42*(o.scale||1),h]);
+}
+/* ============ 아이콘(2D) ============ */
+const ITEMS={sun:1,wind:1,hydro:1,tide:1,geo:1,bio:1,re:1,limit:1,acorn:1,letter:1,bolt:1};
+function drawIcon(c,k){
+  c.lineJoin='round';c.lineCap='round';
+  const F=(fill,stroke,w=3)=>{c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=w;c.stroke();}};
+  switch(k){
+    case 'sun':for(let i=0;i<8;i++){const a=i/8*Math.PI*2;c.beginPath();c.moveTo(32+Math.cos(a)*19,32+Math.sin(a)*19);c.lineTo(32+Math.cos(a)*28,32+Math.sin(a)*28);c.strokeStyle='#f5a623';c.lineWidth=5;c.stroke();}circ(c,32,32,15);F('#ffd23f','#f5a623');break;
+    case 'wind':rr(c,29,26,6,34,3);F('#eef3f6','#9aa9b3',2);for(let i=0;i<3;i++){c.save();c.translate(32,24);c.rotate(i*Math.PI*2/3);c.beginPath();c.ellipse(0,-11,4.5,12,0,0,Math.PI*2);F('#ffffff','#5bb4d8',2.5);c.restore();}circ(c,32,24,4);F('#5bb4d8');break;
+    case 'hydro':c.beginPath();c.moveTo(4,60);c.lineTo(60,60);c.lineTo(60,47);c.quadraticCurveTo(32,40,4,47);c.closePath();F('#5fc8ef','#2f97c8',2);circ(c,32,27,19);F('#c98f52','#8b5e34');for(let i=0;i<8;i++){const a=i/8*Math.PI*2;c.beginPath();c.moveTo(32+Math.cos(a)*6,27+Math.sin(a)*6);c.lineTo(32+Math.cos(a)*19,27+Math.sin(a)*19);c.strokeStyle='#8b5e34';c.lineWidth=2.5;c.stroke();}circ(c,32,27,6);F('#f1cf98','#8b5e34',2);break;
+    case 'tide':[[18,'#2f5fa8'],[33,'#3d8fd6'],[48,'#7ec8e3']].forEach(([y,col])=>{c.beginPath();c.moveTo(5,y);for(let x=5;x<58;x+=13)c.quadraticCurveTo(x+6.5,y-9,x+13,y);c.strokeStyle=col;c.lineWidth=6;c.stroke();});break;
+    case 'geo':c.beginPath();c.arc(32,62,30,Math.PI,0);c.closePath();F('#b08158','#7a5232');c.beginPath();c.arc(32,62,19,Math.PI,0);c.closePath();F('#e8833a');c.beginPath();c.arc(32,62,9,Math.PI,0);c.closePath();F('#ffcf4a');c.beginPath();c.moveTo(14,24);c.lineTo(32,8);c.lineTo(50,24);c.closePath();F('#ff8a65','#c9573a',2);rr(c,19,24,26,12,2);F('#fff6ec','#c9a978',2);break;
+    case 'bio':c.beginPath();c.moveTo(32,5);c.bezierCurveTo(58,16,56,46,32,59);c.bezierCurveTo(8,46,6,16,32,5);F('#7cc46a','#4f8f3f');c.strokeStyle='#4f8f3f';c.lineWidth=3;c.beginPath();c.moveTo(32,14);c.lineTo(32,52);c.stroke();[[23,26],[41,30],[24,40]].forEach(([x,y])=>{c.beginPath();c.moveTo(32,y+5);c.lineTo(x,y);c.stroke();});break;
+    case 're':circ(c,32,32,27);F('#e9f7e1','#5cb85c',4);circ(c,24,25,9);F('#ffd23f','#f5a623',2);c.beginPath();c.moveTo(40,22);c.bezierCurveTo(54,28,52,44,38,50);c.bezierCurveTo(30,42,30,30,40,22);F('#7cc46a','#4f8f3f',2);c.beginPath();c.moveTo(14,44);c.quadraticCurveTo(22,38,30,44);c.quadraticCurveTo(38,50,46,44);c.strokeStyle='#3d8fd6';c.lineWidth=3.5;c.stroke();break;
+    case 'limit':c.beginPath();c.moveTo(32,6);c.lineTo(60,56);c.lineTo(4,56);c.closePath();F('#ffd23f','#e0a020',4);rr(c,29,20,6,22,3);c.fillStyle='#6b5434';c.fill();circ(c,32,48,3.5);c.fill();break;
+    case 'acorn':c.beginPath();c.ellipse(32,38,15,18,0,0,Math.PI*2);F('#e7b46a','#a8743f');c.beginPath();c.ellipse(32,24,19,10,0,Math.PI,0);c.lineTo(51,26);c.lineTo(13,26);c.closePath();F('#8b5e34','#5e3d20');rr(c,30,8,4,9,2);c.fillStyle='#5e3d20';c.fill();break;
+    case 'letter':rr(c,6,14,52,38,6);F('#fffbea','#c9a978');c.beginPath();c.moveTo(8,17);c.lineTo(32,36);c.lineTo(56,17);c.strokeStyle='#c9a978';c.lineWidth=3;c.stroke();circ(c,32,36,6);F('#ef6f6c','#c94f4f',2);break;
+    case 'bolt':c.beginPath();c.moveTo(38,4);c.lineTo(14,36);c.lineTo(30,36);c.lineTo(24,60);c.lineTo(50,26);c.lineTo(34,26);c.closePath();F('#ffd23f','#e0a020');break;
+  }
+}
+const ICON={},ICONURL={};
+for(const k in ITEMS){const c=document.createElement('canvas');c.width=c.height=64;drawIcon(c.getContext('2d'),k);ICON[k]=c;ICONURL[k]=c.toDataURL();}
+
+/* ============ 에너지 모델 (선생님이 바꿀 수 있는 설정표) ============ */
+const DEMAND=80;            // 마을 하루 소비량 (kWh)
+const BUDGET_DEFAULT=3000;  // 마을 예산 (도토리)
+const GEN={
+  solar:{name:'태양광 패널',short:'태양광',icon:'sun',col:'#f4c430',price:500,base:10.8,cap:'3kW',need:'sun'},
+  wind:{name:'풍력 발전기',short:'풍력',icon:'wind',col:'#7ec8e3',price:1500,base:36,cap:'5kW',need:'wind'},
+  hydro:{name:'수력 발전기',short:'수력',icon:'hydro',col:'#3d8fd6',price:800,base:21.6,cap:'2kW',need:'flow'},
+  tidal:{name:'바다 물살 발전기',short:'바다 물살',icon:'tide',col:'#2f5fa8',price:2000,base:30,cap:'5kW',need:'sea'},
+  geo:{name:'지열 냉난방기',short:'지열',icon:'geo',col:'#e8833a',price:1900,base:15,cap:'17.5kW',need:'heat'},
+  bio:{name:'바이오가스 발전기',short:'바이오',icon:'bio',col:'#5cb85c',price:1000,base:16.8,cap:'1kW',need:'fuel'}
+};
+const GORDER=['solar','wind','hydro','tidal','geo','bio'];
+const WX={
+  sky:{sun:['맑음','☀️',1.4],cloud:['구름','☁️',.5],rain:['비','🌧️',.15],storm:['태풍','🌀',.05]},
+  wind:{none:['바람 없음','🍃',0],light:['약한 바람','🍃',.3],mid:['보통 바람','💨',1],strong:['강한 바람','💨',1.8],storm:['태풍(풍력 멈춤)','🌀',0]},
+  sea:{strong:['바닷물 흐름 셈','🌊',1.5],mid:['바닷물 흐름 보통','🌊',1],weak:['바닷물 흐름 약함','〰️',.35]},
+  water:{dry:['폭포 물 적음','💧',.5],mid:['폭포 물 보통','💧',1],much:['폭포 물 많음','💦',1.4]}
+};
+const WEEK_FIXED=[
+  {sky:'sun',wind:'light',sea:'strong',water:'mid',who:'bori',say:'햇빛이 쨍쨍! 태양광 패널이 신났어, 깡총!'},
+  {sky:'cloud',wind:'strong',sea:'mid',water:'mid',who:'dubu',say:'바람이 쌩쌩 불어! 바람개비가 신났어, 곰곰.'},
+  {sky:'rain',wind:'mid',sea:'mid',water:'much',who:'pong',say:'햇빛은 없지만 폭포 물이 콸콸! 개굴!'},
+  {sky:'storm',wind:'storm',sea:'mid',water:'much',who:'mochi',say:'태풍이다냥! 풍력 발전기가 안전하게 멈췄어…'},
+  {sky:'sun',wind:'none',sea:'weak',water:'much',who:'bori',say:'바람이 하나도 없네… 바닷물 흐름도 약해.'},
+  {sky:'sun',wind:'mid',sea:'weak',water:'mid',who:'dubu',say:'햇빛도 바람도 딱 좋아! 오늘은 좋은 날, 곰곰.'},
+  {sky:'cloud',wind:'light',sea:'strong',water:'mid',who:'pong',say:'바닷물이 아주 세게 흘러, 개굴!'}
+];
+function randomWeek(){const pick=o=>{const k=Object.keys(o);return k[Math.floor(Math.random()*k.length)];};const W=[];
+  for(let i=0;i<7;i++){let sky=pick(WX.sky);if(sky==='storm'&&Math.random()<.6)sky='cloud';const d={sky,wind:sky==='storm'?'storm':pick({none:1,light:1,mid:1,strong:1}),sea:pick(WX.sea),water:sky==='rain'||sky==='storm'?'much':pick(WX.water)};
+    d.who=['bori','dubu','mochi','pong'][i%4];d.say=dayLine(d);W.push(d);}return W;}
+function dayLine(d){if(d.sky==='storm')return '태풍이 왔어! 풍력 발전기가 안전하게 멈췄어…';if(d.wind==='strong')return '바람이 쌩쌩! 바람개비가 신났어!';if(d.sky==='rain')return '비가 와서 햇빛이 없어… 대신 폭포 물이 콸콸!';if(d.wind==='none')return '바람이 하나도 없네…';if(d.sky==='sun')return '햇빛이 쨍쨍 내리쬐는 날이야!';if(d.sea==='strong')return '바닷물이 아주 세게 흘러!';return '구름이 잔뜩 꼈네…';}
+function wxCoef(t,d){if(t==='solar')return WX.sky[d.sky][2];if(t==='wind')return WX.wind[d.wind][2];if(t==='hydro')return WX.water[d.water][2];if(t==='tidal')return WX.sea[d.sea][2];return 1;}
+function genDay(inst,d){const by={};let tot=0;inst.forEach(g=>{const v=GEN[g.t].base*g.c*wxCoef(g.t,d);by[g.t]=(by[g.t]||0)+v;tot+=v;});return{by,tot,ratio:Math.min(1,tot/DEMAND)};}
+const pct=r=>Math.round(r*100);
+const fmtN=n=>Math.round(n).toLocaleString('ko-KR');
+
+/* ============ 후보지 ============ */
+const NEEDNAME={sun:['☀️','햇빛'],wind:['💨','바람'],flow:['💧','물 흐름'],sea:['🌊','바닷물 흐름'],heat:['🔥','땅속 열'],fuel:['🍂','연료(분뇨·음식물)']};
+const NEEDNO={sun:'햇빛을 받을 자리가 없어요',wind:'바람개비를 세울 자리가 아니에요',flow:'흐르는 물이 없어요',sea:'바다가 아니에요',heat:'땅을 깊이 파기 어려운 곳이에요',fuel:'연료를 구하기 어려워요'};
+const WEAK={sun:'여긴 그늘이 져서 햇빛이 약한데… 괜찮을까?',wind:'여긴 바람이 약한데… 괜찮을까?',flow:'여긴 물이 별로 없는데… 괜찮을까?',sea:'여긴 바닷물 흐름이 약한데… 괜찮을까?',heat:'여긴 땅속 열이 약한데… 괜찮을까?',fuel:'여긴 연료가 조금밖에 없는데… 괜찮을까?'};
+const SITES=[
+  {id:1,name:'보리네 남향 지붕',x:800,y:705,gx:720,gy:640,roof:1,f:{solar:1},desc:'남쪽을 바라보는 지붕이라 하루 종일 햇빛이 들어요.'},
+  {id:2,name:'두부네 북향 지붕',x:1210,y:1170,gx:1290,gy:1110,roof:-1,f:{solar:.6},desc:'북쪽을 바라보는 지붕이라 햇빛이 비스듬히 들어요.'},
+  {id:3,name:'그루터기 숲',x:390,y:520,f:{solar:.3,wind:.3},desc:'그루터기 사이의 그늘진 곳이에요. 바람도 잘 안 불어요.'},
+  {id:4,name:'바닷가 언덕',x:560,y:1610,f:{solar:.9,wind:1},desc:'바다 바로 앞 높은 언덕이에요. 바닷바람이 세게 불어요.'},
+  {id:5,name:'마을 광장',x:1170,y:870,f:{solar:1,wind:.3},desc:'탁 트여서 햇빛이 잘 들지만, 집들에 막혀 바람은 약해요.'},
+  {id:6,name:'절벽 폭포',x:1440,y:268,gx:1440,gy:205,f:{hydro:1},desc:'높은 절벽에서 물이 힘차게 떨어지는 곳이에요.'},
+  {id:7,name:'말라 버린 연못',x:1610,y:470,gx:1610,gy:470,pond:1,f:{solar:.8,hydro:0},desc:'지난번에 물을 모두 써 버려서 바닥이 쩍쩍 갈라졌어요.'},
+  {id:8,name:'바다 수로',x:1450,y:1755,gx:1450,gy:1850,f:{tidal:1},desc:'좁은 바닷길이라 밀물과 썰물 때 바닷물이 세차게 드나들어요.'},
+  {id:9,name:'모찌네 집 옆 땅',x:560,y:1150,f:{geo:1,bio:.5},desc:'땅을 깊이 파도 괜찮은 빈 땅이에요. 음식물 쓰레기가 조금 나와요.'},
+  {id:10,name:'퐁당의 밭 옆',x:1480,y:850,f:{geo:1,bio:1},desc:'땅을 깊이 팔 수 있고, 밭에서 나오는 풀과 가축 분뇨가 많아요.'}
+];
+SITES.forEach(s=>{if(s.gx==null){s.gx=s.x;s.gy=s.y-55;}});
+const stars=c=>c==null?null:c>=.9?3:c>=.5?2:c>0?1:0;
+
+/* ============ 마을·탐방 주민 ============ */
+const VILL={
+  bori:{id:'bori',name:'보리',sp:'rabbit',col:'#fbe3ea',col2:'#f6b4c6',shirt:'#ffffff',shirt2:'#f48fb1',tag:'#f07fa6',pitch:620,house:{x:720,y:640,roof:'#f28db0',wall:'#fff6ec'}},
+  dubu:{id:'dubu',name:'두부',sp:'bear',col:'#c99766',col2:'#e9c9a2',shirt:'#6fa8dc',shirt2:'#4a86c0',tag:'#a77b54',pitch:230,house:{x:1290,y:1110,roof:'#5c9bd5',wall:'#fff3e0'}},
+  mochi:{id:'mochi',name:'모찌',sp:'cat',col:'#ffe2b8',col2:'#f5b56a',shirt:'#e57373',shirt2:'#c94f4f',tag:'#f2a046',pitch:470,house:{x:720,y:1110,roof:'#ff8a65',wall:'#fffaf2'}},
+  pong:{id:'pong',name:'퐁당',sp:'frog',col:'#8fd27e',col2:'#c9efb5',shirt:'#fff176',shirt2:'#e6cf3a',tag:'#5fb24f',pitch:340,house:{x:1290,y:640,roof:'#7cb342',wall:'#f7fbef'}}
+};
+const ISLE={
+  haerang:{name:'해랑',sp:'hedgehog',col:'#e9cfae',col2:'#7a5236',shirt:'#ffd54f',shirt2:'#f0b429',tag:'#e0a020',pitch:560,spot:'solar',x:470,y:850},
+  bara:{name:'바라',sp:'gull',col:'#ffffff',col2:'#b0bec5',shirt:'#4fc3f7',shirt2:'#0288d1',tag:'#3aa0d8',pitch:700,spot:'wind',x:1680,y:760},
+  dorang:{name:'도랑',sp:'otter',col:'#a0704e',col2:'#ecd2b4',shirt:'#81c784',shirt2:'#4caf50',tag:'#3d8fd6',pitch:480,spot:'hydro',x:720,y:400},
+  mulgyeol:{name:'물결',sp:'turtle',col:'#9ccc8a',col2:'#4f7f48',shirt:'#90caf9',shirt2:'#5c9bd5',tag:'#2f5fa8',pitch:190,spot:'tidal',x:1530,y:1150},
+  pogeun:{name:'포근',sp:'mole',col:'#77707f',col2:'#ffb3c1',shirt:'#ffab91',shirt2:'#ff7043',tag:'#e8833a',pitch:300,spot:'geo',x:1250,y:650},
+  bogeul:{name:'보글',sp:'goat',col:'#f6f1e7',col2:'#c7b8a8',shirt:'#aed581',shirt2:'#7cb342',tag:'#5cb85c',pitch:520,spot:'bio',x:720,y:1250},
+  owl:{name:'부엉이 촌장',sp:'owl',col:'#a1795a',col2:'#f1dfc6',shirt:'#7e57c2',shirt2:'#5e35b1',tag:'#7e57c2',pitch:250,chief:true,x:1000,y:440}
+};
+function prepChar(v){['col','col2','shirt','shirt2'].forEach(k=>v[k+'C']=hex(v[k]));v.ang=0;v.moving=false;v.walkT=0;v.seed=Math.random()*10;v.jump=-9;v.frozen=false;v.hidden=false;v.wt=Math.random()*3;}
+for(const id in VILL){const v=VILL[id];prepChar(v);v.home={x:v.house.x+(id==='bori'||id==='mochi'?70:-70),y:v.house.y+60};v.x=v.home.x;v.y=v.home.y;v.tx=v.x;v.ty=v.y;}
+for(const id in ISLE){const v=ISLE[id];v.id=id;prepChar(v);v.home={x:v.x,y:v.y};v.tx=v.x;v.ty=v.y;}
+const SPOTNAME={solar:'햇살 언덕',wind:'바람 해안',hydro:'물레 폭포',tidal:'밀물 바닷길',geo:'따끈 온돌집',bio:'꼬순 농장'};
+const SPOTNPC={solar:'haerang',wind:'bara',hydro:'dorang',tidal:'mulgyeol',geo:'pogeun',bio:'bogeul'};
+
+/* ============ 에너지 카드 ============ */
+const CARDS={
+  solar:{icon:'sun',chip:'태양 에너지',col:'#e0a020',title:'태양 에너지',use:'태양 빛이나 태양열을 이용해요. 태양광 패널은 햇빛을 받아 전기를 만들어요.',where:'햇빛이 잘 들고 그늘이 없는 곳 (남쪽을 바라보는 지붕, 탁 트인 들판)',good:'햇빛은 날마다 다시 비추어서 계속 이용할 수 있어요. 지붕 위처럼 작은 곳에도 설치할 수 있어요.',bad:'구름이 끼거나 비가 오면 발전량이 크게 줄고, 밤에는 전기를 만들 수 없어요.'},
+  wind:{icon:'wind',chip:'풍력',col:'#3aa0d8',title:'풍력',use:'바람으로 발전기의 날개를 돌려 전기를 생산해요.',where:'바람이 세고 꾸준히 부는 바닷가나 높은 언덕 (제주도에 풍력 발전기가 많은 까닭이에요!)',good:'바람은 계속 불어서 계속 이용할 수 있어요. 바람이 셀수록 전기를 많이 만들어요.',bad:'바람이 없으면 멈추고, 태풍처럼 바람이 너무 세면 안전을 위해 멈춰야 해요. 설치 비용이 많이 들어요.'},
+  hydro:{icon:'hydro',chip:'수력',col:'#3d8fd6',title:'수력',use:'높은 곳에서 낮은 곳으로 떨어지는 물의 흐름을 이용해요.',where:'물이 높은 곳에서 힘차게 떨어지는 폭포나 계곡',good:'물이 흐르는 동안에는 낮에도 밤에도 전기를 만들 수 있어요.',bad:'비가 적게 와서 물이 줄면 발전량도 줄어요. 물이 흐르지 않는 곳에는 설치할 수 없어요.'},
+  tidal:{icon:'tide',chip:'해양 에너지',col:'#2f5fa8',title:'해양 에너지',use:'밀물과 썰물, 파도, 바닷물의 흐름 등을 이용해요.',where:'바닷물이 세차게 드나드는 좁은 바닷길이나 바닷가',good:'바닷물은 날마다 들어오고 나가서 계속 이용할 수 있어요.',bad:'바닷물이 멈추는 때에는 발전도 멈추고, 날마다 바닷물 흐름의 세기가 달라요. 바닷속에 설치해야 해서 설치 비용이 아주 많이 들어요.'},
+  geo:{icon:'geo',chip:'지열 에너지',col:'#e8833a',title:'지열 에너지',use:'땅속 깊은 곳의 열을 이용해요.',where:'땅을 깊이 팔 수 있는 집 옆 땅',good:'땅속 온도는 계절과 날씨에 상관없이 거의 일정해서, 늘 같은 양의 에너지를 얻을 수 있어요. 여름에는 시원하게, 겨울에는 따뜻하게 해 줘요.',bad:'땅을 깊이 파야 해서 설치 비용이 많이 들어요.'},
+  bio:{icon:'bio',chip:'바이오 에너지',col:'#4f9e3c',title:'바이오 에너지',use:'식물, 가축의 분뇨, 음식물 쓰레기를 이용해요.',where:'가축을 기르는 농장이나 음식물 쓰레기를 모으기 좋은 곳',good:'버려지는 것들로 에너지를 얻고, 남은 찌꺼기는 퇴비로 쓸 수 있어요. 날씨와 상관없어요.',bad:'연료를 계속 모아서 넣어 주어야 해요. 연료가 없으면 전기를 만들 수 없어요.'},
+  re:{icon:'re',chip:'정리',col:'#5cb85c',title:'재생 에너지란?',text:'<span class="hl">재생 에너지</span>는 태양 빛, 바람, 물처럼 <span class="hl">자연에서 얻을 수 있고 계속 이용할 수 있는 에너지</span>예요. 석탄이나 석유는 <span class="hl">쓸수록 줄어들고</span>, 태울 때 <span class="hl">기후변화</span>에 영향을 주는 물질이 나와요. 그래서 사람들은 재생 에너지를 활용하려고 노력하고 있어요.'},
+  limit:{icon:'limit',chip:'정리',col:'#e07a3f',title:'재생 에너지의 한계와 기술 발전',text:'재생 에너지는 날씨와 자연 현상에 따라 <span class="hl">항상 일정한 양을 얻기 어렵고</span>, 발전기를 <span class="hl">설치하는 비용도 많이</span> 들어요. 그래서 재생 에너지를 더 잘 이용하려면 <span class="hl">기술 발전</span>이 필요해요. 알맞은 곳에 알맞은 발전기를 설치하고, 여러 가지 재생 에너지를 함께 쓰는 것도 도움이 돼요.'}
+};
+const CORDER=['solar','wind','hydro','tidal','geo','bio','re','limit'];
+
+/* ============ 월드 지형 ============ */
+const POND={x:1610,y:470,rx:235,ry:140};
+const FALLV={x:1500,y:140};          // 도토리 마을 북쪽 절벽 폭포
+const POOLV={x:1500,y:192,rx:70,ry:38};
+const DOCKV={x:1000,y0:1760,y1:1915}; // 도토리 마을 부두
+const DOCKI={x:1000,y0:1400,y1:1560}; // 바람햇살 마을 부두
+function cliffY(x){if(x>820&&x<1180)return 250;if(x>=790&&x<=820)return lerp(140,250,(x-790)/30);if(x>=1180&&x<=1210)return lerp(250,140,(x-1180)/30);return 140;}
+function pondD(x,y){const dx=(x-POND.x)/POND.rx,dy=(y-POND.y)/POND.ry;return Math.sqrt(dx*dx+dy*dy);}
+function segD(px,py,a,b){const dx=b[0]-a[0],dy=b[1]-a[1],l=dx*dx+dy*dy;let t=((px-a[0])*dx+(py-a[1])*dy)/l;t=clamp(t,0,1);return Math.hypot(px-a[0]-t*dx,py-a[1]-t*dy);}
+function polyD(x,y,paths){let d=1e9;paths.forEach(p=>{for(let i=1;i<p.length;i++)d=Math.min(d,segD(x,y,p[i-1],p[i]));});return d;}
+const PATHSV=[[[1000,800],[1000,270]],[[1000,800],[760,760],[600,640],[470,560]],[[1000,800],[1250,760],[1390,690],[1440,640]],[[1000,800],[1000,980],[860,1110],[780,1170]],[[1000,980],[1140,1110],[1230,1170]],[[1000,980],[1000,1760]],[[1000,1450],[700,1560],[560,1600]],[[1000,1450],[1300,1600],[1450,1740]],[[1250,760],[1480,830]],[[1440,640],[1460,300],[1440,240]]];
+const STREAMV=[[1560,205],[1700,215],[1850,240],[2050,250]];
+function hVil(x,y){
+  if(y<cliffY(x))return 2.6;
+  const d=pondD(x,y);if(d<1)return -1.1*Math.sqrt(1-d*d);
+  const pd=Math.hypot((x-POOLV.x)/POOLV.rx,(y-POOLV.y)/POOLV.ry);if(pd<1)return -.5*Math.sqrt(1-pd*pd);
+  if(polyD(x,y,[STREAMV])<20&&y<300)return -.3;
+  let h=0;const hd=Math.hypot((x-560)/170,(y-1610)/120);if(hd<1)h+=1.05*(Math.cos(hd*Math.PI)+1)/2;
+  if(y>1775)h-=Math.min(2.6,(y-1775)/40);
+  return h;
+}
+const COL={grass:hex('#86cc62'),grass2:hex('#74bc50'),sand:hex('#e2cf9a'),sandE:hex('#d6bd85'),mud:hex('#9c8463'),rim:hex('#d4bf8a'),cliff:hex('#b5875a'),cliff2:hex('#a47650'),top:hex('#79c257'),dirt:hex('#cdb48a'),wood:hex('#c98f52'),woodD:hex('#8b5e34'),stone:hex('#b8b4aa'),leaf:hex('#4ea53f'),leaf2:hex('#5cb84e'),beach:hex('#efdfae'),wet:hex('#cdb98a'),floor:hex('#7fb6b0')};
+function colVil(x,y,h){
+  const n=vnoise(x/90,y/90),n2=vnoise(x/23+5,y/23);
+  if(h>1.5&&y<300)return mixc(COL.top,COL.grass2,n*.6);
+  const d=pondD(x,y);if(d<1)return mixc(COL.mud,hex('#7d6a50'),1-d);if(d<1.13)return COL.rim;
+  if(h<-.15)return y>1700?(h>-1.45?mixc(COL.wet,COL.beach,clamp((h+1.3)/1.15,0,1)):COL.floor):hex('#8fb0a8');
+  let c=mixc(COL.grass,COL.grass2,n*.7+n2*.25);
+  const fd=Math.hypot((x-380)/420,(y-470)/360);if(fd<1)c=mixc(c,hex('#93a35a'),(1-fd)*.5);
+  const md=Math.hypot((x-1000)/220,(y-300)/90);if(md<1)c=mixc(c,COL.dirt,Math.min(1,(1-md)*2.5));
+  if(y>1540)c=mixc(c,COL.beach,clamp((y-1540)/80,0,1));if(y>1740)c=mixc(COL.beach,COL.wet,clamp((y-1740)/40,0,1));
+  const fld=Math.abs(x-1560)<70&&Math.abs(y-880)<55;if(fld)c=(Math.floor((y-825)/14)%2)?hex('#a8875e'):hex('#93734d');
+  const pd=polyD(x,y,PATHSV),pl=Math.hypot((x-1000)/190,(y-800)/120);
+  if(pl<1){c=pl>.94?COL.sandE:mixc(COL.sand,hex('#e3cf98'),n2*.5);}else if(pd<31&&y<1560)c=mixc(COL.sand,hex('#e3cf98'),n2*.5);else if(pd<38&&y<1560)c=COL.sandE;
+  return c;
+}
+function isleD(x,y){const dx=(x-1000)/960,dy=(y-740)/690;const th=Math.atan2(dy,dx);const r=1+.05*Math.sin(3*th+1)+.035*Math.sin(5*th);return Math.hypot(dx,dy)/r;}
+function plateY(x){if(x>230&&x<870)return 250;if(x>=200&&x<=230)return lerp(150,250,(x-200)/30);if(x>=870&&x<=900)return lerp(250,150,(x-870)/30);return 150;}
+const FALLI={x:550,y:250},POOLI={x:550,y:305,rx:95,ry:45};
+const STREAMI=[[470,330],[330,420],[220,520],[110,600],[0,650]];
+const PATHSI=[[[1000,1420],[1000,880],[1000,470]],[[1000,880],[760,840],[520,800]],[[1000,880],[1250,800],[1520,760],[1650,760]],[[1000,1100],[1250,1120],[1500,1150]],[[1000,1100],[780,1180],[700,1220]],[[1000,700],[1180,660],[1240,640]],[[760,840],[730,600],[720,430]]];
+function hIsle(x,y){
+  const d=isleD(x,y);if(d>1)return -Math.min(2.8,(d-1)*16);
+  if(y<plateY(x))return 2.8;
+  const pd=Math.hypot((x-POOLI.x)/POOLI.rx,(y-POOLI.y)/POOLI.ry);if(pd<1)return -.55*Math.sqrt(1-pd*pd);
+  if(polyD(x,y,[STREAMI])<22)return -.3;
+  let h=0;const hd=Math.hypot((x-380)/190,(y-700)/150);if(hd<1)h+=1.25*(Math.cos(hd*Math.PI)+1)/2;
+  if(d>.93)h-=(d-.93)/.07*.25;
+  return h;
+}
+function colIsle(x,y,h){
+  const n=vnoise(x/90,y/90),n2=vnoise(x/23+5,y/23),d=isleD(x,y);
+  if(h>1.5&&y<300)return mixc(COL.top,hex('#68b84a'),n*.6);
+  if(d>1&&h<-.15)return h>-1.45?mixc(COL.wet,COL.beach,clamp((h+1.3)/1.15,0,1)):COL.floor;if(h<-.28)return hex('#7fb6b0');
+  let c=mixc(hex('#8fd463'),hex('#78c452'),n*.7+n2*.25);
+  if(d>.9)c=mixc(c,COL.beach,clamp((d-.9)/.05,0,1));
+  const fd=Math.hypot((x-660)/120,(y-1130)/80);if(fd<1)c=mixc(c,hex('#d8b878'),.5);
+  const pd=polyD(x,y,PATHSI),pl=Math.hypot((x-1000)/170,(y-880)/105);
+  if(pl<1){c=pl>.93?COL.sandE:mixc(COL.sand,hex('#e3cf98'),n2*.5);}else if(pd<29)c=mixc(COL.sand,hex('#e3cf98'),n2*.5);else if(pd<36)c=COL.sandE;
+  return c;
+}
+function onPier(map,x,y){const D=map==='isle'?DOCKI:DOCKV;return Math.abs(x-D.x)<40&&y>D.y0-20&&y<D.y1;}
+function groundH(map,x,y){if(onPier(map,x,y))return .35;return map==='isle'?Math.max(0,hIsle(x,y)):Math.max(0,hVil(x,y));}
+function buildGround(g,x0,x1,y0,y1,step,hf,cf,cliffC){
+  const nx=Math.round((x1-x0)/step),ny=Math.round((y1-y0)/step);const V=[];
+  for(let j=0;j<=ny;j++){V[j]=[];for(let i=0;i<=nx;i++){const x=x0+i*step,y=y0+j*step,h=hf(x,y);V[j][i]={p:[x/U,h,y/U],c:cf(x,y,h)};}}
+  for(let j=0;j<ny;j++)for(let i=0;i<nx;i++){
+    const a=V[j][i],b=V[j][i+1],c=V[j+1][i+1],d=V[j+1][i];
+    [[a,d,c],[a,c,b]].forEach(([p,q,r])=>{const n=flatN(p.p,q.p,r.p);
+      if(n[1]<.55&&Math.max(p.p[1],q.p[1],r.p[1])>.8){const k=cliffC(p.p[0]);g.tri(p.p,q.p,r.p,k,k,k,n);}else g.tri(p.p,q.p,r.p,p.c,q.c,r.c,n);});
+  }
+}
+const sp=(g,x,y,z,sx,sy,sz,col,pr='sph')=>g.add(PR[pr],C(Tm(x,y,z),Sm(sx,sy,sz)),col);
+function bush(g,x,y,s=1,h=0,c1=COL.leaf,c2=COL.leaf2){const X=x/U,Z=y/U;sp(g,X-.3*s,h+.45*s,Z,.6*s,.5*s,.55*s,c1,'sphL');sp(g,X+.35*s,h+.4*s,Z+.1*s,.55*s,.45*s,.5*s,c1,'sphL');sp(g,X,h+.65*s,Z-.05*s,.6*s,.55*s,.55*s,c2,'sphL');}
+function house(g,h,tag){
+  const X=h.x/U,Z=h.y/U-1.1,wall=hex(h.wall),roof=hex(h.roof);
+  g.add(PR.box,C(Tm(X,.13,Z),Sm(3.3,.26,2.3)),hex('#c9b99a'));
+  g.add(PR.box,C(Tm(X,1.05,Z),Sm(3.1,1.9,2.1)),wall);
+  g.add(PR.prism,C(Tm(X,1.95,Z),Sm(3.9,1.35,3.0)),roof);
+  g.add(PR.box,C(Tm(X,1.97,Z),Sm(3.95,.08,3.05)),mixc(roof,[1,1,1],.35));
+  g.add(PR.box,C(Tm(X+.95,2.75,Z-.35),Sm(.38,.9,.38)),hex('#9a9a9a'));
+  g.add(PR.box,C(Tm(X,.72,Z+1.06),Sm(.78,1.25,.08)),hex('#7a5236'));
+  g.add(PR.sph,C(Tm(X+.24,.7,Z+1.12),Sm(.06)),hex('#f2c14e'));
+  [-1,1].forEach(s=>{g.add(PR.box,C(Tm(X+s*.98,1.2,Z+1.06),Sm(.66,.56,.06)),hex('#bfe8ff'));g.add(PR.box,C(Tm(X+s*.98,1.2,Z+1.1),Sm(.7,.06,.04)),[1,1,1]);g.add(PR.box,C(Tm(X+s*.98,1.2,Z+1.1),Sm(.06,.6,.04)),[1,1,1]);});
+  if(tag){g.add(PR.box,C(Tm(X-2.0,.45,Z+1.5),Sm(.1,.9,.1)),COL.woodD);g.add(PR.box,C(Tm(X-2.0,1.0,Z+1.5),Sm(.42,.3,.32)),hex(tag));}
+}
+const ROOFM=(h,face)=>C(Tm(h.x/U,1.95+1.35/2+.05,h.y/U-1.1+face*.75),RX(face*.733));
+function addTree(g,x,y,h=0,s=1,seed=0,pal){const M=C(Tm(x/U,h,y/U),RY(seed),Sm(s));const p=pal||[hex('#3f9e46'),hex('#53b856'),hex('#7ed67f')];
+  g.add(PR.cylT,C(M,Sm(.3,1.5,.3)),hex('#9c6b3f'));
+  g.add(PR.sph,C(M,Tm(0,2.25,0),Sm(1.25,1.05,1.25)),p[0]);g.add(PR.sph,C(M,Tm(-.6,1.9,.25),Sm(.8)),p[0]);g.add(PR.sph,C(M,Tm(.6,1.95,-.1),Sm(.8)),p[0]);g.add(PR.sph,C(M,Tm(0,2.55,.2),Sm(1.0,.85,1.0)),p[1]);g.add(PR.sph,C(M,Tm(-.25,3.0,.3),Sm(.45)),p[2]);}
+function addStump(g,x,y,seed){const M=C(Tm(x/U,0,y/U),RY(seed));g.add(PR.cylT,C(M,Sm(.34,.38,.34)),hex('#9c6b3f'));g.add(PR.disc,C(M,Tm(0,.385,0),Sm(.27)),hex('#e7c38b'));g.add(PR.disc,C(M,Tm(0,.39,0),Sm(.17)),hex('#c99a5c'));}
+function flowers(g,list,r){const fc=['#ffffff','#ffd84d','#ff8fb1','#ff6b6b','#b39ddb'].map(hex);
+  list.forEach(([fx,fy])=>{for(let k=0;k<7;k++){const x=(fx+(r()-.5)*100)/U,z=(fy+(r()-.5)*70)/U,col=fc[Math.floor(r()*fc.length)];
+    g.add(PR.box,C(Tm(x,.12,z),Sm(.04,.24,.04)),hex('#4f9e3c'));for(let p=0;p<5;p++){const a=p/5*Math.PI*2;g.add(PR.sphL,C(Tm(x+Math.cos(a)*.1,.27,z+Math.sin(a)*.1),Sm(.09,.04,.09)),col);}g.add(PR.sphL,C(Tm(x,.29,z),Sm(.06,.04,.06)),hex('#ffcc33'));}});}
+function geoPanel(g,M){
+  [[-.7,-.3],[.7,-.3]].forEach(([a,b])=>g.add(PR.box,C(M,Tm(a,.45,b),Sm(.08,.9,.08)),hex('#8d959d')));
+  [[-.7,.35],[.7,.35]].forEach(([a,b])=>g.add(PR.box,C(M,Tm(a,.25,b),Sm(.08,.5,.08)),hex('#8d959d')));
+  geoPanelTop(g,C(M,Tm(0,.68,0),RX(.5)));}
+function geoPanelTop(g,P){g.add(PR.box,C(P,Sm(1.8,.07,1.15)),hex('#d9dde2'));g.add(PR.box,C(P,Tm(0,.04,0),Sm(1.7,.04,1.05)),hex('#2c4f9e'));
+  for(let i=1;i<4;i++)g.add(PR.box,C(P,Tm(-.85+i*.425,.065,0),Sm(.025,.02,1.05)),hex('#8fb3ff'));g.add(PR.box,C(P,Tm(0,.065,0),Sm(1.7,.02,.025)),hex('#8fb3ff'));}
+function pier(g,D){for(let y=D.y0-10;y<D.y1;y+=18)g.add(PR.box,C(Tm(D.x/U,.3,y/U),Sm(2,.1,.38)),(y/18|0)%2?COL.wood:hex('#b98245'));
+  for(let y=D.y0+30;y<D.y1;y+=60)[-1,1].forEach(s=>g.add(PR.cyl,C(Tm(D.x/U+s*1.05,-2.4,y/U),Sm(.1,3,.1)),COL.woodD));}
+function boat(g,x,y){const X=x/U,Z=y/U,o=-1.0;g.add(PR.sph,C(Tm(X,-.2+o,Z),Sm(1.1,.55,2.2)),hex('#e57373'));g.add(PR.box,C(Tm(X,.25+o,Z),Sm(1.7,.12,3.4)),hex('#fff6ec'));g.add(PR.cyl,C(Tm(X,.3+o,Z-.3),Sm(.06,2.6,.06)),COL.woodD);
+  g.tri([X+.05,2.8,Z-.3],[X+.05,.7,Z-.3],[X+.05,.8,Z+1.1],[1,1,1],[1,1,1],[1,1,1],[1,0,0]);g.tri([X+.05,2.8,Z-.3],[X+.05,.8,Z+1.1],[X+.05,.7,Z-.3],[1,1,1],[1,1,1],[1,1,1],[-1,0,0]);}
+function siteSign(g,s){const X=s.x/U,Z=s.y/U+.2,h=Math.max(0,hVil(s.x,s.y));g.add(PR.box,C(Tm(X,h+.5,Z),Sm(.1,1,.1)),COL.woodD);g.add(PR.box,C(Tm(X,h+1.05,Z),Sm(.62,.5,.1)),hex('#ffd23f'));g.add(PR.box,C(Tm(X,h+1.05,Z+.06),Sm(.5,.38,.02)),hex('#fff3b0'));}
+function buildVillage(){
+  const g=new Geo(),r=mulberry32(5);
+  buildGround(g,-480,2480,-320,2240,20,(x,y)=>(x<10||x>1990)?(y<cliffY(x)?2.6:(y>1775?hVil(x,y):0)):hVil(x,y),colVil,x=>((Math.floor(x*2.5))%2?COL.cliff:COL.cliff2));
+  for(const id in VILL)house(g,VILL[id].house,VILL[id].tag);
+  for(let i=0;i<30;i++){const a=i/30*Math.PI*2,x=POND.x+Math.cos(a)*(POND.rx+22),y=POND.y+Math.sin(a)*(POND.ry+20);g.add(PR.rock,C(Tm(x/U,.02,y/U),RY(r()*6),Sm(.32+r()*.15,.22,.28+r()*.1)),mixc(COL.stone,[1,1,1],r()*.2));}
+  for(let i=0;i<14;i++){const a=i/14*Math.PI*2,x=POOLV.x+Math.cos(a)*(POOLV.rx+14),y=POOLV.y+Math.sin(a)*(POOLV.ry+12);if(y<POOLV.y-20)continue;g.add(PR.rock,C(Tm(x/U,.02,y/U),RY(r()*6),Sm(.3,.2,.26)),COL.stone);}
+  // 금줄 친 광산 입구
+  g.add(PR.box,C(Tm(25,1.0,6.15),Sm(2.3,2.1,.9)),hex('#140e0a'));[-1.3,1.3].forEach(dx=>g.add(PR.box,C(Tm(25+dx,1.15,6.55),Sm(.3,2.3,.3)),COL.woodD));
+  g.add(PR.box,C(Tm(25,2.3,6.55),Sm(3.0,.3,.34)),COL.woodD);[.6,-.6].forEach(a=>g.add(PR.box,C(Tm(25,1.1,6.7),RZ(a),Sm(2.6,.22,.1)),hex('#b98245')));
+  // 그루터기 숲
+  [[200,310],[370,250],[540,330],[230,500],[430,470],[300,690],[150,400],[520,620]].forEach(([x,y],i)=>addStump(g,x,y,i*1.7));
+  // 밭
+  for(let i=0;i<7;i++)for(let j=0;j<4;j++)g.add(PR.sphL,C(Tm((1505+j*36)/U,.12,(838+i*14)/U),Sm(.14,.12,.14)),hex('#6cbf4f'));
+  g.add(PR.box,C(Tm(1420/U,.35,905/U),Sm(.9,.7,.7)),hex('#8b6b4a'));g.add(PR.box,C(Tm(1420/U,.72,905/U),Sm(.95,.06,.75)),hex('#6e5236'));
+  // 바다 수로 바위
+  [[1360,1790],[1335,1840],[1350,1900],[1545,1790],[1565,1845],[1550,1905],[1300,1800],[1600,1810]].forEach(([x,y],i)=>g.add(PR.rock,C(Tm(x/U,-1.5,y/U),RY(i),Sm(.9+r()*.4,1.6,.8)),mixc(COL.stone,hex('#8a8478'),r())));
+  pier(g,DOCKV);boat(g,DOCKV.x+70,DOCKV.y1-30);
+  flowers(g,[[860,640],[1140,640],[820,900],[600,900],[1400,960],[1500,1250],[500,1250],[1700,800],[1800,1000],[150,1000],[300,1300],[1700,1350],[900,1400],[1150,1380]],r);
+  for(let y=170;y<1700;y+=60){bush(g,-10,y,1.3);bush(g,2010,y,1.3);bush(g,-90,y+30,1.6);bush(g,2090,y+30,1.6);}
+  for(let x=-200;x<2200;x+=110)bush(g,x+(r()-.5)*40,60+(r()-.5)*60,1.4,2.6);
+  [[120,420],[620,420],[140,600],[610,250],[700,220],[1750,1450],[250,1450]].forEach(([x,y])=>bush(g,x,y,1.1,0,hex('#7b9a4a'),hex('#8aa956')));
+  SITES.forEach(s=>siteSign(g,s));
+  return mkMesh(g);
+}
+function buildIsle(){
+  const g=new Geo(),r=mulberry32(11);
+  buildGround(g,-500,2500,-400,2000,20,hIsle,colIsle,x=>((Math.floor(x*2.5))%2?hex('#c39463'):hex('#b08158')));
+  // 마을 회관
+  {const X=25,Z=7.4;g.add(PR.box,C(Tm(X,.15,Z),Sm(6,.3,3.6)),hex('#c9b99a'));g.add(PR.box,C(Tm(X,1.5,Z),Sm(5.6,2.8,3.2)),hex('#fff3df'));g.add(PR.prism,C(Tm(X,2.9,Z),Sm(6.6,1.7,4.1)),hex('#8e6bd6'));
+    g.add(PR.box,C(Tm(X,4.3,Z),Sm(1.2,1.6,1.2)),hex('#fff3df'));g.add(PR.prism,C(Tm(X,5.1,Z),Sm(1.6,.9,1.6)),hex('#8e6bd6'));g.add(PR.cyl,C(Tm(X,4.4,Z+.61),RX(Math.PI/2),Sm(.42,.04,.42)),[1,1,1]);
+    g.add(PR.box,C(Tm(X,1.0,Z+1.62),Sm(1.2,1.9,.08)),hex('#7a5236'));[-1,1].forEach(s=>[1.6,2.6].forEach(dx=>g.add(PR.box,C(Tm(X+s*dx,1.7,Z+1.62),Sm(.7,.7,.06)),hex('#bfe8ff'))));
+    geoPanelTop(g,C(Tm(X-1.6,2.9+.85+.05,Z+1.0),RX(.69)));geoPanelTop(g,C(Tm(X+1.6,2.9+.85+.05,Z+1.0),RX(.69)));}
+  // 햇살 언덕 태양광 단지
+  [[300,650],[420,640],[350,760],[470,750]].forEach(([x,y])=>geoPanel(g,C(Tm(x/U,hIsle(x,y),y/U))));
+  // 집들 (지붕 태양광)
+  [{x:1300,y:560,roof:'#ff8a65',wall:'#fffaf2'},{x:1420,y:1000,roof:'#5c9bd5',wall:'#fff3e0'},{x:560,y:1000,roof:'#f28db0',wall:'#fff6ec'}].forEach((h,i)=>{house(g,h,i?'#f2a046':null);geoPanelTop(g,ROOFM(h,1));});
+  // 지열 배관
+  {const X=1180/U,Z=560/U;g.add(PR.box,C(Tm(X,.45,Z),Sm(.9,.9,.6)),hex('#e9eef2'));g.add(PR.cyl,C(Tm(X,.45,Z+.31),RX(Math.PI/2),Sm(.3,.02,.3)),hex('#7d8a94'));g.add(PR.cyl,C(Tm(X+.6,0,Z),Sm(.09,.6,.09)),hex('#e8833a'));g.add(PR.box,C(Tm(X+.6,.03,Z+.6),Sm(.5,.04,1.2)),hex('#7a5232'));}
+  // 꼬순 농장
+  {const X=600/U,Z=1110/U;g.add(PR.box,C(Tm(X,1.1,Z),Sm(2.6,2.2,2.2)),hex('#d9534f'));g.add(PR.prism,C(Tm(X,2.2,Z),Sm(3.0,1.2,2.6)),hex('#8b5e34'));g.add(PR.box,C(Tm(X,.9,Z+1.11),Sm(1.2,1.6,.06)),hex('#fff6ec'));[.5,-.5].forEach(a=>g.add(PR.box,C(Tm(X,.9,Z+1.15),RZ(a),Sm(1.5,.1,.04)),hex('#d9534f')));
+    [[680,1230],[540,1240]].forEach(([x,y])=>g.add(PR.cyl,C(Tm(x/U,.0,y/U),RZ(Math.PI/2),Tm(0,-.4,0),Sm(.45,.8,.45)),hex('#e8c86a')));
+    for(let x=470;x<900;x+=45)g.add(PR.box,C(Tm(x/U,.35,1300/U),Sm(.08,.7,.08)),hex('#fff6ec'));g.add(PR.box,C(Tm(685/U,.55,1300/U),Sm(10.8,.06,.05)),hex('#fff6ec'));}
+  // 물레 폭포 받침
+  {const X=650/U,Z=300/U;[-.4,.4].forEach(dz=>g.add(PR.box,C(Tm(X,.6,Z+dz),Sm(.15,1.2,.12)),COL.woodD));g.add(PR.box,C(Tm(X+1.4,.8,Z),Sm(1.4,1.6,1.3)),hex('#e7d3b0'));g.add(PR.prism,C(Tm(X+1.4,1.6,Z),RY(Math.PI/2),Sm(1.7,.8,1.8)),hex('#6aa84f'));}
+  for(let i=0;i<16;i++){const a=i/16*Math.PI*2,x=POOLI.x+Math.cos(a)*(POOLI.rx+14),y=POOLI.y+Math.sin(a)*(POOLI.ry+12);if(y<POOLI.y-20)continue;g.add(PR.rock,C(Tm(x/U,.02,y/U),RY(r()*6),Sm(.3,.2,.26)),COL.stone);}
+  // 바다 물살 발전 표시 부표 길
+  [[1640,1260],[1720,1320],[1790,1380]].forEach(([x,y])=>{g.add(PR.cyl,C(Tm(x/U,-1.6,y/U),Sm(.25,.9,.25)),hex('#ffca28'));});
+  pier(g,DOCKI);boat(g,DOCKI.x+70,DOCKI.y1-30);
+  // 나무·꽃·덤불
+  const avoid=(x,y)=>polyD(x,y,PATHSI)<70||isleD(x,y)>.9||y<300||Math.hypot((x-380)/220,(y-700)/180)<1||Math.hypot(x-1000,y-500)<240||Math.hypot(x-660,y-1150)<220||Math.hypot(x-1300,y-600)<160||Math.hypot(x-1420,y-1000)<160||Math.hypot(x-560,y-1000)<160||Math.hypot(x-1700,y-750)<220||Math.hypot(x-1550,y-1180)<150||Math.hypot(x-700,y-380)<170;
+  let n=0;for(let i=0;i<400&&n<46;i++){const x=150+r()*1700,y=320+r()*1100;if(avoid(x,y))continue;addTree(g,x,y,hIsle(x,y),.9+r()*.35,r()*6);n++;}
+  for(let x=-100;x<2100;x+=110)bush(g,x+(r()-.5)*40,90+(r()-.5)*50,1.4,2.8,hex('#3f9e46'),hex('#53b856'));
+  flowers(g,[[860,960],[1140,960],[820,700],[1180,760],[1250,1250],[760,1380],[1500,880],[400,940],[1150,1350],[880,1250]],r);
+  return mkMesh(g);
+}
+
+/* ============ 동적 메시 ============ */
+function buildDyn(){
+  for(const k in PR)MS[k]=unitMesh(PR[k]);
+  let g=new Geo();addStump(g,0,0,0);MS.stump=mkMesh(g);
+  g=new Geo();geoPanel(g,m4.I());MS.panel=mkMesh(g);
+  g=new Geo();geoPanelTop(g,m4.I());MS.panelTop=mkMesh(g);
+  g=new Geo();g.add(PR.cylT,C(Sm(.24,5.2,.24)),hex('#f4f6f8'));g.add(PR.cyl,C(Sm(.42,.15,.42)),hex('#c9ccd1'));g.add(PR.box,C(Tm(0,5.2,.05),Sm(.42,.42,.9)),hex('#eef1f4'));g.add(PR.sph,C(Tm(0,5.2,.55),Sm(.2)),hex('#dfe4e8'));MS.tower=mkMesh(g);
+  g=new Geo();g.add(PR.box,C(Tm(0,1.25,0),Sm(.26,2.5,.06)),hex('#ffffff'));g.add(PR.box,C(Tm(0,2.35,.01),Sm(.24,.3,.065)),hex('#ef6f6c'));MS.blade=mkMesh(g);
+  g=new Geo();for(let i=0;i<10;i++){const a=i/10*Math.PI*2;g.add(PR.box,C(RZ(a),Tm(0,1,0),Sm(.34,.1,.55)),hex('#b8834f'));g.add(PR.box,C(RZ(a),Tm(0,.5,0),Sm(.07,1,.07)),hex('#8b5e34'));}
+    g.add(PR.cyl,C(RX(Math.PI/2),Tm(0,-.4,0),Sm(1.02,.08,1.02)),hex('#8b5e34'));g.add(PR.cyl,C(RX(Math.PI/2),Tm(0,-.35,0),Sm(.16,.7,.16)),hex('#6e4a2a'));MS.wheel=mkMesh(g);
+  g=new Geo();g.add(PR.box,C(Tm(0,.75,0),Sm(1.2,1.5,1.1)),hex('#e7d3b0'));g.add(PR.prism,C(Tm(0,1.5,0),RY(Math.PI/2),Sm(1.5,.7,1.6)),hex('#3d8fd6'));g.add(PR.box,C(Tm(0,.8,.56),Sm(.4,.7,.04)),hex('#7a5236'));MS.hut=mkMesh(g);
+  g=new Geo();g.add(PR.cyl,C(Tm(0,-.25,0),Sm(.75,.5,.75)),hex('#ffca28'));g.add(PR.box,C(Tm(0,.5,0),Sm(.1,1.2,.1)),hex('#8d959d'));g.add(PR.sph,C(Tm(0,1.15,0),Sm(.14)),hex('#ff7043'));g.add(PR.box,C(Tm(0,-.9,0),Sm(.12,1.4,.12)),hex('#8d959d'));g.add(PR.box,C(Tm(0,-1.6,.15),Sm(.3,.3,.7)),hex('#5f6a73'));MS.buoy=mkMesh(g);
+  g=new Geo();g.add(PR.box,C(Tm(0,.5,0),Sm(1.0,1.0,.7)),hex('#eef1f4'));g.add(PR.box,C(Tm(0,1.02,0),Sm(1.05,.06,.75)),hex('#e8833a'));g.add(PR.cyl,C(Tm(.62,-.6,0),Sm(.1,1.0,.1)),hex('#e8833a'));g.add(PR.box,C(Tm(.62,.42,0),Sm(.3,.1,.1)),hex('#e8833a'));g.add(PR.disc,C(Tm(-.75,.03,.6),Sm(.5,1,.4)),hex('#7a5232'));MS.geoU=mkMesh(g);
+  g=new Geo();g.add(PR.cyl,C(Sm(1,.8,1)),hex('#6ab04c'));g.add(PR.hemi,C(Tm(0,.8,0),Sm(1,.7,1)),hex('#7cc46a'));g.add(PR.box,C(Tm(1.25,.35,0),Sm(.9,.12,.12)),hex('#8d959d'));g.add(PR.box,C(Tm(1.8,.45,0),Sm(.6,.9,.6)),hex('#eef1f4'));g.add(PR.box,C(Tm(-1.05,.5,.4),Sm(.5,.5,.5)),hex('#8b6b4a'));MS.bioT=mkMesh(g);
+  g=new Geo();{const N=50,Sz=2.4,c=[1,1,1],n=[0,1,0];for(let j=0;j<N;j++)for(let i=0;i<N;i++){const x0=(i-N/2)*Sz,z0=(j-N/2)*Sz,x1=x0+Sz,z1=z0+Sz;g.tri([x0,0,z0],[x0,0,z1],[x1,0,z1],c,c,c,n);g.tri([x0,0,z0],[x1,0,z1],[x1,0,z0],c,c,c,n);}}MS.sea=mkMesh(g);
+  MS.village=buildVillage();MS.isle=buildIsle();
+  g=new Geo();const CR=mulberry32(42);for(let i=0;i<26;i++){let x=(CR()*2-1)*.85,y=(CR()*2-1)*.85;if(x*x+y*y>.8)continue;let px=x,py=y;for(let j=0;j<4;j++){x+=(CR()-.5)*.35;y+=(CR()-.5)*.35;const ax=POND.x+px*POND.rx,ay=POND.y+py*POND.ry,bx=POND.x+x*POND.rx,by=POND.y+y*POND.ry;const mx=(ax+bx)/2,my=(ay+by)/2,len=Math.hypot(bx-ax,by-ay)/U,a=Math.atan2(bx-ax,by-ay);
+    g.add(PR.box,C(Tm(mx/U,hVil(mx,my)+.04,my/U),RY(a),Sm(.06,.03,len)),hex('#6e5536'));px=x;py=y;}}MS.cracks=mkMesh(g);
+}
+
+/* ============ 캐릭터(탐방 주민 포함) ============ */
+function drawVillager(v,o={}){
+  const sad=o.sad,h=groundH(S.map,v.x,v.y);
+  let bob=v.moving?Math.abs(Math.sin(v.walkT*10))*.06:sad?0:Math.sin(T*2.2+v.seed)*.015;
+  const jt=T-v.jump;if(jt>=0&&jt<.5)bob+=Math.sin(jt/.5*Math.PI)*.45;
+  const sw=v.moving?Math.sin(v.walkT*10)*.6:0;
+  const B=C(Tm(v.x/U,h+bob,v.y/U),RY(v.ang),Sm(o.scale||1));
+  const leg=v.sp==='gull'?hex('#ffb74d'):v.colC;
+  [-1,1].forEach(s=>{const L=C(B,Tm(s*.13,.36,0),RX(s*sw));draw(MS.cyl,C(L,Tm(0,-.32,0),Sm(.09,.32,.09)),leg);draw(MS.sph,C(L,Tm(0,-.3,.03),Sm(.11,.07,.13)),leg);});
+  draw(MS.cylT,C(B,Tm(0,.32,0),Sm(.3,.46,.27)),v.shirtC);draw(MS.cyl,C(B,Tm(0,.32,0),Sm(.31,.1,.28)),v.shirt2C);
+  if(v.sp==='turtle'){draw(MS.hemi,C(B,Tm(0,.55,-.2),RX(-1.45),Sm(.42,.3,.4)),v.col2C);draw(MS.cyl,C(B,Tm(0,.52,-.2),RX(-1.45),Sm(.43,.04,.41)),hex('#d8c48a'));}
+  if(v.sp==='gull')[-1,1].forEach(s=>draw(MS.sph,C(B,Tm(s*.34,.6,-.05),RZ(s*(.5+Math.sin(T*8)*.15)),Tm(0,-.1,0),Sm(.08,.3,.18)),v.col2C));
+  else [-1,1].forEach(s=>draw(MS.sph,C(B,Tm(s*.34,.6,0),RX(-s*sw*.7),Tm(0,-.08,0),Sm(.1)),v.sp==='mole'?v.col2C:v.colC));
+  if(v.chief)draw(MS.cyl,C(B,Tm(.42,-.02,.15),RX(.15),Sm(.03,.9,.03)),hex('#8b5e34'));
+  const H=C(B,Tm(0,1.18,0));
+  const mouth=()=>draw(MS.box,C(H,Tm(0,-.18,.4),Sm(sad?.06:.09,.022,.02)),hex('#5a3a2a'));
+  switch(v.sp){
+    case 'frog':draw(MS.sph,C(H,Sm(.5,.36,.44)),v.colC);[-1,1].forEach(s=>{draw(MS.sph,C(H,Tm(s*.22,.3,.12),Sm(.17)),v.colC);
+        if(sad){draw(MS.sph,C(H,Tm(s*.22,.3,.26),Sm(.08,.05,.04)),BLK);}else{draw(MS.sph,C(H,Tm(s*.22,.32,.26),Sm(.1,.1,.06)),WHITE);draw(MS.sph,C(H,Tm(s*.22,.32,.31),Sm(.055,.06,.03)),BLK);}
+        draw(MS.sph,C(H,Tm(s*.32,-.06,.3),Sm(.07,.04,.03)),PINK);});
+      draw(MS.box,C(H,Tm(0,-.08,.42),Sm(.32,.03,.03)),hex('#3e6b34'));if(sad)[-1,1].forEach(s=>draw(MS.box,C(H,Tm(s*.22,.44,.25),RZ(s*.4),Sm(.12,.025,.03)),hex('#3e6b34')));break;
+    case 'owl':draw(MS.sph,C(H,Sm(.5,.46,.44)),v.colC);[-1,1].forEach(s=>{draw(MS.cone,C(H,Tm(s*.28,.36,0),RZ(-s*.35),Sm(.1,.26,.08)),v.colC);draw(MS.sph,C(H,Tm(s*.17,.04,.36),Sm(.16,.16,.06)),v.col2C);draw(MS.sph,C(H,Tm(s*.17,.04,.41),Sm(.075,.08,.03)),BLK);draw(MS.sph,C(H,Tm(s*.17+.02,.07,.435),Sm(.022)),WHITE);});
+      draw(MS.cone,C(H,Tm(0,-.06,.42),RX(Math.PI),Sm(.06,.14,.05)),hex('#f2a046'));draw(MS.cyl,C(H,Tm(.17,.04,.43),RX(Math.PI/2),Sm(.17,.01,.17)),hex('#e0b33c'));break;
+    case 'gull':draw(MS.sph,C(H,Sm(.42,.4,.42)),v.colC);draw(MS.cone,C(H,Tm(0,-.06,.36),RX(Math.PI/2),Sm(.09,.3,.07)),hex('#ffb300'));draw(MS.sph,C(H,Tm(0,.38,-.02),Sm(.1,.14,.1)),v.col2C);face(H,{sad,ey:.06,ez:.38});break;
+    case 'hedgehog':draw(MS.sph,C(H,Sm(.44,.42,.42)),v.colC);for(let i=0;i<11;i++){const a=-1.1+i*.22;draw(MS.cone,C(H,RX(-.5-Math.abs(Math.sin(i*1.7))*.5),RZ(a),Tm(0,.3,-.12),Sm(.1,.32,.1)),v.col2C);}
+      [-1,1].forEach(s=>draw(MS.sph,C(H,Tm(s*.3,.26,.05),Sm(.09,.09,.05)),v.colC));draw(MS.sph,C(H,Tm(0,-.06,.44),Sm(.07,.06,.05)),BLK);face(H,{sad,ez:.38});break;
+    case 'otter':draw(MS.sph,C(H,Sm(.46,.4,.42)),v.colC);[-1,1].forEach(s=>draw(MS.sph,C(H,Tm(s*.3,.26,0),Sm(.09,.08,.06)),v.colC));draw(MS.sph,C(H,Tm(0,-.12,.3),Sm(.22,.14,.14)),v.col2C);draw(MS.sph,C(H,Tm(0,-.06,.43),Sm(.07,.05,.04)),hex('#3a2418'));
+      [-1,1].forEach(s=>[-.02,.03].forEach(dy=>draw(MS.box,C(H,Tm(s*.28,-.1+dy,.36),RZ(s*dy*3),Sm(.2,.012,.012)),hex('#4a3020'))));face(H,{sad,ey:.06,ez:.39});break;
+    case 'turtle':draw(MS.sph,C(H,Sm(.42,.38,.42)),v.colC);[-1,1].forEach(s=>{draw(MS.sph,C(H,Tm(s*.15,.03,.38),Sm(.05,sad?.03:.035,.03)),BLK);draw(MS.box,C(H,Tm(s*.15,.07,.39),Sm(.1,.02,.02)),v.colC);});draw(MS.box,C(H,Tm(0,-.13,.4),Sm(.14,.02,.02)),hex('#3e6b34'));break;
+    case 'mole':draw(MS.sph,C(H,Sm(.44,.4,.42)),v.colC);draw(MS.sph,C(H,Tm(0,-.06,.42),Sm(.11,.09,.08)),v.col2C);[-1,1].forEach(s=>draw(MS.sph,C(H,Tm(s*.14,.08,.39),Sm(.035)),BLK));draw(MS.sph,C(H,Tm(0,.3,.05),Sm(.3,.12,.3)),hex('#ffd54f'));draw(MS.box,C(H,Tm(0,.32,.3),Sm(.12,.1,.06)),hex('#fff8c4'),1,[.4,.4,.2]);break;
+    case 'goat':draw(MS.sph,C(H,Sm(.42,.42,.42)),v.colC);[-1,1].forEach(s=>{draw(MS.cone,C(H,Tm(s*.15,.32,-.05),RX(-.7),RZ(-s*.25),Sm(.07,.36,.07)),v.col2C);draw(MS.sph,C(H,Tm(s*.42,.05,0),RZ(s*.3),Sm(.16,.06,.09)),v.colC);});
+      draw(MS.cone,C(H,Tm(0,-.3,.28),RX(Math.PI),Sm(.07,.2,.06)),v.col2C);draw(MS.sph,C(H,Tm(0,-.06,.42),Sm(.05,.035,.03)),PINK);face(H,{sad,ez:.39});mouth();break;
+    default:
+      draw(MS.sph,C(H,Sm(.44,.42,.42)),v.colC);
+      if(v.sp==='rabbit')[-1,1].forEach(s=>{const E=C(H,Tm(s*.16,.42,-.02),RZ(-s*.12));draw(MS.sph,C(E,Tm(0,.32,0),Sm(.11,.38,.09)),v.colC);draw(MS.sph,C(E,Tm(0,.32,.06),Sm(.055,.27,.04)),v.col2C);});
+      if(v.sp==='bear'){[-1,1].forEach(s=>{draw(MS.sph,C(H,Tm(s*.3,.32,0),Sm(.15,.15,.1)),v.colC);draw(MS.sph,C(H,Tm(s*.3,.32,.06),Sm(.08,.08,.05)),v.col2C);});draw(MS.sph,C(H,Tm(0,-.12,.3),Sm(.2,.14,.14)),v.col2C);draw(MS.sph,C(H,Tm(0,-.06,.43),Sm(.07,.05,.04)),hex('#4a3020'));}
+      if(v.sp==='cat'){[-1,1].forEach(s=>draw(MS.cone,C(H,Tm(s*.24,.28,0),RZ(-s*.3),Sm(.14,.3,.1)),v.colC));draw(MS.sph,C(H,Tm(0,.18,.25),Sm(.25,.18,.2)),v.col2C);draw(MS.sph,C(H,Tm(0,-.08,.42),Sm(.04,.03,.03)),PINK);
+        [-1,1].forEach(s=>[-.02,.04].forEach(dy=>draw(MS.box,C(H,Tm(s*.3,-.08+dy,.33),RZ(s*dy*3),Sm(.2,.012,.012)),hex('#8a6a50'))));}
+      if(v.sp==='rabbit')draw(MS.sph,C(H,Tm(0,-.08,.42),Sm(.04,.03,.03)),hex('#e57391'));
+      face(H,{sad,ey:.0,ez:.41,brow:hex('#5a3a2a')});mouth();
+  }
+  SHADOWS.push([v.x,v.y,.45*(o.scale||1),h]);
+}
+
+/* ============ 상태 ============ */
+const S={mode:'title',map:'village',name:'주민',stage:'prologue',lock:false,trans:false,gloom:.78,gloomT:.78,warm:0,
+  cards:[],read:[],cardNew:false,visited:{},chiefDone:false,letter:false,budget:BUDGET_DEFAULT,budget0:BUDGET_DEFAULT,inst:[],week:WEEK_FIXED,weekMode:'fixed',
+  prevDay:0,prevT:0,results:[],best:null,tries:0,quizBest:0,setWeather:'fixed'};
+const P={x:1000,y:880,ang:Math.PI,moving:false,walkT:0,action:null,hidden:false};
+const cam={x:1000,y:800};
+let T=0,SHADOWS=[];
+const instAt=id=>S.inst.find(g=>g.site===id);
+const spent=()=>S.inst.reduce((s,g)=>s+GEN[g.t].price,0);
+function curWx(){if(S.mode==='week'&&SIM)return S.week[SIM.day];if(S.map==='isle')return {sky:'sun',wind:'mid',sea:'mid',water:'mid'};if(S.stage==='prologue'||S.stage==='tour')return {sky:'cloud',wind:'light',sea:'mid',water:'mid'};return S.week[S.prevDay%7];}
+
+/* ============ 퀘스트 패널 ============ */
+function questTarget(){
+  if(S.mode!=='play')return null;
+  if(S.map==='village'&&S.stage==='prologue'&&S.letter)return{x:DOCKV.x,y:DOCKV.y1-40,h:1.4};
+  if(S.map==='isle'&&S.stage==='tour'){
+    if(S.chiefDone)return{x:DOCKI.x,y:DOCKI.y1-40,h:1.4};
+    if(GORDER.every(t=>S.visited[t])){const o=ISLE.owl;return{x:o.x,y:o.y,h:2.6};}
+    let best=null,bd=1e9;GORDER.forEach(t=>{if(S.visited[t])return;const v=ISLE[SPOTNPC[t]];const d=Math.hypot(v.x-P.x,v.y-P.y);if(d<bd){bd=d;best=v;}});
+    return best?{x:best.x,y:best.y,h:2.5}:null;}
+  return null;
+}
+function updateQuestUI(){
+  const e=$('quest');
+  if(S.mode!=='play'||!['prologue','tour','install'].includes(S.stage)){e.classList.add('hidden');return}
+  e.classList.remove('hidden');let h='';
+  if(S.stage==='prologue'){h=`<div class="qh">📜 이야기의 시작</div><ul><li class="${S.letter?'done':'go'}"><span class="ck">${S.letter?'✔':''}</span>보리의 이야기 듣기</li><li class="${S.letter?'go':''}"><span class="ck"></span>⛵ 남쪽 부두에서 배 타기</li></ul>`;}
+  else if(S.stage==='tour'){const n=GORDER.filter(t=>S.visited[t]).length;
+    h=`<div class="qh">🧭 마을 탐방<span>카드 ${n}/6</span></div><ul>`+GORDER.map(t=>`<li class="${S.visited[t]?'done':''}"><span class="ck">${S.visited[t]?'✔':''}</span><img src="${ICONURL[CARDS[t].icon]}">${SPOTNAME[t]}</li>`).join('')+
+    (S.chiefDone?`<li class="go"><span class="ck"></span>⛵ 부두에서 배 타고 돌아가기</li>`:`<li class="${n>=6?'go':''}"><span class="ck"></span>🦉 마을 회관의 촌장님께 가기</li>`)+'</ul>';}
+  else{const n=S.inst.length;
+    h=`<div class="qh">🔧 발전기 설치<span>${n}대 설치</span></div><ul><li class="${n?'done':'go'}"><span class="ck">${n?'✔':''}</span>⚡ 후보지를 살펴보고 설치하기</li><li><span class="ck"></span>🎯 목표: 일주일 평균 50% 이상</li></ul><button class="btn run" id="qRun" ${n?'':'disabled'}>▶ 일주일 운영해 보기</button>`;}
+  e.innerHTML=h;const b=$('qRun');if(b)b.onclick=()=>{if(!busy())askRun();};
+}
+
+/* ============ HUD: 재생 에너지 비율 ============ */
+let hudT=0;
+function hudData(){const d=curWx();const r=genDay(S.inst,d);return{d,r};}
+function wxText(d){return `${WX.sky[d.sky][1]} ${WX.sky[d.sky][0]} · ${WX.wind[d.wind][0]} · ${WX.sea[d.sea][0].replace('바닷물 흐름','물살')}`;}
+function updateHUD(){
+  const show=S.map==='village'&&['install','week','result','review','quiz','done'].includes(S.stage)&&S.mode!=='title';
+  $('hud').classList.toggle('hidden',!show);if(!show)return;
+  const {d,r}=hudData();
+  $('hPct').textContent=pct(r.ratio)+'%';
+  let segs='',acc=0;GORDER.forEach(t=>{if(!r.by[t])return;const w=Math.min(r.by[t],DEMAND-acc);if(w<=0)return;acc+=w;segs+=`<i style="width:${w/DEMAND*100}%;background:${GEN[t].col}" title="${GEN[t].short}"></i>`;});
+  $('hBar').innerHTML=segs+(acc<DEMAND?`<i class="coal" style="width:${(DEMAND-acc)/DEMAND*100}%"></i>`:'');
+  const day=S.mode==='week'&&SIM?`${SIM.day+1}일째 · `:'오늘 · ';
+  $('hWx').textContent=day+wxText(d);
+  $('hKwh').textContent=`⚡ ${fmtN(r.tot)} / ${DEMAND}kWh`;
+  $('hMoney').innerHTML=`<img src="${ICONURL.acorn}">${fmtN(S.budget)}`;
+}
+$('hud').onclick=()=>{if(S.mode!=='play'&&S.mode!=='week')return;const {d,r}=hudData();
+  $('hdet').innerHTML=`<button class="x" id="hdX">✕</button><h3>⚡ ${S.mode==='week'?(SIM.day+1)+'일째':'오늘'} 발전량</h3><div class="sub">${wxText(d)} · ${WX.water[d.water][0]}</div>`+
+  (S.inst.length?`<table class="dt"><tr><th>발전기</th><th>자리</th><th>발전량</th></tr>${S.inst.map(g=>{const v=GEN[g.t].base*g.c*wxCoef(g.t,d);return `<tr><td><img src="${ICONURL[GEN[g.t].icon]}">${GEN[g.t].short}</td><td>${SITES[g.site-1].name}</td><td>${v.toFixed(1)}kWh</td></tr>`;}).join('')}</table>`:'<div class="none">아직 설치한 발전기가 없어요.</div>')+
+  `<div class="tot">재생 에너지 ${fmtN(r.tot)}kWh ÷ 마을 소비량 ${DEMAND}kWh = <b>${pct(r.ratio)}%</b>${r.tot>DEMAND?' (100%까지만 세요)':''}</div><div class="leg">${GORDER.map(t=>`<span><i style="background:${GEN[t].col}"></i>${GEN[t].short}</span>`).join('')}<span><i style="background:#b9b3a6"></i>석탄·석유로 만든 전기</span></div>`;
+  $('hDet').classList.remove('hidden');sfx('open');$('hdX').onclick=()=>$('hDet').classList.add('hidden');};
+
+/* ============ 에너지 카드 북 ============ */
+function unlockCard(k){if(!S.cards.includes(k)){S.cards.push(k);S.cardNew=true;updateBookBtn();report();}}
+function updateBookBtn(){$('bookBtn').innerHTML='⚡'+(S.cardNew?'<span class="dot"></span>':'');}
+function cardHTML(c){return c.text?`<p>${c.text}</p>`:`<div class="cs"><div class="ck_"><span>🔎 무엇을 이용할까?</span>${c.use}</div><div class="ck_"><span>📍 어디에 설치하면 좋을까?</span>${c.where}</div><div class="ck_ g"><span>👍 좋은 점</span>${c.good}</div><div class="ck_ b"><span>😥 아쉬운 점</span>${c.bad}</div></div>`;}
+function showCard(k){return new Promise(res=>{const c=CARDS[k];$('nImg').src=ICONURL[c.icon];$('nChip').textContent=c.chip;$('nChip').style.background=c.col;$('nTitle').textContent=c.title;$('nBody').innerHTML=cardHTML(c);
+  $('nHead').textContent='⚡ 에너지 카드';$('nSaved').classList.remove('hidden');$('note').classList.remove('hidden');sfx('done');$('nOk').onclick=()=>{$('note').classList.add('hidden');res();};});}
+function showLetter(){return new Promise(res=>{$('nImg').src=ICONURL.letter;$('nChip').textContent='편지';$('nChip').style.background='#ef6f6c';$('nTitle').textContent='도토리 마을 친구들에게';$('nHead').textContent='💌 바람햇살 마을에서 온 편지';$('nSaved').classList.add('hidden');
+  $('nBody').innerHTML='<p>안녕하세요, 도토리 마을 친구들! 우리 바람햇살 마을은 햇빛, 바람, 물처럼 자연에서 얻고 <span class="hl">계속 이용할 수 있는 에너지</span>로 전기를 만들어요. 쓸수록 줄어드는 석탄이 걱정이라면, 우리 마을에 놀러 와서 배워 가세요!<br><span style="float:right">— 바람햇살 마을 촌장 부엉이</span></p>';
+  $('note').classList.remove('hidden');sfx('open');$('nOk').onclick=()=>{$('note').classList.add('hidden');res();};});}
+let BOOK={review:false,res:null};
+function openBook(review){BOOK.review=review===true;S.cardNew=false;updateBookBtn();sfx('page');renderBook();$('bList').classList.remove('hidden');$('bDetail').classList.add('hidden');$('book').classList.remove('hidden');}
+function renderBook(){
+  const rv=BOOK.review;
+  $('bSub').textContent=rv?'퀴즈를 풀기 전에 에너지 카드를 하나씩 눌러서 모두 읽어 보세요!':`모은 카드 ${S.cards.length} / ${CORDER.length} · 바람햇살 마을 주민들에게 배우면 새 카드가 열려요.`;
+  $('bGrid').innerHTML=CORDER.map((k,i)=>{const c=CARDS[k];return S.cards.includes(k)?`<div class="bt ${rv&&!S.read.includes(k)?'unread':''}" data-k="${k}">${rv&&S.read.includes(k)?'<div class="rd">✔</div>':''}<img src="${ICONURL[c.icon]}"><div><span class="c" style="background:${c.col}">${c.chip}</span></div><div class="t">${c.title}</div></div>`
+    :`<div class="bt lock"><div class="q">?</div><div class="t">${k==='limit'?'마지막 카드':k==='re'?'촌장님의 카드':'아직 몰라요'}</div></div>`;}).join('');
+  $('bGrid').querySelectorAll('.bt[data-k]').forEach(el=>el.onclick=()=>showCardDetail(el.dataset.k));
+  $('bX').classList.toggle('hidden',rv);$('bFoot').classList.toggle('hidden',!rv);
+  if(rv){const r=S.read.length,t=CORDER.length,all=r>=t;$('bPg').textContent=all?`⚡ ${t}장의 카드를 모두 읽었어요! 이제 퀴즈를 풀어 볼까요?`:`⚡ 읽은 카드 ${r} / ${t} · 모두 읽으면 퀴즈를 풀 수 있어요.`;$('bQuiz').disabled=!all;}
+}
+function showCardDetail(k){
+  const c=CARDS[k];if(BOOK.review&&!S.read.includes(k)){S.read.push(k);report();}
+  $('bdImg').src=ICONURL[c.icon];$('bdChip').textContent=c.chip;$('bdChip').style.background=c.col;$('bdTitle').textContent=c.title;$('bdText').innerHTML=cardHTML(c);
+  const i=CORDER.indexOf(k);let nx=null;for(let j=i+1;j<CORDER.length;j++)if(S.cards.includes(CORDER[j])){nx=CORDER[j];break;}
+  $('bNext').classList.toggle('hidden',!nx);$('bNext').onclick=()=>showCardDetail(nx);
+  $('bList').classList.add('hidden');$('bDetail').classList.remove('hidden');sfx('page');if(BOOK.review)renderBook();
+}
+function reviewBook(){return new Promise(res=>{S.read=[];openBook(true);
+  $('bQuiz').onclick=()=>{if($('bQuiz').disabled)return;$('book').classList.add('hidden');BOOK.review=false;$('bX').classList.remove('hidden');$('bFoot').classList.add('hidden');res();};});}
+$('bX').onclick=()=>{if(!BOOK.review)$('book').classList.add('hidden');};
+$('bBack').onclick=()=>{renderBook();$('bList').classList.remove('hidden');$('bDetail').classList.add('hidden');sfx('page');};
+$('bookBtn').onclick=()=>{if(DLG||CHO||S.mode==='week')return;openBook();};
+
+/* ============ 체험 (탐방 스팟) ============ */
+const EXP={
+  solar:{title:'날씨를 바꿔 보세요!',btns:[['sun','☀️ 맑게 하기'],['cloud','☁️ 구름 끼게 하기'],['rain','🌧️ 비 오게 하기'],['night','🌙 밤 되게 하기']],chk:[['cloud','구름 낀 날'],['rain','비 오는 날'],['night','밤']],
+    init:()=>({k:'sun'}),press:(s,k)=>{s.k=k;},out:s=>({sun:1,cloud:.35,rain:.1,night:0})[s.k],
+    msg:s=>({sun:'햇빛이 쨍쨍! 패널이 전기를 아주 많이 만들어요.',cloud:'구름이 해를 가렸어요. 전기가 확 줄었어요.',rain:'비가 와서 햇빛이 거의 없어요. 전기를 조금밖에 못 만들어요.',night:'밤에는 햇빛이 없어서 전기를 만들 수 없어요.'})[s.k]},
+  wind:{title:'바람 세기를 바꿔 보세요!',btns:[['0','🍃 바람 없음'],['1','🌬️ 약한 바람'],['2','💨 보통 바람'],['3','💨💨 강한 바람'],['4','🌀 태풍']],chk:[['0','바람 없음'],['3','강한 바람'],['4','태풍']],
+    init:()=>({k:'2',ang:0}),press:(s,k)=>{s.k=k;},out:s=>[0,.17,.55,1,0][+s.k],
+    msg:s=>['바람이 없으면 날개가 멈춰서 전기를 만들 수 없어요.','바람이 약하면 날개가 천천히 돌아요.','바람이 불어서 날개가 힘차게 돌아요.','바람이 셀수록 날개가 빨리 돌아 전기를 많이 만들어요!','태풍처럼 바람이 너무 세면 고장 나지 않도록 날개를 멈춰요.'][+s.k]},
+  hydro:{title:'폭포의 물의 양을 바꿔 보세요!',btns:[['dry','🏜️ 가뭄 (물이 적어요)'],['mid','💧 보통'],['much','💦 비 온 뒤 (물이 많아요)']],chk:[['dry','가뭄'],['much','비 온 뒤']],
+    init:()=>({k:'mid',ang:0}),press:(s,k)=>{s.k=k;},out:s=>({dry:.36,mid:.71,much:1})[s.k],
+    msg:s=>({dry:'가뭄이라 떨어지는 물이 줄었어요. 물레방아가 느리게 돌아요.',mid:'높은 곳에서 떨어지는 물이 물레방아를 돌려요.',much:'비가 온 뒤라 물이 콸콸! 물레방아가 아주 빠르게 돌아요.'})[s.k]},
+  tidal:{title:'밀물과 썰물을 만들어 보세요!',btns:[['in','🌊 밀물 (바닷물이 들어와요)'],['high','⏸ 물이 가장 높을 때'],['out','🌊 썰물 (바닷물이 나가요)'],['low','⏸ 물이 가장 낮을 때'],['wave','💨 파도 세게/약하게']],chk:[['in','밀물'],['out','썰물'],['stop','물이 멈춘 때'],['wave','센 파도']],
+    init:()=>({k:'in',lv:.5,wave:false,ang:0}),press:(s,k)=>{if(k==='wave'){s.wave=!s.wave;s.done=s.done||{};if(s.wave)s.done.wave=1;return}s.k=k;if(k==='high'||k==='low'){s.done=s.done||{};s.done.stop=1;}},out:s=>((s.k==='in'||s.k==='out')?.72:0)+(s.wave?.28:.07),
+    msg:s=>({in:'밀물! 바닷물이 들어오면서 물속 바람개비를 돌려요.',out:'썰물! 바닷물이 빠져나가면서 반대 방향으로 돌려요.',high:'물이 가장 높이 차서 바닷물이 멈췄어요. 바람개비도 멈춰요.',low:'물이 다 빠져서 바닷물이 멈췄어요. 바람개비도 멈춰요.'})[s.k]+(s.wave?' 파도가 세서 파도 힘으로도 전기를 조금 더 만들어요.':'')},
+  geo:{title:'계절을 바꿔 보세요!',btns:[['spring','🌸 봄'],['summer','☀️ 여름'],['fall','🍁 가을'],['winter','❄️ 겨울']],chk:[['summer','여름'],['winter','겨울']],
+    init:()=>({k:'spring'}),press:(s,k)=>{s.k=k;},out:s=>.62,
+    msg:s=>({spring:'봄에는 바깥과 땅속 온도가 비슷해요.',summer:'바깥은 30℃로 덥지만 땅속은 15℃! 땅속의 시원함으로 집을 시원하게 해요.',fall:'가을에도 땅속은 늘 15℃ 정도예요.',winter:'바깥은 영하 5℃로 춥지만 땅속은 15℃! 땅속의 따뜻함으로 집을 데워요.'})[s.k]+' 땅속 온도는 거의 일정해서 늘 같은 양의 에너지를 얻어요.'},
+  bio:{title:'연료를 넣어 보세요!',btns:[['food','🍎 음식물 쓰레기 넣기'],['dung','🐄 가축 분뇨 넣기'],['grass','🌾 풀·짚 넣기'],['comp','🧺 퇴비 꺼내기']],chk:[['food','음식물 쓰레기'],['dung','가축 분뇨'],['grass','풀·짚'],['comp','퇴비']],
+    init:()=>({k:'',fuel:0,comp:0,last:''}),
+    press:(s,k)=>{if(k==='comp'){if(s.fuel<=0){s.k='nocomp';return}s.fuel-=1;s.comp+=1;s.k='comp';s.last='';return}
+      if(s.fuel>=3){s.k='full';return}s.fuel+=1;s.k=k;s.last=k;},
+    out:s=>Math.min(1,s.fuel/2),
+    msg:s=>s.k==='full'?'통이 꽉 찼어요! 더 넣을 수 없어요. 🧺 퇴비를 꺼내서 통을 비워 주세요.':s.k==='nocomp'?'통이 텅 비었어요. 꺼낼 퇴비가 없어요. 연료를 다시 넣어 보세요!':s.k==='comp'?(s.fuel>0?'가스를 만들고 남은 찌꺼기를 퇴비로 꺼냈어요! 통이 빌 때까지 더 꺼낼 수 있어요.':'퇴비를 모두 꺼냈어요. 통이 비어서 이제 전기를 만들 수 없어요!'):s.fuel<=0?'통이 비었어요. 연료가 없으면 전기를 만들 수 없어요!':s.fuel>=3?'연료가 썩으면서 가스가 보글보글! 통이 꽉 찼어요.':'연료가 썩으면서 가스가 보글보글 생겨요. 이 가스로 전기를 만들어요!'}
+};
+let EX=null;
+function openExp(t){return new Promise(res=>{const E=EXP[t];EX={t,E,s:E.init(),done:{},res};$('eImg').src=ICONURL[CARDS[t].icon];$('eTitle').textContent=`${SPOTNAME[t]} 체험 · ${E.title}`;
+  $('eBtns').innerHTML=E.btns.map(([k,l])=>`<button class="eb" data-k="${k}">${l}</button>`).join('');
+  $('eBtns').querySelectorAll('.eb').forEach(b=>b.onclick=()=>{E.press(EX.s,b.dataset.k);if(!(EX.t==='bio'&&(EX.s.k==='full'||EX.s.k==='nocomp')))EX.done[b.dataset.k]=1;if(EX.s.done)Object.assign(EX.done,EX.s.done);sfx('pick');expUI();});
+  $('eDone').onclick=()=>{if($('eDone').disabled)return;$('exp').classList.add('hidden');const r=EX.res;EX=null;r();};
+  $('exp').classList.remove('hidden');sfx('open');expUI();});}
+function expUI(){const E=EX.E,s=EX.s;
+  $('eBtns').querySelectorAll('.eb').forEach(b=>b.classList.toggle('on',b.dataset.k===s.k||(b.dataset.k==='wave'&&s.wave)));
+  $('eMsg').textContent=E.msg(s);
+  const all=E.chk.every(([k])=>EX.done[k]);
+  $('eChk').innerHTML='해 보기: '+E.chk.map(([k,l])=>`<span class="${EX.done[k]?'ok':''}">${EX.done[k]?'✔':'○'} ${l}</span>`).join('');
+  $('eDone').disabled=!all;$('eDone').textContent=all?'⚡ 에너지 카드 받기':'모두 해 보면 카드를 받을 수 있어요';}
+
+/* ============ 체험 그림(2D) ============ */
+const ec=$('eCv').getContext('2d');let expLast=0;
+function sky(c,top,bot){const g=c.createLinearGradient(0,0,0,300);g.addColorStop(0,top);g.addColorStop(1,bot);c.fillStyle=g;c.fillRect(0,0,640,300);}
+function cloud(c,x,y,s,col){c.fillStyle=col;[[0,0,30],[28,-12,34],[60,0,28],[30,10,30]].forEach(([a,b,r])=>{circ(c,x+a*s,y+b*s,r*s);c.fill();});}
+function rainL(c,n,sl,t){c.strokeStyle='rgba(220,235,255,.8)';c.lineWidth=2;for(let i=0;i<n;i++){const x=(i*73.3+t*60*sl)%700-30,y=(i*37.7+t*420)%320-10;c.beginPath();c.moveTo(x,y);c.lineTo(x+sl*8,y+16);c.stroke();}}
+function bulb(c,x,y,k){circ(c,x,y,15+k*12);c.fillStyle=`rgba(255,230,120,${k*.35})`;c.fill();circ(c,x,y,12);c.fillStyle=k>.02?`rgb(255,${200+k*50|0},${80+k*60|0})`:'#d9d4c7';c.fill();c.strokeStyle='#8a7350';c.lineWidth=2;c.stroke();rr(c,x-6,y+10,12,9,2);c.fillStyle='#8d959d';c.fill();}
+function expDraw(dt){
+  if(!EX)return;const t=performance.now()/1000,s=EX.s,c=ec,E=EX.E,out=E.out(s);
+  c.clearRect(0,0,640,300);
+  switch(EX.t){
+    case 'solar':{const n=s.k==='night';sky(c,n?'#1c2541':s.k==='sun'?'#7fd0ff':s.k==='cloud'?'#9fb3c4':'#7d8a97',n?'#3a4a75':'#d9f1ff');
+      if(n){for(let i=0;i<30;i++){circ(c,(i*97)%640,(i*53)%150,1.5);c.fillStyle='#fff';c.fill();}circ(c,520,70,26);c.fillStyle='#fff6c8';c.fill();}
+      else{for(let i=0;i<10;i++){const a=i/10*Math.PI*2+t*.3;c.strokeStyle='#ffb300';c.lineWidth=4;c.beginPath();c.moveTo(520+Math.cos(a)*40,70+Math.sin(a)*40);c.lineTo(520+Math.cos(a)*54,70+Math.sin(a)*54);c.stroke();}circ(c,520,70,32);c.fillStyle='#ffd23f';c.fill();
+        if(s.k==='sun'){c.setLineDash([8,8]);c.lineDashOffset=-t*30;c.strokeStyle='rgba(255,190,40,.9)';c.lineWidth=3;[[-20,0],[0,0],[20,0]].forEach(([dx])=>{c.beginPath();c.moveTo(510+dx,100);c.lineTo(300+dx*2,175);c.stroke();});c.setLineDash([]);}}
+      if(s.k==='cloud'||s.k==='rain'){cloud(c,440,70,1.3,s.k==='rain'?'#8f9aa5':'#e8eef3');cloud(c,250,60,1.1,s.k==='rain'?'#9ba6b0':'#f4f7f9');cloud(c,80,90,.9,s.k==='rain'?'#a5aeb7':'#ffffff');}
+      if(s.k==='rain')rainL(c,60,1,t);
+      c.fillStyle=n?'#2f5a3a':'#7cc46a';c.fillRect(0,230,640,70);
+      c.fillStyle='#8d959d';c.fillRect(250,195,8,40);c.fillRect(350,180,8,55);
+      c.save();c.translate(300,190);c.transform(1,-.25,0,1,0,0);rr(c,-80,-28,160,52,4);c.fillStyle='#d9dde2';c.fill();rr(c,-74,-23,148,42,3);c.fillStyle='#2c4f9e';c.fill();c.strokeStyle='#8fb3ff';c.lineWidth=1.5;for(let i=1;i<4;i++){c.beginPath();c.moveTo(-74+i*37,-23);c.lineTo(-74+i*37,19);c.stroke();}c.beginPath();c.moveTo(-74,-2);c.lineTo(74,-2);c.stroke();
+        if(out>.5){c.fillStyle=`rgba(255,255,255,${.25+.2*Math.sin(t*6)})`;c.fillRect(-40,-20,20,36);}c.restore();
+      c.strokeStyle='#5d4630';c.lineWidth=3;c.beginPath();c.moveTo(380,215);c.quadraticCurveTo(450,240,520,215);c.stroke();rr(c,500,170,70,60,6);c.fillStyle='#fff6ec';c.fill();c.beginPath();c.moveTo(492,172);c.lineTo(535,140);c.lineTo(578,172);c.closePath();c.fillStyle='#f28db0';c.fill();bulb(c,535,198,out);break;}
+    case 'wind':{const k=+s.k;sky(c,k===4?'#55606e':'#8fd6ff',k===4?'#8a96a3':'#e3f6ff');if(k===4){cloud(c,100,50,1.4,'#6e7883');cloud(c,380,40,1.6,'#77818c');rainL(c,90,4,t);}
+      c.fillStyle='#4fb8e0';c.fillRect(0,240,640,60);c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=3;const wv=[0,2,4,7,12][k];for(let x=0;x<640;x+=40){c.beginPath();c.moveTo(x,248+Math.sin(t*3+x)*wv*.3);c.quadraticCurveTo(x+20,248-wv+Math.sin(t*3+x)*wv*.3,x+40,248);c.stroke();}
+      c.fillStyle='#e2cf9a';c.beginPath();c.moveTo(0,250);c.quadraticCurveTo(200,215,420,250);c.lineTo(420,300);c.lineTo(0,300);c.fill();
+      const spd=[0,1.2,4,8,0][k];s.ang+=spd*dt;c.fillStyle='#f4f6f8';c.beginPath();c.moveTo(214,235);c.lineTo(226,235);c.lineTo(222,90);c.lineTo(218,90);c.fill();
+      for(let i=0;i<3;i++){c.save();c.translate(220,88);c.rotate(s.ang+i*Math.PI*2/3);c.beginPath();c.ellipse(0,-36,7,38,0,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.strokeStyle='#b0bec5';c.lineWidth=1.5;c.stroke();c.restore();}circ(c,220,88,8);c.fillStyle='#cfd8dc';c.fill();
+      c.strokeStyle='rgba(255,255,255,.9)';c.lineWidth=2.5;const nl=[0,3,6,10,16][k];for(let i=0;i<nl;i++){const x=((i*131)+t*(120+k*90))%760-80,y=40+(i*47)%170;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+30,y-8,x+60,y);c.stroke();}
+      if(k===4){rr(c,140,20,160,34,17);c.fillStyle='#ef6f6c';c.fill();c.fillStyle='#fff';c.font='18px Jua';c.textAlign='center';c.fillText('⚠ 안전을 위해 멈춤',220,43);}
+      rr(c,470,170,80,60,6);c.fillStyle='#fff6ec';c.fill();c.beginPath();c.moveTo(462,172);c.lineTo(510,140);c.lineTo(558,172);c.closePath();c.fillStyle='#5c9bd5';c.fill();bulb(c,510,198,out);c.strokeStyle='#5d4630';c.lineWidth=3;c.beginPath();c.moveTo(225,232);c.quadraticCurveTo(350,260,470,215);c.stroke();break;}
+    case 'hydro':{sky(c,'#8fd6ff','#e3f6ff');c.fillStyle='#b08158';c.fillRect(0,60,170,240);c.fillStyle='#79c257';c.fillRect(0,50,170,16);c.fillStyle='#86cc62';c.fillRect(170,250,470,50);
+      const w={dry:10,mid:26,much:46}[s.k];c.fillStyle='rgba(120,200,240,.9)';c.fillRect(160,60,w,190);c.strokeStyle='rgba(255,255,255,.8)';c.lineWidth=2;for(let i=0;i<5;i++){const y=60+((t*200+i*40)%190);c.beginPath();c.moveTo(162,y);c.lineTo(160+w,y+10);c.stroke();}
+      c.fillStyle='#4fb8e0';c.beginPath();c.ellipse(220,262,90,14,0,0,Math.PI*2);c.fill();
+      const spd={dry:.8,mid:2,much:3.6}[s.k];s.ang+=spd*dt;c.save();c.translate(230,200);c.rotate(s.ang);for(let i=0;i<10;i++){c.rotate(Math.PI/5);c.fillStyle='#b8834f';c.fillRect(-6,-58,12,20);c.fillStyle='#8b5e34';c.fillRect(-2,-40,4,40);}c.restore();circ(c,230,200,40);c.strokeStyle='#8b5e34';c.lineWidth=5;c.stroke();circ(c,230,200,8);c.fillStyle='#6e4a2a';c.fill();
+      if(s.k==='much'){c.fillStyle='rgba(255,255,255,.6)';for(let i=0;i<8;i++){circ(c,200+Math.sin(t*5+i)*40,250-((t*40+i*9)%30),3);c.fill();}}
+      if(s.k==='dry'){c.fillStyle='#d6c39a';c.beginPath();c.ellipse(220,262,60,8,0,0,Math.PI*2);c.fill();}
+      rr(c,470,170,80,60,6);c.fillStyle='#fff6ec';c.fill();c.beginPath();c.moveTo(462,172);c.lineTo(510,140);c.lineTo(558,172);c.closePath();c.fillStyle='#6aa84f';c.fill();bulb(c,510,198,out);c.strokeStyle='#5d4630';c.lineWidth=3;c.beginPath();c.moveTo(270,200);c.quadraticCurveTo(370,230,470,210);c.stroke();break;}
+    case 'tidal':{sky(c,'#8fd6ff','#e3f6ff');const tgt={in:.82,high:.85,out:.18,low:.15}[s.k];const flow=s.k==='in'?1:s.k==='out'?-1:0;s.lv+=(tgt-s.lv)*Math.min(1,dt*.6);
+      c.fillStyle='#e2cf9a';c.beginPath();c.moveTo(0,300);c.lineTo(0,170);c.quadraticCurveTo(60,150,120,180);c.lineTo(120,300);c.fill();c.beginPath();c.moveTo(640,300);c.lineTo(640,160);c.quadraticCurveTo(580,150,520,180);c.lineTo(520,300);c.fill();
+      const wy=270-s.lv*130,amp=s.wave?9:3;c.fillStyle='rgba(60,150,210,.85)';c.beginPath();c.moveTo(0,300);for(let x=0;x<=640;x+=10)c.lineTo(x,wy+Math.sin(x/30+t*(s.wave?4:2))*amp);c.lineTo(640,300);c.fill();
+      c.fillStyle='#c2a978';c.fillRect(0,286,640,14);c.fillStyle='#8d959d';c.fillRect(316,140,8,140);rr(c,296,128,48,16,6);c.fillStyle='#ffca28';c.fill();
+      s.ang+=(flow!==0?flow*4:0)*dt+(s.wave?Math.sin(t*3)*.6*dt:0);c.save();c.translate(320,255);c.scale(1,.9);for(let i=0;i<3;i++){c.save();c.rotate(s.ang+i*Math.PI*2/3);c.beginPath();c.ellipse(0,-20,6,20,0,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.strokeStyle='#5f6a73';c.lineWidth=1.5;c.stroke();c.restore();}c.restore();circ(c,320,255,6);c.fillStyle='#5f6a73';c.fill();
+      if(flow){c.fillStyle='rgba(255,255,255,.9)';for(let i=0;i<6;i++){const x=((i*110+t*120*flow)%700+700)%700-30,y=wy+40+(i%3)*14;c.beginPath();c.moveTo(x+flow*16,y);c.lineTo(x-flow*6,y-7);c.lineTo(x-flow*6,y+7);c.fill();}}
+      c.fillStyle='#5d4630';c.font='17px Jua';c.textAlign='left';c.fillText('🌊 넓은 바다',12,30);c.textAlign='right';c.fillText('바닷가 마을 🏘️',628,30);bulb(c,590,110,out);break;}
+    case 'geo':{const T_={spring:15,summer:30,fall:15,winter:-5}[s.k];sky(c,s.k==='winter'?'#c9dcec':s.k==='summer'?'#6fc8ff':'#8fd6ff',s.k==='winter'?'#f2f6fa':'#e3f6ff');
+      if(s.k==='summer'){circ(c,90,50,26);c.fillStyle='#ffb300';c.fill();}
+      c.fillStyle=s.k==='winter'?'#f4f8fb':s.k==='fall'?'#d9a24a':'#86cc62';c.fillRect(0,120,640,14);
+      const lay=['#a7774f','#93653f','#7f5634','#6b482b'];lay.forEach((col,i)=>{c.fillStyle=col;c.fillRect(0,134+i*42,640,42);});
+      rr(c,250,60,110,62,4);c.fillStyle='#fffaf2';c.fill();c.beginPath();c.moveTo(240,62);c.lineTo(305,22);c.lineTo(370,62);c.closePath();c.fillStyle='#ff8a65';c.fill();rr(c,290,85,30,37,3);c.fillStyle='#7a5236';c.fill();
+      if(s.k==='winter'){c.fillStyle='#fff';for(let i=0;i<30;i++){circ(c,(i*71+t*20)%640,(i*37+t*40)%120,2.5);c.fill();}}
+      if(s.k==='fall'){c.fillStyle='#e8833a';for(let i=0;i<12;i++){circ(c,(i*91+t*30)%640,(i*29+t*30)%118,3.5);c.fill();}}
+      c.strokeStyle='#e8833a';c.lineWidth=6;c.beginPath();c.moveTo(340,122);c.lineTo(340,280);c.lineTo(380,280);c.lineTo(380,122);c.stroke();
+      const fl=s.k==='summer'?1:s.k==='winter'?-1:0;if(fl){c.fillStyle=fl>0?'#5fc8ef':'#ff7043';for(let i=0;i<4;i++){const y=fl<0?280-((t*60+i*40)%150):130+((t*60+i*40)%150);const x=fl<0?380:340;c.beginPath();c.moveTo(x-7,y+fl*-6);c.lineTo(x+7,y+fl*-6);c.lineTo(x,y+fl*6);c.fill();}}
+      const th=(x,y,v,lab)=>{rr(c,x-9,y,18,100,9);c.fillStyle='#fff';c.fill();c.strokeStyle='#8a7350';c.lineWidth=2;c.stroke();const hh=clamp((v+10)/45,0,1)*86;rr(c,x-5,y+96-hh,10,hh,5);c.fillStyle=v>20?'#ef6f6c':v<5?'#5c9bd5':'#f2a046';c.fill();c.fillStyle='#5d4630';c.font='17px Jua';c.textAlign='left';c.fillText(lab+' '+v+'℃',x+16,y+50);};
+      th(470,14,T_,'바깥');th(470,175,15,'땅속');bulb(c,150,90,out);break;}
+    case 'bio':{sky(c,'#8fd6ff','#e3f6ff');c.fillStyle='#86cc62';c.fillRect(0,230,640,70);
+      rr(c,20,120,120,110,4);c.fillStyle='#d9534f';c.fill();c.beginPath();c.moveTo(10,124);c.lineTo(80,80);c.lineTo(150,124);c.closePath();c.fillStyle='#8b5e34';c.fill();rr(c,55,170,50,60,3);c.fillStyle='#fff6ec';c.fill();
+      c.fillStyle='#6ab04c';rr(c,220,150,150,82,8);c.fill();c.beginPath();c.ellipse(295,152,75,50,0,Math.PI,0);c.fillStyle='#7cc46a';c.fill();
+      const fh=s.fuel/3*70;rr(c,240,226-fh,110,fh,4);c.fillStyle='#8b6b4a';c.fill();
+      if(s.fuel>0){c.fillStyle='rgba(255,255,255,.8)';for(let i=0;i<7;i++){const y=220-((t*40+i*17)%(60+fh));circ(c,250+(i*17)%95,y,3+i%3);c.fill();}}
+      c.fillStyle='#8d959d';c.fillRect(370,170,70,10);rr(c,440,150,60,80,5);c.fillStyle='#eef1f4';c.fill();bulb(c,470,128,out);
+      for(let i=0;i<Math.min(s.comp,6);i++){c.beginPath();c.ellipse(560,230-i*11,44-i*6,13,0,Math.PI,0);c.fillStyle='#6b482b';c.fill();}c.fillStyle='#5d4630';c.font='16px Jua';c.textAlign='center';c.fillText('퇴비',560,255);
+      c.fillText('가스 통',295,262);c.fillText('발전기',470,250);
+      const lab=s.last==='food'?'🍎':s.last==='dung'?'💩':s.last==='grass'?'🌾':'';if(lab){c.font='30px sans-serif';c.fillText(lab,295,78);}c.font='16px Jua';c.fillStyle=s.fuel>=3?'#d0563a':'#5d4630';c.fillText(s.fuel>=3?'가득 참!':`${s.fuel} / 3칸`,295,128);if(s.comp)c.fillText(`${s.comp}번 꺼냄`,560,275);break;}
+  }
+  $('eBar').style.width=(out*100)+'%';$('eVal').textContent=out>.8?'아주 많이!':out>.45?'많이':out>.15?'조금':out>0.01?'아주 조금':'못 만들어요';
+}
+
+/* ============ 설치 창 ============ */
+let INST=null;
+function needOf(site,t){return site.f[t];}
+function openSite(site){
+  INST={site};sfx('open');renderSite();$('inst').classList.remove('hidden');
+}
+function renderSite(){
+  const site=INST.site,cur=instAt(site.id),first=!site.seen;site.seen=true;
+  const needs={};GORDER.forEach(t=>{const n=GEN[t].need;const v=site.f[t];if(v!=null)needs[n]=Math.max(needs[n]==null?-1:needs[n],v);});
+  let meas=Object.keys(NEEDNAME).map((n,i)=>{const v=needs[n];const st=stars(v);return `<div class="mr ${v==null?'na':''}" style="animation-delay:${first?i*.12:0}s"><span>${NEEDNAME[n][0]} ${NEEDNAME[n][1]}</span><b>${v==null?'—':st===0?'없음':'★'.repeat(st)+'☆'.repeat(3-st)}</b></div>`;}).join('');
+  let h=`<button class="x" id="iX">✕</button><h2>⚡ 후보지 ${site.id} · ${site.name}</h2><div class="sub">${site.desc}</div><div class="meas"><div class="mh">🔎 자연 조건 측정 결과 <small>(☀️ 햇빛 측정기 · 🌬️ 풍속계 · 💧 물 흐름 측정기)</small></div>${meas}</div>`;
+  if(cur){const g=GEN[cur.t],back=Math.round(g.price*.8);
+    h+=`<div class="sec">지금 설치된 발전기</div><div class="rc"><img class="big" src="${ICONURL[g.icon]}"><div><div class="nm">${g.name}</div><div class="mats"><span class="m">평범한 날 하루 약 ${(g.base*cur.c).toFixed(1)}kWh</span></div></div><button class="btn or" id="iDel">철거하기<br><small>+${fmtN(back)}도토리</small></button></div><div class="none">💡 철거하면 설치 비용의 80%만 돌려받아요.</div>`;}
+  else{h+=`<div class="sec">어떤 발전기를 설치할까? <small>남은 예산 <img src="${ICONURL.acorn}" style="width:18px;vertical-align:-3px">${fmtN(S.budget)}도토리</small></div>`;
+    GORDER.forEach(t=>{const g=GEN[t],v=site.f[t];let why='';if(v==null)why=NEEDNO[g.need];else if(v===0)why='물이 흐르지 않아서 돌지 않아요';else if(g.price>S.budget)why='예산이 모자라요';
+      h+=`<div class="rc ${why?'off':''}"><img class="big" src="${ICONURL[g.icon]}"><div><div class="nm">${g.name} <small>${g.cap}</small></div><div class="mats"><span class="m"><img src="${ICONURL.acorn}">${fmtN(g.price)}도토리</span>${why?`<span class="m no">${why}</span>`:''}</div></div><button class="btn" data-t="${t}" ${why?'disabled':''}>설치</button></div>`;});}
+  $('instCard').innerHTML=h;$('iX').onclick=closeSite;
+  if(cur)$('iDel').onclick=()=>askRemove(cur);
+  $('instCard').querySelectorAll('button[data-t]').forEach(b=>b.onclick=()=>askInstall(b.dataset.t));
+}
+function closeSite(){$('inst').classList.add('hidden');INST=null;}
+function askInstall(t){const site=INST.site,g=GEN[t],v=site.f[t];sfx('open');
+  const warn=v<=.3?`<div class="warn">🤔 ${WEAK[g.need]}</div>`:'';
+  $('instCard').innerHTML=`<div style="text-align:center"><img src="${ICONURL[g.icon]}" style="width:96px;height:96px"><div class="ask">${josa(g.name,'을','를')} <b>${fmtN(g.price)}도토리</b>에 설치할까요?</div><div class="lab">📍 ${site.name} · 남은 예산 ${fmtN(S.budget)} → ${fmtN(S.budget-g.price)}도토리</div>${warn}
+    <div class="btns"><button class="btn" id="iYes">설치할래요</button><button class="btn gray" id="iNo">아니요</button></div></div>`;
+  $('iYes').onclick=()=>doInstall(site,t);$('iNo').onclick=renderSite;}
+function askRemove(cur){const g=GEN[cur.t],back=Math.round(g.price*.8);sfx('open');
+  $('instCard').innerHTML=`<div style="text-align:center"><img src="${ICONURL[g.icon]}" style="width:96px;height:96px"><div class="ask">${josa(g.name,'을','를')} 철거할까요?</div><div class="warn">설치 비용 ${fmtN(g.price)}도토리 중 <b>${fmtN(back)}도토리</b>만 돌려받아요.</div><div class="btns"><button class="btn or" id="iYes">철거할래요</button><button class="btn gray" id="iNo">아니요</button></div></div>`;
+  $('iYes').onclick=()=>{S.inst=S.inst.filter(x=>x!==cur);S.budget+=back;sfx('hammer');const s=SITES[cur.site-1];for(let i=0;i<14;i++)part(s.gx/U,1,s.gy/U,(Math.random()-.5)*3,1+Math.random()*2,(Math.random()-.5)*3,'#cdb48a',.16,.8);closeSite();toast(`🔧 철거했어요. ${fmtN(back)}도토리를 돌려받았어요`);updateQuestUI();updateHUD();report();};$('iNo').onclick=renderSite;}
+function doInstall(site,t){const g=GEN[t];closeSite();S.budget-=g.price;updateHUD();
+  faceTo(site.gx,site.gy);P.action={kind:'craft',t:0,dur:1.6,hits:0,site,gt:t};sfx('open');}
+function finishInstall(a){const site=a.site,g=GEN[a.gt];const inst={site:site.id,t:a.gt,c:site.f[a.gt],born:T};S.inst.push(inst);sfx('done');
+  for(let i=0;i<18;i++)part(site.gx/U,1.5,site.gy/U,(Math.random()-.5)*3,2+Math.random()*2,(Math.random()-.5)*3,i%2?'#ffd23f':'#fff3a0',.12,.9);
+  const r=genDay(S.inst,curWx());toast(`⚡ ${g.short} 설치 완료! 오늘 재생 에너지 비율 ${pct(r.ratio)}%`,3200);updateQuestUI();updateHUD();report();
+  if(BGM.mode==='sad'){BGM.mode='happy';}
+  if(S.inst.length===1&&!S.firstGen){S.firstGen=true;setTimeout(async()=>{if(busy())return;S.lock=true;await say(VILL.bori,['와! 첫 번째 발전기다, 깡총!','화면 위쪽 막대를 봐. 재생 에너지 비율이 올라갔어!','막대를 누르면 발전기마다 오늘 얼마나 만들었는지 볼 수 있어.']);S.lock=false;},900);}}
+
+/* ============ 상호작용 ============ */
+function interactables(){
+  const L=[];
+  if(S.map==='village'){
+    for(const id in VILL){const v=VILL[id];if(!v.hidden)L.push({type:'vill',v,x:v.x,y:v.y,r:75,h:2.5,label:'말하기'});}
+    if(S.stage==='install')SITES.forEach(s=>{if(s.pond){const dx=(P.x-POND.x)/(POND.rx+75),dy=(P.y-POND.y)/(POND.ry+65),e=Math.hypot(dx,dy);if(e<1)L.push({type:'site',s,x:P.x,y:P.y,r:999,near:true,dd:(e-.7)*200,h:2,label:instAt(s.id)?'발전기 살펴보기':'후보지 살펴보기',px:s.x,py:s.y});return}
+      L.push({type:'site',s,x:s.x,y:s.y,r:80,h:2.2+Math.max(0,hVil(s.x,s.y)),label:instAt(s.id)?'발전기 살펴보기':'후보지 살펴보기'});});
+    if(S.stage==='prologue'&&S.letter)L.push({type:'boat',x:DOCKV.x,y:DOCKV.y1-50,r:90,h:1.6,label:'배 타기'});
+  }else{
+    for(const id in ISLE){const v=ISLE[id];if(!v.hidden)L.push({type:'npc',v,x:v.x,y:v.y,r:80,h:2.6,label:'말하기'});}
+    if(S.chiefDone)L.push({type:'boat',x:DOCKI.x,y:DOCKI.y1-50,r:90,h:1.6,label:'배 타고 돌아가기'});
+  }
+  return L;
+}
+function nearest(){let best=null,bd=1e9;interactables().forEach(o=>{const d=o.near?o.dd:Math.hypot(o.x-P.x,(o.y-P.y)*1.2);if(d<o.r&&d<bd){bd=d;best=o;}});return best;}
+function faceTo(x,y){P.ang=Math.atan2(x-P.x,y-P.y);}
+const MODALS=['note','book','inst','exp','res','hDet','quiz','pass'];
+function busy(){return !!DLG||!!CHO||S.lock||S.trans||!!P.action||MODALS.some(id=>!$(id).classList.contains('hidden'));}
+function onA(){
+  if(S.mode==='title')return;
+  if(!$('book').classList.contains('hidden'))return;
+  if(CHO){pick(CHO.sel);return}
+  if(DLG){dlgAdvance();return}
+  if(S.mode!=='play'||busy())return;
+  const t=nearest();if(!t)return;
+  faceTo(t.px||t.x,t.py||t.y);
+  if(t.type==='vill')talkVill(t.v);else if(t.type==='npc')talkIsle(t.v);else if(t.type==='site')openSite(t.s);else if(t.type==='boat')sail();
+}
+function josa(w,a,b){const c=w.charCodeAt(w.length-1);if(c<0xAC00||c>0xD7A3)return w+b;return w+(((c-0xAC00)%28)?a:b);}
+
+/* ============ 대화: 도토리 마을 ============ */
+const IDLEV={
+  pre:{bori:['석탄이 다 떨어지면 밤에 불을 켤 수 없대… 깡총.'],dubu:['요즘 전기가 자꾸 끊겨서 걱정이야, 곰곰.'],mochi:['광산에 석탄이 거의 없다냥…'],pong:['연못이 말라 버린 뒤로 마을이 너무 쓸쓸해, 개굴.']},
+  install:{bori:['내 지붕은 남쪽을 보고 있어서 하루 종일 햇빛이 들어, 깡총!','바닷가 언덕에 올라가면 바람이 엄청 세게 불어!'],dubu:['우리 집 지붕은 북쪽을 보고 있어서 햇빛이 비스듬히 들어, 곰곰.','북쪽 절벽에서는 폭포가 콸콸 떨어져!'],mochi:['우리 집 옆 땅은 깊이 파도 괜찮다냥.','숲은 그루터기만 남아서 그늘지고 바람도 잘 안 분다냥.'],pong:['내 밭 옆에는 풀이랑 가축 분뇨가 잔뜩 있어, 개굴.','남쪽 바다 수로는 바닷물이 세차게 드나들어, 개굴.']},
+  after:{bori:['마을에 다시 불이 켜졌어! 고마워, 깡총!'],dubu:['재생 에너지 덕분에 석탄 걱정이 줄었어, 곰곰.'],mochi:['날씨가 매일 달라서 전기도 매일 달라진다냥.'],pong:['개굴! 다음에는 어떤 발전기를 놓아 볼까?']}
+};
+async function talkVill(v){
+  S.lock=true;v.frozen=true;v.moving=false;v.ang=Math.atan2(P.x-v.x,P.y-v.y);
+  try{
+    if(S.stage==='install'&&v.id==='bori'){await say(v,S.inst.length?['발전기를 다 설치했어?','준비되면 일주일 동안 마을을 운영해 보자!']:['⚡ 후보지 표지판에 다가가서 자리를 살펴봐!','자리에 맞는 발전기를 골라 설치하면 돼, 깡총.']);
+      if(S.inst.length){S.lock=false;await askRun();}}
+    else{const k=S.stage==='prologue'?'pre':S.stage==='install'?'install':'after';const arr=IDLEV[k][v.id];await say(v,[arr[Math.floor(Math.random()*arr.length)]]);}
+  }finally{v.frozen=false;S.lock=false;}
+}
+async function askRun(){if(busy())return;if(!S.inst.length){toast('⚡ 발전기를 먼저 하나 이상 설치해 주세요!');return}
+  S.lock=true;const b=VILL.bori;await say(b,[`발전기 ${S.inst.length}대로 일주일 동안 마을을 운영해 볼까?`,'운영을 시작하면 날씨에 따라 날마다 발전량이 달라져!'],true);
+  const c=await choose(['▶ 일주일 운영 시작!','조금 더 설치할래.']);S.lock=false;if(c===0)startWeek();}
+
+/* ============ 대화: 바람햇살 마을 ============ */
+const SPOTTALK={
+  solar:{intro:['안녕! 나는 햇살 언덕을 지키는 해랑이야, 꼼지락.','«태양 에너지»는 «태양 빛이나 태양열»을 이용하는 에너지야.','저기 반짝이는 태양광 패널이 햇빛을 받아서 전기를 만들지!','구름이 끼거나 밤이 되면 어떻게 될까? 직접 날씨를 바꿔 봐!'],outro:['봤지? 햇빛이 약하면 전기도 조금밖에 못 만들어.','그래서 태양광 패널은 햇빛이 잘 드는 곳에 설치해야 해!']},
+  wind:{intro:['끼룩! 바람 해안에 온 걸 환영해! 나는 갈매기 바라야.','«풍력 에너지»는 «바람»으로 발전기를 돌려 전기를 생산하는 에너지야.','이 바닷가는 바람이 세고 꾸준히 불어서 풍력 발전기를 세우기 딱 좋아.','바람 세기를 바꿔 볼래? 태풍이 오면 어떻게 되는지도 봐!'],outro:['바람이 셀수록 날개가 빨리 돌아 전기를 많이 만들어.','하지만 바람이 없거나, 태풍처럼 너무 세면 멈춰야 해. 끼룩!','제주도에 풍력 발전기가 많은 것도 «바람이 많이 불기 때문»이야.']},
+  hydro:{intro:['어서 와! 나는 수달 도랑이야.','«수력 에너지»는 «높은 곳에서 낮은 곳으로 떨어지는 물의 흐름»을 이용하는 에너지야.','폭포에서 떨어지는 물이 물레방아를 힘차게 돌리지!','비가 많이 온 뒤와 가뭄일 때를 비교해 봐.'],outro:['물이 많으면 물레방아가 빨리 돌고, 가뭄이면 느려지지.','그리고 물이 흐르지 않는 곳에는 수력 발전기를 놓을 수 없어!']},
+  tidal:{intro:['어서 오렴… 나는 거북 물결이란다.','«해양 에너지»는 «밀물과 썰물, 파도, 바닷물의 흐름» 등을 이용하는 에너지야.','이 바닷길은 바닷물이 세차게 들어왔다 나갔다 한단다.','밀물과 썰물 버튼을 눌러서 물속 바람개비가 어떻게 도는지 보렴.'],outro:['바닷물이 흐를 때는 잘 돌지만, 물이 멈추면 발전도 멈춘단다.','바닷물 흐름은 날마다 세기도 달라진단다. 천천히… 기억하렴.']},
+  geo:{intro:['흠흠, 나는 땅속을 잘 아는 두더지 포근이야.','«지열 에너지»는 «땅속 깊은 곳의 열»을 이용하는 에너지야.','땅속은 여름에도 겨울에도 온도가 거의 똑같거든!','계절 버튼을 눌러서 바깥 온도와 땅속 온도를 비교해 봐.'],outro:['땅속 온도가 일정하니까 날씨와 상관없이 늘 같은 양의 에너지를 얻을 수 있어.','대신 땅을 깊이 파야 해서 설치 비용이 아주 많이 들어. 흠흠.']},
+  bio:{intro:['음메~ 꼬순 농장에 온 걸 환영해! 나는 염소 보글이야.','«바이오 에너지»는 «식물, 가축의 분뇨, 음식물 쓰레기»를 이용하는 에너지야.','이 통에 넣으면 썩으면서 가스가 생기는데, 그 가스로 전기를 만들어!','하나씩 넣어 보고, 남은 찌꺼기는 퇴비로 꺼내 봐!'],outro:['버려지는 것들로 에너지도 얻고 퇴비도 얻으니 일석이조지!','하지만 연료를 계속 넣어 줘야 해. 연료가 없으면 멈춘다고, 음메~']}
+};
+async function talkIsle(v){
+  S.lock=true;v.frozen=true;v.ang=Math.atan2(P.x-v.x,P.y-v.y);
+  try{
+    if(v.chief){await talkChief(v);return}
+    const t=v.spot,tk=SPOTTALK[t];
+    if(!S.visited[t]){await say(v,tk.intro,true);const c=await choose(['좋아, 해 볼래!','나중에 할게.']);if(c!==0){await say(v,['그래, 언제든 다시 와!']);return}
+      await openExp(t);await say(v,tk.outro);unlockCard(t);S.visited[t]=true;await showCard(t);updateQuestUI();report();
+      const n=GORDER.filter(k=>S.visited[k]).length;toast(n>=6?'🦉 카드를 모두 모았어요! 마을 회관의 촌장님께 가 봐요':`⚡ 에너지 카드 ${n}/6 · 다른 주민도 찾아가 봐요`,3200);}
+    else{await say(v,['또 왔구나! 다시 체험해 볼래?'],true);const c=await choose(['다시 해 볼래!','괜찮아.']);if(c===0)await openExp(t);}
+  }finally{v.frozen=false;S.lock=false;}
+}
+async function talkChief(v){
+  const n=GORDER.filter(k=>S.visited[k]).length;
+  if(S.chiefDone){await say(v,['부두에 배를 준비해 두었네. 도토리 마을을 잘 부탁하네, 부엉!']);return}
+  if(n<6){await say(v,[`에너지 카드를 ${n}장 모았구먼. ${6-n}곳을 더 둘러보고 오게나.`,'주민들 머리 위에 ❗가 떠 있는 곳을 찾아가 보게. 부엉.']);return}
+  await say(v,['오오, 에너지 카드 6장을 모두 모았구먼! 대단하네, {name}.','태양 빛, 바람, 물, 바닷물, 땅속의 열, 식물과 가축의 분뇨처럼…','«자연에서 얻고 계속 이용할 수 있는 에너지»를 «재생 에너지»라고 한다네.','석탄이나 석유는 «쓰면 쓸수록 줄어들고», 태울 때 «기후변화»에 영향을 주지.']);
+  unlockCard('re');await showCard('re');
+  await say(v,['하지만 재생 에너지에도 어려운 점이 있다네.','날씨와 자연 현상에 따라 «항상 일정한 양을 얻기 어렵고», 발전기를 «설치하는 비용도 많이» 들지.','그러니 어디에, 어떤 발전기를 놓을지 잘 생각해야 하네.','«햇빛이 잘 드는 곳에는 태양광», «바람이 센 바닷가에는 풍력»처럼 말일세.',`자, 이건 도토리 마을에 보내는 마을 예산 ${fmtN(S.budget0)}도토리일세. 아껴서 잘 쓰게나.`]);
+  S.budget=S.budget0;sfx('quest');toast(`💰 마을 예산 ${fmtN(S.budget0)}도토리를 받았어요!`,3000);
+  await say(v,['부두에 배를 준비해 두었네. 잘 가게, 부엉부엉!']);
+  S.chiefDone=true;updateQuestUI();report();
+}
+
+/* ============ 배 타기 ============ */
+async function sail(){
+  S.trans=true;sfx('door');$('fade').style.opacity=1;await wait(700);
+  const toIsle=S.map==='village';const cap=$('caption');cap.textContent=toIsle?'⛵ 바다 건너 바람햇살 마을로 가는 중…':'⛵ 배운 것을 가득 안고 도토리 마을로 돌아가는 중…';cap.style.opacity=1;await wait(2200);cap.style.opacity=0;
+  if(toIsle){S.map='isle';S.stage='tour';P.x=1000;P.y=1380;P.ang=Math.PI;$('clkM').textContent='🌞 바람햇살 마을';BGM.mode='happy';S.gloomT=S.gloom=0;const o=ISLE.owl;o.x=1000;o.y=1300;o.ang=0;}
+  else{S.map='village';S.stage='install';P.x=1000;P.y=1680;P.ang=Math.PI;$('clkM').textContent='🏡 도토리 마을';BGM.mode='sad';const b=VILL.bori;b.x=1000;b.y=1600;b.ang=0;}
+  cam.x=P.x;cam.y=P.y;PARTS.length=0;updateQuestUI();updateHUD();report(true);
+  await wait(300);$('fade').style.opacity=0;await wait(500);S.trans=false;
+  S.lock=true;
+  if(toIsle){const o=ISLE.owl;o.frozen=true;await say(o,['어서 오게, 도토리 마을 친구! 나는 바람햇살 마을의 촌장 부엉이라네.','우리 마을에는 여섯 가지 재생 에너지 발전소가 있지.','마을 곳곳의 주민들에게 배우고, 에너지 카드 6장을 모두 모아 오게.','다 모으면 마을 회관으로 오게나. 부엉부엉!']);
+    $('fade').style.opacity=1;await wait(500);o.x=o.home.x;o.y=o.home.y;o.frozen=false;$('fade').style.opacity=0;toast('🧭 주민들을 찾아가 에너지 카드를 모아요! 오른쪽 위 ⚡ 버튼으로 언제든 볼 수 있어요',4200);}
+  else{const b=VILL.bori;b.frozen=true;await say(b,['{name}! 돌아왔구나, 깡총!','바람햇살 마을 촌장님이 마을 예산을 보내 주셨다고? 고마워!','마을 곳곳에 ⚡ 후보지 표지판을 세워 뒀어. 모두 10곳이야.','자리를 살펴보고, 알맞은 발전기를 골라 설치해 줘!','화면 위쪽에는 마을 전기 가운데 재생 에너지가 몇 %인지 보여 줄게.','목표는 일주일 평균 50% 이상! 다 설치하면 광장에 있는 나에게 말해 줘.']);
+    b.home={x:1000,y:840};b.x=1000;b.y=840;b.frozen=false;updateHUD();toast('🔧 ⚡ 표지판에 다가가 Ⓐ를 누르면 자리를 살펴볼 수 있어요',4200);}
+  S.lock=false;
+}
+
+/* ============ 일주일 운영 ============ */
+let SIM=null;const DAYLEN=6.5;
+function startWeek(){
+  S.mode='week';S.stage='week';SIM={day:0,t:0,spd:1,res:[],shown:-1};report(true);
+  ['quest','ctrl','menu'].forEach(id=>$(id).classList.add('hidden'));$('wk').classList.remove('hidden');$('wkSpd').textContent='⏩ 2배 빠르게';
+  renderWk();BGM.mode='happy';
+}
+$('wkSpd').onclick=()=>{if(!SIM)return;SIM.spd=SIM.spd===1?2:1;$('wkSpd').textContent=SIM.spd===1?'⏩ 2배 빠르게':'▶ 보통 빠르기';};
+function renderWk(){
+  const max=Math.max(DEMAND*1.25,...S.week.map(d=>genDay(S.inst,d).tot));
+  $('wkBars').innerHTML=S.week.map((d,i)=>{const done=i<=SIM.day,r=genDay(S.inst,d);let segs='';if(done)GORDER.forEach(t=>{if(r.by[t])segs+=`<i style="height:${r.by[t]/max*100}%;background:${GEN[t].col}"></i>`;});
+    return `<div class="wc ${i===SIM.day?'now':''}"><div class="col">${segs}<div class="dl" style="bottom:${DEMAND/max*100}%"></div></div><div class="wl">${i+1}일</div><div class="we">${done?WX.sky[d.sky][1]:'?'}</div><div class="wp">${done?pct(r.ratio)+'%':''}</div></div>`;}).join('');
+}
+function weekUpdate(dt){
+  if(!SIM)return;
+  if(SIM.shown!==SIM.day){SIM.shown=SIM.day;const d=S.week[SIM.day],r=genDay(S.inst,d);SIM.res[SIM.day]=r;renderWk();updateHUD();
+    const cap=$('caption');cap.innerHTML=`<b>${SIM.day+1}일째</b> · ${WX.sky[d.sky][1]} ${WX.sky[d.sky][0]} · ${WX.wind[d.wind][0]} · ${WX.sea[d.sea][0]} · ${WX.water[d.water][0]}<br><span class="say">${VILL[d.who].name}: “${d.say}”</span>`;cap.style.opacity=1;
+    sfx(r.ratio>=.5?'quest':'page');if(d.sky==='storm'||d.sky==='rain')wind(3);
+    S.gloomT=.78*(1-r.ratio);}
+  SIM.t+=dt*SIM.spd;
+  if(SIM.t>=DAYLEN){SIM.t=0;if(SIM.day<6)SIM.day++;else endWeek();}
+}
+function dayReason(d,inst,good){const has=t=>inst.some(g=>g.t===t);const R=[];
+  if(good){if(has('solar')&&d.sky==='sun')R.push('햇빛이 쨍쨍했어요');if(has('wind')&&(d.wind==='strong'||d.wind==='mid'))R.push(d.wind==='strong'?'바람이 세게 불었어요':'바람이 알맞게 불었어요');if(has('hydro')&&d.water==='much')R.push('폭포 물이 많았어요');if(has('tidal')&&d.sea==='strong')R.push('바닷물 흐름이 셌어요');}
+  else{if(has('wind')&&d.wind==='storm')R.push('태풍이라 풍력 발전기가 멈췄어요');else if(has('wind')&&(d.wind==='none'||d.wind==='light'))R.push(d.wind==='none'?'바람이 하나도 없었어요':'바람이 약했어요');if(has('solar')&&d.sky!=='sun')R.push(d.sky==='cloud'?'구름이 껴서 햇빛이 약했어요':d.sky==='rain'?'비가 와서 햇빛이 거의 없었어요':'햇빛도 거의 없었어요');if(has('tidal')&&d.sea==='weak')R.push('바닷물 흐름이 약했어요');if(has('hydro')&&d.water==='dry')R.push('폭포 물이 적었어요');}
+  if(!R.length)R.push(good?'날씨가 고르게 좋았어요':'날씨가 크게 바뀌지 않는 발전기가 적었어요');return R.slice(0,2).join(', ');}
+function endWeek(){
+  const res=S.week.map(d=>genDay(S.inst,d)),avg=res.reduce((s,r)=>s+r.ratio,0)/7;let hi=0,lo=0;res.forEach((r,i)=>{if(r.ratio>res[hi].ratio)hi=i;if(r.ratio<res[lo].ratio)lo=i;});
+  const out={avg,hi,lo,min:res[lo].ratio,cost:spent(),inst:S.inst.map(g=>({t:g.t,site:g.site})),mode:S.weekMode,days:res.map(r=>pct(r.ratio))};
+  S.results.push(out);if(!S.best||avg>S.best.avg)S.best=out;S.last=out;S.tries++;
+  SIM=null;$('wk').classList.add('hidden');$('caption').style.opacity=0;S.mode='play';S.stage='result';S.lock=true;report(true);showResult(out);
+}
+function showResult(o){
+  const max=Math.max(DEMAND*1.25,...S.week.map(d=>genDay(S.inst,d).tot));
+  const bars=S.week.map((d,i)=>{const r=genDay(S.inst,d);let segs='';GORDER.forEach(t=>{if(r.by[t])segs+=`<i style="height:${r.by[t]/max*100}%;background:${GEN[t].col}"></i>`;});
+    return `<div class="wc ${i===o.hi?'hi':i===o.lo?'lo':''}"><div class="col">${segs}<div class="dl" style="bottom:${DEMAND/max*100}%"></div></div><div class="wl">${i+1}일</div><div class="we">${WX.sky[d.sky][1]}</div><div class="wp">${pct(r.ratio)}%</div></div>`;}).join('');
+  const ok=o.avg>=.5;
+  $('resCard').innerHTML=`<h2>📊 일주일 운영 결과</h2><div class="sub">${S.weekMode==='random'?'🎲 랜덤 날씨':'📅 기본 날씨'} · 발전기 ${S.inst.length}대 · ${S.tries}번째 도전</div>
+   <div class="chart">${bars}</div><div class="leg"><span style="color:#d0563a">┅ 마을 소비량 ${DEMAND}kWh</span>${GORDER.filter(t=>S.inst.some(g=>g.t===t)).map(t=>`<span><i style="background:${GEN[t].col}"></i>${GEN[t].short}</span>`).join('')}</div>
+   <div class="big ${ok?'ok':'no'}">일주일 평균 재생 에너지 비율 <b>${pct(o.avg)}%</b><br><small>${ok?'🎯 목표 50% 달성!':'🎯 목표 50%에 조금 못 미쳤어요'}</small></div>
+   <div class="rows"><div>🔼 가장 높은 날 <b>${o.hi+1}일째 ${pct(genDay(S.inst,S.week[o.hi]).ratio)}%</b> — ${dayReason(S.week[o.hi],S.inst,true)}</div><div>🔽 가장 낮은 날 <b>${o.lo+1}일째 ${pct(o.min)}%</b> — ${dayReason(S.week[o.lo],S.inst,false)}</div><div>💰 쓴 예산 <b>${fmtN(o.cost)}도토리</b> / ${fmtN(S.budget0)}도토리 (남은 예산 ${fmtN(S.budget)})</div></div>
+   <div style="text-align:center;margin-top:12px"><button class="btn" id="resNext">다음 ▶</button></div>`;
+  $('res').classList.remove('hidden');sfx('done');$('resNext').onclick=()=>{$('res').classList.add('hidden');monologue(o);};
+}
+async function monologue(o){
+  S.lock=true;const lo=o.lo+1;const lines=[`일주일 동안 재생 에너지로 마을 전기의 평균 ${pct(o.avg)}%를 만들었어.`];
+  if(o.min<.5)lines.push(`그런데 ${lo}일째에는 ${dayReason(S.week[o.lo],S.inst,false).replace(/요$/,'서')} 전기가 많이 모자랐어.`);
+  lines.push('재생 에너지는 날씨와 자연 현상에 따라 «항상 일정한 양을 얻기 어렵»구나.');
+  lines.push(S.budget<500?'발전기를 더 놓고 싶어도… 예산이 바닥났어. «설치 비용»이 정말 많이 들어.':'발전기 하나하나를 «설치하는 데 비용이 정말 많이» 들었어.');
+  lines.push('그래도 햇빛, 바람, 물은 쓸수록 사라지는 석탄과 달리 «계속 이용할 수 있어»!','앞으로 «기술이 더 발전»하면, 더 싸고 더 많은 전기를 만드는 발전기가 생기겠지?');
+  await say(PLAYER,lines);
+  S.gloomT=.78*(1-o.avg);for(const id in VILL){VILL[id].jump=T+Math.random()*.4;}sfx('done');
+  for(let i=0;i<30;i++)part(P.x/U+(Math.random()-.5)*8,2+Math.random()*2,P.y/U+(Math.random()-.5)*6,(Math.random()-.5),1+Math.random(),(Math.random()-.5),i%2?'#ffd23f':'#fff3a0',.12,1.6,true);
+  if(!S.cards.includes('limit')){unlockCard('limit');await showCard('limit');}
+  await say(PLAYER,['다른 자리에, 다른 발전기를 놓으면 어떻게 될까?'],true);
+  const c=await choose(['🔄 다시 설치해 볼래 (같은 날씨)','🎲 다시 설치해 볼래 (랜덤 날씨)','⚡ 이대로 마무리할래']);
+  S.lock=false;
+  if(c<2){S.inst=[];S.budget=S.budget0;S.weekMode=c===1?'random':(S.setWeather==='random'?'random':'fixed');S.week=S.weekMode==='random'?randomWeek():WEEK_FIXED;S.stage='install';S.gloomT=.78;S.prevDay=0;
+    toast('🔄 예산을 되돌렸어요. 다시 설치해 보세요!',3200);['quest'].forEach(id=>$(id).classList.remove('hidden'));if(isTouch())$('ctrl').classList.remove('hidden');updateQuestUI();updateHUD();report(true);}
+  else finishGame();
+}
+async function finishGame(){S.stage='review';S.mode='quiz';report(true);$('quest').classList.add('hidden');CORDER.forEach(unlockCard);await reviewBook();S.stage='quiz';report();await startQuiz(true);showEnd();}
+function showEnd(){
+  const b=S.best||{avg:0,inst:[],cost:0,min:0};
+  $('endCard').innerHTML=`<div class="k">5학년 2학기 과학 · 4. 자원과 에너지</div><h1>재생 에너지가 궁금해!</h1>
+  <div class="k">내가 만든 도토리 마을의 재생 에너지</div>
+  <div class="stats"><div class="st"><div style="font-size:30px">🌱</div><div>${pct(b.avg)}%</div><small>가장 높은 일주일 평균</small></div><div class="st"><div style="font-size:30px">🔽</div><div>${pct(b.min)}%</div><small>그때 가장 낮은 날</small></div><div class="st"><img src="${ICONURL.acorn}"><div>${fmtN(b.cost)}</div><small>쓴 예산(도토리)</small></div><div class="st"><div style="font-size:30px">🔄</div><div>${S.tries}번</div><small>도전 횟수</small></div></div>
+  <div class="gens">${b.inst.map(g=>`<span><img src="${ICONURL[GEN[g.t].icon]}">${GEN[g.t].short} · ${SITES[g.site-1].name}</span>`).join('')}</div>
+  <div class="sum">🌱 재생 에너지는 태양 빛, 바람, 물처럼 자연에서 얻고 <b>계속 이용할 수 있는 에너지</b>예요. 하지만 <b>항상 일정한 양을 얻기 어렵고 설치 비용이 많이 들어서</b>, 더 잘 이용하려면 기술 발전이 필요해요.</div>
+  <div class="q">💬 생각해 보기<br>우리 학교나 우리 동네에는 어떤 재생 에너지 발전기를 어디에 설치하면 좋을까요?</div>
+  <div class="k" style="margin-top:12px">🧠 퀴즈 점수: ${S.quizBest}점 / ${QUIZ.length}점</div><div class="row"><button class="btn" id="endQuiz" style="background:#5c9bd5;box-shadow:0 4px 0 #3f78ad">🧠 퀴즈 다시 풀기</button><button class="btn or" id="endBook">⚡ 에너지 카드 보기</button><button class="btn" onclick="location.reload()">처음부터 다시 하기</button></div>`;
+  $('end').classList.remove('hidden');S.mode='end';S.stage='done';report(true);$('endBook').onclick=()=>openBook();$('endQuiz').onclick=()=>startQuiz(false).then(showEnd);
+}
+
+/* ============ 비밀번호 ============ */
+const TEACHER_PW='0803';
+function askPass(title){return new Promise(res=>{const lk=S.lock;S.lock=true;$('psT').textContent=title;$('psIn').value='';$('psE').textContent='';$('pass').classList.remove('hidden');setTimeout(()=>$('psIn').focus(),50);
+  const done=v=>{$('pass').classList.add('hidden');S.lock=lk;$('psIn').onkeydown=null;res(v);};
+  const chk=()=>{if($('psIn').value===TEACHER_PW){sfx('quest');done(true);}else{sfx('empty');$('psE').textContent='비밀번호가 달라요.';$('psIn').value='';$('psIn').focus();}};
+  $('psOk').onclick=chk;$('psNo').onclick=()=>done(false);$('psIn').onkeydown=e=>{e.stopPropagation();if(e.key==='Enter')chk();if(e.key==='Escape')done(false);};});}
+
+/* ============ 마무리 퀴즈 ============ */
+const QUIZ=[
+ {q:'<b>O X 퀴즈</b> · 재생 에너지는 태양 빛, 바람, 물처럼 자연에서 얻을 수 있고 계속 이용할 수 있는 에너지예요.',o:['⭕ 맞아요','❌ 틀려요'],ox:true,e:'맞아요! 자연에서 얻고 <b>계속 이용할 수 있는 에너지</b>를 재생 에너지라고 해요.'},
+ {q:'<b>O X 퀴즈</b> · 바이오 에너지는 식물, 가축의 분뇨, 음식물 쓰레기를 이용해요.',o:['⭕ 맞아요','❌ 틀려요'],ox:true,e:'맞아요! 꼬순 농장의 가스 통처럼 <b>식물, 가축의 분뇨, 음식물 쓰레기</b>로 에너지를 얻어요.'},
+ {q:'<b>O X 퀴즈</b> · 해양 에너지는 땅속 깊은 곳의 열을 이용해요.',o:['❌ 틀려요','⭕ 맞아요'],ox:true,fix:['⭕ 맞아요','❌ 틀려요'],e:'틀린 말이에요! 땅속 깊은 곳의 열을 이용하는 것은 <b>지열 에너지</b>예요. 해양 에너지는 밀물과 썰물, 파도, 바닷물의 흐름 등을 이용해요.'},
+ {q:'제주도에 풍력 발전기가 많은 까닭은 무엇일까요?',o:['바람이 세고 꾸준히 불기 때문이에요.','햇빛이 하루 종일 비추기 때문이에요.','높은 폭포가 많기 때문이에요.','땅속이 아주 뜨겁기 때문이에요.'],e:'풍력 발전기는 <b>바람이 많이 부는 곳</b>에 설치해야 전기를 많이 만들어요. 바닷가 언덕도 그래서 좋은 자리였어요.'},
+ {q:'높은 곳에서 낮은 곳으로 떨어지는 물의 흐름을 이용하는 재생 에너지는 무엇일까요?',o:['수력','풍력','지열 에너지','태양 에너지'],e:'<b>수력</b>은 폭포처럼 높은 곳에서 떨어지는 물의 흐름을 이용해요. 그래서 물이 흐르지 않는 말라 버린 연못에는 설치할 수 없었어요.'},
+ {q:'구름이 끼고 비가 오는 날, 발전량이 가장 크게 줄어드는 것은 무엇일까요?',o:['태양광 패널','지열 냉난방기','바이오가스 발전기','수력 발전기'],e:'<b>태양광 패널</b>은 햇빛으로 전기를 만들어서 구름이나 비에 약해요. 오히려 비가 온 뒤에는 폭포 물이 많아져 수력 발전량이 늘었어요.'},
+ {q:'계절이나 날씨에 상관없이 거의 일정한 양을 얻을 수 있는 에너지는 무엇일까요?',o:['지열 에너지','풍력','태양 에너지','해양 에너지'],e:'땅속 온도는 여름에도 겨울에도 거의 일정해서 <b>지열 에너지</b>는 늘 같은 양을 얻을 수 있어요. 대신 설치 비용이 많이 들어요.'},
+ {q:'태풍이 오면 풍력 발전기는 어떻게 될까요?',o:['고장 나지 않도록 날개를 멈춰요.','평소보다 열 배 더 많은 전기를 만들어요.','바닷속으로 들어가 숨어요.','저절로 태양광 패널로 바뀌어요.'],e:'바람이 너무 세면 고장 날 수 있어서 <b>안전을 위해 멈춰요</b>. 그래서 태풍이 온 날은 재생 에너지 비율이 뚝 떨어졌어요.'},
+ {q:'재생 에너지의 한계(어려운 점)로 알맞은 것은 무엇일까요?',o:['항상 일정한 양을 얻기 어렵고 설치 비용이 많이 들어요.','한번 쓰면 다시는 얻을 수 없어요.','쓸수록 석탄처럼 줄어들어요.','자연에서는 절대 얻을 수 없어요.'],e:'재생 에너지는 <b>날씨에 따라 얻는 양이 달라지고, 설치 비용이 많이 들어요</b>. 마을 예산으로 원하는 만큼 발전기를 놓을 수 없었던 것처럼요.'},
+ {q:'재생 에너지를 더 잘 이용하려면 무엇이 필요할까요?',o:['더 싸고 효율이 좋은 발전기를 만드는 기술 발전','아무 곳에나 같은 발전기를 많이 세우기','석탄을 더 많이 캐기','재생 에너지를 쓰지 않기'],e:'재생 에너지의 한계를 줄이려면 <b>기술 발전</b>이 필요해요. 알맞은 곳에 알맞은 발전기를 놓는 것도 중요해요.'}
+];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+let QZ=null;
+function startQuiz(first){return new Promise(res=>{QZ={i:0,score:0,res,first,order:QUIZ.slice(),ans:[]};S.quizAns=[];S.quizRight=0;if(!first){S.stage='quiz';report();}$('quiz').classList.remove('hidden');renderQ();});}
+function renderQ(){
+  const it=QZ.order[QZ.i];let opts;if(it.ox){const L=it.fix||it.o;opts=L.map(t=>({t,ok:t===it.o[0]}));}else opts=shuffle(it.o.map((t,k)=>({t,ok:k===0})));const n=QZ.order.length;QZ.opts=opts;
+  $('qzCard').innerHTML=`<div class="top">🧠 마무리 퀴즈<div class="bar"><i style="width:${QZ.i/n*100}%"></i></div>${QZ.i+1} / ${n}</div>
+   <div class="qq">${it.q}</div>${opts.map((o,k)=>`<button class="op ${it.ox?'oxb':''}" data-k="${k}"><span>${it.ox?'':'ABCD'[k]}</span>${o.t}</button>`).join('')}<div id="qzEx"></div>`;
+  $('qzCard').querySelectorAll('.op').forEach(b=>b.onclick=()=>answer(+b.dataset.k));
+}
+function answer(k){
+  const it=QZ.order[QZ.i],ok=QZ.opts[k].ok,btns=$('qzCard').querySelectorAll('.op');QZ.ans[QZ.i]=ok;S.quizAns=QZ.ans.slice();S.quizRight=QZ.ans.filter(Boolean).length;report();
+  btns.forEach((b,j)=>{b.disabled=true;if(QZ.opts[j].ok)b.classList.add('right');else if(j===k)b.classList.add('wrong');});
+  if(ok){QZ.score++;sfx('done');}else sfx('empty');
+  const last=QZ.i===QZ.order.length-1;
+  $('qzEx').innerHTML=`<div class="ex ${ok?'r':'w'}">${ok?'⭕ 정답이에요!':'❌ 아쉬워요!'} ${it.e}</div><div style="text-align:center"><button class="btn" id="qzNext">${last?'결과 보기':'다음 문제 ▶'}</button></div>`;
+  $('qzNext').onclick=()=>{QZ.i++;if(QZ.i<QZ.order.length){sfx('page');renderQ();}else quizResult();};
+  $('qzEx').scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+function quizResult(){
+  const sc=QZ.score,n=QZ.order.length;S.quizBest=Math.max(S.quizBest,sc);S.quizLast=sc;S.stage='done';report(true);
+  const st=sc>=9?'⭐⭐⭐':sc>=6?'⭐⭐':sc>=3?'⭐':'🌱';
+  const msg=sc>=9?'재생 에너지 박사예요! 바람햇살 마을 촌장님도 깜짝 놀라겠어요.':sc>=6?'잘했어요! 에너지 카드를 한 번 더 읽어 보면 만점도 문제없어요.':'괜찮아요! ⚡ 에너지 카드를 다시 읽고 한 번 더 도전해 봐요.';
+  sfx('quest');
+  $('qzCard').innerHTML=`<div class="res"><div class="top" style="justify-content:center">🧠 퀴즈 결과</div><div class="big">${st}</div><div class="sc">${sc} / ${n}</div><p>${msg}</p>
+   <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><button class="btn or" id="qzBook">⚡ 에너지 카드 보기</button><button class="btn" id="qzDone">${QZ.first?'마무리하기':'닫기'}</button></div></div>`;
+  $('qzBook').onclick=()=>openBook();
+  $('qzDone').onclick=()=>{$('quiz').classList.add('hidden');const r=QZ.res;QZ=null;r();};
+}
+
+/* ============ 입력 ============ */
+const KEYS={};
+addEventListener('keydown',e=>{
+  if(document.activeElement===$('psIn'))return;
+  if(['clsIn','schIn','nameIn'].some(id=>document.activeElement===$(id))){if(e.key==='Enter')startGame();return;}
+  if(document.activeElement&&document.activeElement.tagName==='INPUT')return;
+  KEYS[e.code]=true;
+  if(CHO&&(e.code==='ArrowUp'||e.code==='KeyW')){CHO.sel=(CHO.sel+CHO.opts.length-1)%CHO.opts.length;drawCho();e.preventDefault();return}
+  if(CHO&&(e.code==='ArrowDown'||e.code==='KeyS')){CHO.sel=(CHO.sel+1)%CHO.opts.length;drawCho();e.preventDefault();return}
+  if(['Space','Enter','KeyZ','KeyE','NumpadEnter'].includes(e.code)){e.preventDefault();if(!e.repeat){if(!$('note').classList.contains('hidden')){$('nOk').click();return}onA();}}
+  if(e.code==='KeyN'&&!e.repeat&&S.mode!=='title'&&S.mode!=='week'&&!DLG&&!CHO){if($('book').classList.contains('hidden'))openBook();else if(!BOOK.review)$('book').classList.add('hidden');}
+  if(e.code==='Escape'){if(INST)closeSite();$('hDet').classList.add('hidden');if(!BOOK.review)$('book').classList.add('hidden');}
+});
+addEventListener('keyup',e=>{KEYS[e.code]=false;});
+const JOY={x:0,y:0,id:null,bx:0,by:0};
+const jz=$('joyZone'),jb=$('joyBase'),jk=$('joyKnob');
+jz.addEventListener('pointerdown',e=>{JOY.id=e.pointerId;JOY.bx=e.clientX;JOY.by=e.clientY;const r=jz.getBoundingClientRect();jb.style.display='block';jb.style.left=(e.clientX-65-r.left)+'px';jb.style.top=(e.clientY-65-r.top)+'px';jz.setPointerCapture(e.pointerId);initAudio();});
+jz.addEventListener('pointermove',e=>{if(e.pointerId!==JOY.id)return;let dx=e.clientX-JOY.bx,dy=e.clientY-JOY.by;const d=Math.hypot(dx,dy),m=48;if(d>m){dx=dx/d*m;dy=dy/d*m;}JOY.x=dx/m;JOY.y=dy/m;jk.style.left=(35+dx)+'px';jk.style.top=(35+dy)+'px';});
+const joyEnd=e=>{if(e.pointerId!==JOY.id)return;JOY.id=null;JOY.x=JOY.y=0;jb.style.display='none';jk.style.left='35px';jk.style.top='35px';};
+jz.addEventListener('pointerup',joyEnd);jz.addEventListener('pointercancel',joyEnd);
+$('btnA').addEventListener('pointerdown',e=>{e.preventDefault();onA();});
+cv.addEventListener('pointerdown',()=>{if(DLG)dlgAdvance();});
+const isTouch=()=>matchMedia('(pointer:coarse)').matches||'ontouchstart' in window;
+$('menuBtn').onclick=()=>$('menu').classList.toggle('hidden');
+$('mSound').onclick=()=>{muted=!muted;if(master)master.gain.value=muted?0:.9;$('mSound').textContent=muted?'🔈 소리 켜기':'🔊 소리 끄기';};
+$('mRestart').onclick=()=>location.reload();
+$('mEnding').onclick=async()=>{$('menu').classList.add('hidden');if(S.mode!=='play'||busy())return;if(!await askPass('엔딩 미리 보기는 선생님만 쓸 수 있어요. 비밀번호를 입력하세요.'))return;
+  GORDER.concat(['re']).forEach(k=>{unlockCard(k);S.visited[k]=true;});S.chiefDone=true;
+  if(S.map!=='village'){S.map='village';P.x=1000;P.y=900;cam.x=P.x;cam.y=P.y;$('clkM').textContent='🏡 도토리 마을';VILL.bori.home={x:1000,y:840};VILL.bori.x=1000;VILL.bori.y=840;}
+  S.stage='install';S.budget=S.budget0;S.inst=[{site:4,t:'wind',c:1,born:-9},{site:6,t:'hydro',c:1,born:-9},{site:1,t:'solar',c:1,born:-9}];S.budget-=spent();updateQuestUI();updateHUD();startWeek();};
+
+/* ============ 충돌 ============ */
+const W_=2000;
+function solid(x,y,r){
+  if(S.map==='village'){
+    if(x<50||x>W_-50)return true;
+    if(y-r*.6<cliffY(x))return true;
+    if(y>1772&&!onPier('village',x,y))return true;if(onPier('village',x,y)&&(Math.abs(x-DOCKV.x)>34||y>DOCKV.y1-12))return true;
+    for(const id in VILL){const h=VILL[id].house;if(x>h.x-66-r&&x<h.x+66+r&&y>h.y-90&&y<h.y+4+r*.4)return true;}
+    const dx=(x-POND.x)/(POND.rx+r*.6),dy=(y-POND.y)/(POND.ry+r*.5);if(dx*dx+dy*dy<1)return true;
+    const px=(x-POOLV.x)/(POOLV.rx+r),py=(y-POOLV.y)/(POOLV.ry+r);if(px*px+py*py<1)return true;
+    if(Math.abs(x-1420)<26+r&&Math.abs(y-905)<20+r*.4)return true;
+    for(const g of S.inst){const s=SITES[g.site-1];if(s.roof||s.pond||g.t==='tidal')continue;const rad=g.t==='wind'?16:g.t==='bio'?42:g.t==='hydro'?24:24;if(Math.hypot(x-s.gx,(y-s.gy)*1.4)<rad+r)return true;}
+  }else{
+    if(isleD(x,y)>.965&&!onPier('isle',x,y))return true;if(onPier('isle',x,y)&&(Math.abs(x-DOCKI.x)>34||y>DOCKI.y1-12))return true;
+    if(y-r*.6<plateY(x))return true;
+    if(Math.abs(x-1000)<120+r&&y>230&&y<380+r*.4)return true;
+    for(const h of [{x:1300,y:560},{x:1420,y:1000},{x:560,y:1000}])if(x>h.x-66-r&&x<h.x+66+r&&y>h.y-90&&y<h.y+4+r*.4)return true;
+    if(Math.abs(x-600)<55+r&&y>1060&&y<1158+r*.4)return true;
+    if(Math.hypot(x-760,(y-1120)*1.3)<44+r)return true;
+    if(y>1288&&y<1312&&x>460&&x<905)return true;
+    const px=(x-POOLI.x)/(POOLI.rx+r),py=(y-POOLI.y)/(POOLI.ry+r);if(px*px+py*py<1)return true;
+    for(const[a,b]of[[1820,520],[1880,740],[1810,960],[300,650],[420,640],[350,760],[470,750],[650,300],[706,300],[1180,560]])if(Math.hypot(x-a,(y-b)*1.4)<26+r)return true;
+  }
+  return false;
+}
+
+/* ============ 업데이트 ============ */
+const PARTS=[];
+function part(x,y,z,vx,vy,vz,col,size,life,float){PARTS.push({x,y,z,vx,vy,vz,col:col==='heart'?'heart':hex(col),size,life,max:life,float:!!float,rot:Math.random()*6,map:S.map});}
+let lastStep=0;
+function update(dt){
+  T+=dt;P.moving=false;
+  if(S.mode==='play'&&!busy()){
+    let mx=(KEYS.ArrowRight||KEYS.KeyD?1:0)-(KEYS.ArrowLeft||KEYS.KeyA?1:0)+JOY.x,my=(KEYS.ArrowDown||KEYS.KeyS?1:0)-(KEYS.ArrowUp||KEYS.KeyW?1:0)+JOY.y;
+    const m=Math.hypot(mx,my);
+    if(m>.15){mx/=Math.max(1,m);my/=Math.max(1,m);const spd=230*Math.min(1,m),nx=P.x+mx*spd*dt,ny=P.y+my*spd*dt;
+      if(!solid(nx,P.y,14))P.x=nx;if(!solid(P.x,ny,14))P.y=ny;P.moving=true;P.walkT+=dt;
+      const ta=Math.atan2(mx,my);let da=ta-P.ang;while(da>Math.PI)da-=Math.PI*2;while(da<-Math.PI)da+=Math.PI*2;P.ang+=da*Math.min(1,dt*14);
+      if(T-lastStep>.28){lastStep=T;sfx('step');}}
+  }
+  const a=P.action;
+  if(a){a.t+=dt;const hh=Math.floor(a.t*3.3+.5);if(hh>a.hits&&a.t<a.dur-.1){a.hits=hh;sfx('hammer');for(let i=0;i<4;i++)part(a.site.gx/U+(Math.random()-.5),.6,a.site.gy/U,(Math.random()-.5)*2,1+Math.random()*2,(Math.random()-.5)*2,'#e6d6a8',.12,.6);}
+    if(a.t>=a.dur){P.action=null;finishInstall(a);}}
+  const chars=S.map==='village'?VILL:ISLE;
+  for(const id in chars){const v=chars[id];
+    if(v.frozen||S.mode==='week'||S.lock){v.moving=false;continue;}
+    const d=Math.hypot(P.x-v.x,P.y-v.y);
+    if(d<100&&S.mode==='play'){v.moving=false;v.ang=Math.atan2(P.x-v.x,P.y-v.y);continue;}
+    v.wt-=dt;if(v.wt<=0){v.wt=2+Math.random()*4;const an=Math.random()*Math.PI*2,rad=Math.random()*(S.map==='isle'?40:70);v.tx=v.home.x+Math.cos(an)*rad;v.ty=v.home.y+Math.abs(Math.sin(an))*rad*.6+10;}
+    const dx=v.tx-v.x,dy=v.ty-v.y,dd=Math.hypot(dx,dy);
+    if(dd>4){const nx=v.x+dx/dd*55*dt,ny=v.y+dy/dd*55*dt;if(!solid(nx,ny,12)){v.x=nx;v.y=ny;v.moving=true;v.walkT+=dt;v.ang=Math.atan2(dx,dy);}else{v.tx=v.x;v.ty=v.y;v.moving=false;}}else v.moving=false;
+  }
+  for(let i=PARTS.length-1;i>=0;i--){const p=PARTS[i];p.life-=dt;if(p.life<=0){PARTS.splice(i,1);continue;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;if(p.float){p.vx*=.97;p.vz*=.97;}else p.vy-=9*dt;p.rot+=dt*5;}
+  if(S.mode==='week')weekUpdate(dt);
+  if(S.map==='village'&&S.stage==='install'&&S.mode==='play'){S.prevT+=dt;if(S.prevT>40){S.prevT=0;S.prevDay=(S.prevDay+1)%7;const d=S.week[S.prevDay];toast(`🌤️ 날씨가 바뀌었어요: ${wxText(d)}`,2600);}const r=genDay(S.inst,curWx());S.gloomT=.78*(1-r.ratio);}
+  if(S.map==='isle')S.gloomT=0;
+  S.gloom=lerp(S.gloom,S.gloomT,Math.min(1,dt*1.2));
+  if(S.mode==='week'){cam.x=lerp(cam.x,1000+Math.sin(T*.12)*250,Math.min(1,dt*.8));cam.y=lerp(cam.y,1000,Math.min(1,dt*.8));}
+  else if(S.mode!=='title'){cam.x=lerp(cam.x,P.x,Math.min(1,dt*5));cam.y=lerp(cam.y,P.y,Math.min(1,dt*5));}
+  hudT+=dt;if(hudT>.4){hudT=0;updateHUD();}
+  if(EX)expDraw(dt);
+  dlgTick(dt);bgmTick();
+}
+
+/* ============ 렌더 ============ */
+let VP=null,BENDZ=0,BEND=.0065,CAMPOS=[0,0,0];
+const SKYC={sun:[.62,.85,.98],cloud:[.66,.74,.82],rain:[.55,.6,.66],storm:[.4,.44,.52]};
+const SUNK={sun:1,cloud:.72,rain:.56,storm:.42};
+function setEnv(eye,tgt,fov=34){
+  const asp=VW/VH;VP=m4.mul(m4.persp(fov*Math.PI/180,asp,.5,160),m4.look(eye,tgt,[0,1,0]));
+  BENDZ=tgt[2];CAMPOS=eye;
+  gl.uniformMatrix4fv(LOC.uVP,false,VP);gl.uniform1f(LOC.uBend,BEND);gl.uniform1f(LOC.uBendZ,BENDZ);gl.uniform3fv(LOC.uCam,eye);
+  const L=[.35,1,.55],l=Math.hypot(...L);gl.uniform3fv(LOC.uL,L.map(v=>v/l));
+  gl.uniform1f(LOC.uGloom,clamp(S.gloom,0,1));gl.uniform1f(LOC.uWarm,S.warm);
+  const d=curWx(),k=SUNK[d.sky],sc=SKYC[d.sky];
+  gl.uniform3fv(LOC.uSun,[.55*k,.51*k,.44*k]);gl.uniform3fv(LOC.uSky,[.56,.61,.66].map(v=>v*(.75+.25*k)));gl.uniform3fv(LOC.uGnd,[.42,.4,.34].map(v=>v*(.8+.2*k)));gl.uniform3fv(LOC.uFog,sc);gl.uniform1f(LOC.uFogN,S.mode==='week'?40:26);gl.uniform1f(LOC.uFogF,S.mode==='week'?90:62);
+  const pl=new F32(16),pc=new F32(12);for(let i=0;i<4;i++)pl[i*4+3]=.001;gl.uniform4fv(LOC.uPL,pl);gl.uniform3fv(LOC.uPC,pc);
+  const g=S.gloom,gc=[sc[0]*(1-g)+.6*g,sc[1]*(1-g)+.62*g,sc[2]*(1-g)+.66*g];gl.clearColor(gc[0],gc[1],gc[2],1);
+}
+function proj(x,y,z){const dz=z-BENDZ;const v=m4.xf(VP,x,y-dz*dz*BEND,z);if(v[3]<=0)return null;return{x:(v[0]/v[3]*.5+.5)*VW,y:(1-(v[1]/v[3]*.5+.5))*VH};}
+const GSPIN={};
+function rotorSpeed(t,d){if(t==='wind')return[0,1.2,3.5,6.5,0][['none','light','mid','strong','storm'].indexOf(d.wind)];if(t==='hydro')return 1.6*WX.water[d.water][2];if(t==='tidal')return 2.4*WX.sea[d.sea][2];return 1;}
+function spin(key,spd,dt){GSPIN[key]=(GSPIN[key]||0)+spd*dt;return GSPIN[key];}
+let lastR=0;
+function drawTurbine(x,y,h,key,spd,dt,s=1){const B=C(Tm(x/U,h,y/U),Sm(s));draw(MS.tower,B);const a=spin(key,spd,dt);const H=C(B,Tm(0,5.2,.62));for(let i=0;i<3;i++)draw(MS.blade,C(H,RZ(a+i*2.094)));draw(MS.sph,C(H,Sm(.2)),hex('#dfe4e8'));SHADOWS.push([x,y,.6*s,h]);}
+function drawWheel(x,y,h,key,spd,dt){draw(MS.wheel,C(Tm(x/U,h+1.05,y/U),RZ(-spin(key,spd,dt))));}
+function drawGen(g,dt){
+  const s=SITES[g.site-1],d=curWx(),born=clamp((T-g.born)/.5,0,1),sc=born<1?Math.sin(born*Math.PI/2)*(1+.25*Math.sin(born*Math.PI)):1;if(sc<=0)return;
+  const X=s.gx,Y=s.gy,h=s.pond?hVil(X,Y):Math.max(0,hVil(X,Y));
+  if(g.t==='solar'){if(s.roof){const v=VILL[s.roof>0?'bori':'dubu'];draw(MS.panelTop,C(ROOFM(v.house,s.roof),Sm(sc)));}else{draw(MS.panel,C(Tm(X/U,h,Y/U),Sm(sc*1.1)));SHADOWS.push([X,Y,.9,h]);}}
+  else if(g.t==='wind')drawTurbine(X,Y,h,'w'+g.site,rotorSpeed('wind',d),dt,sc*.9);
+  else if(g.t==='hydro'){draw(MS.hut,C(Tm(X/U-1.7,h,Y/U+.2),Sm(sc)));drawWheel(X,Y,h,'h'+g.site,rotorSpeed('hydro',d)*(sc),dt);}
+  else if(g.t==='tidal'){const lv=seaLevel();draw(MS.buoy,C(Tm(X/U,lv,Y/U),RZ(Math.sin(T*1.3)*.06),Sm(sc)));const a=spin('t'+g.site,rotorSpeed('tidal',d),dt);const H=C(Tm(X/U,lv-.8,Y/U+.6),Sm(.3*sc));for(let i=0;i<3;i++)draw(MS.blade,C(H,RZ(a+i*2.094)));}
+  else if(g.t==='geo'){draw(MS.geoU,C(Tm(X/U,h,Y/U),Sm(sc)));const a=spin('g'+g.site,4,dt);draw(MS.box,C(Tm(X/U,h+.5,Y/U+.36),RZ(a),Sm(.5,.06,.02)),hex('#7d8a94'));draw(MS.box,C(Tm(X/U,h+.5,Y/U+.36),RZ(a+1.57),Sm(.5,.06,.02)),hex('#7d8a94'));SHADOWS.push([X,Y,.7,h]);}
+  else if(g.t==='bio'){draw(MS.bioT,C(Tm(X/U,h,Y/U),Sm(.8*sc)));const gl_=.6+.4*Math.sin(T*3);draw(MS.sph,C(Tm(X/U+1.45,h+1.05,Y/U),Sm(.14)),[1,.9,.5],1,[.8*gl_,.6*gl_,.2]);SHADOWS.push([X,Y,1.1,h]);
+    if(Math.random()<dt*2)part(X/U+(Math.random()-.5)*.8,h+1.4,Y/U,0,.6,0,'#ffffff',.06,1.2,true);}
+}
+function seaLevel(){const d=curWx();return -1.32+Math.sin(T*.5)*.1*WX.sea[d.sea][2];}
+function drawFall(x,yc,top,w,k){const X=x/U,Z=yc/U+.12,ww=w*(.3+.7*Math.min(1,k/1.4));
+  draw(MS.box,C(Tm(X,top/2,Z),Sm(ww,top,.16)),hex('#9fdcf5'),.78,[.15,.22,.28]);
+  for(let i=0;i<7;i++){const ph=(T*1.5+i/7)%1;draw(MS.box,C(Tm(X+(i-3)*ww/7.5,top*(1-ph),Z+.1),Sm(.07,.45,.04)),[1,1,1],.65*(1-ph),[.4,.4,.4]);}
+  for(let i=0;i<2;i++){const ph=(T*.8+i/2)%1;draw(MS.disc,C(Tm(X,.05,Z+.5),Sm(ww*.45+ph*1.1,1,.3+ph*.45)),[1,1,1],.4*(1-ph),[.4,.4,.4]);}}
+function drawStrip(path,w,y){for(let i=1;i<path.length;i++){const a=path[i-1],b=path[i],mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,len=Math.hypot(b[0]-a[0],b[1]-a[1])/U,an=Math.atan2(b[0]-a[0],b[1]-a[1]);draw(MS.box,C(Tm(mx/U,y,my/U),RY(an),Sm(w,.02,len+.5)),hex('#5fc3e8'),.8,[.05,.1,.14]);}}
+const RAIN=[];for(let i=0;i<260;i++)RAIN.push({x:Math.random(),y:Math.random(),z:Math.random()});
+const CLOUDS=[];for(let i=0;i<9;i++)CLOUDS.push({x:Math.random(),z:Math.random(),s:.8+Math.random()*.7});
+function drawWeather(cx,cz){
+  const d=curWx(),k=d.sky==='rain'?1:d.sky==='storm'?1.6:0,sl=d.sky==='storm'?1.4:.15;
+  if(k>0){const n=Math.floor(RAIN.length*Math.min(1,k));for(let i=0;i<n;i++){const r=RAIN[i];const yy=(((r.y-T*1.5*(1+r.z*.4))%1)+1)%1*10;const X=cx+(r.x-.5)*40+sl*yy*.35,Z=cz+(r.z-.5)*30-2;draw(MS.box,C(Tm(X,yy,Z),RZ(sl*.3),Sm(.03,.55,.03)),[.85,.9,1],.5,[.3,.35,.4]);}}
+  const nC={sun:2,cloud:7,rain:9,storm:9}[d.sky],cc=d.sky==='sun'||d.sky==='cloud'?[1,1,1]:[.72,.75,.8],ws=d.wind==='strong'||d.wind==='storm'?2:.6;
+  for(let i=0;i<nC;i++){const c=CLOUDS[i],X=cx+((c.x*60+T*ws)%60)-30,Z=cz-24-c.z*16;[[0,0,1.6],[1.5,.3,1.3],[-1.4,.2,1.2],[.4,.9,1.1]].forEach(([a,b,s])=>draw(MS.sph,C(Tm(X+a*c.s,7+b*c.s,Z),Sm(s*c.s*1.2,s*c.s*.8,s*c.s)),cc,.92,[.2,.2,.22]));
+    if(d.sky!=='sun')draw(MS.disc,C(Tm(cx+((c.x*60+T*ws+17)%60)-30,.06,cz+(c.z-.5)*20),Sm(3.2*c.s,1,2.4*c.s)),[0,0,0],.08);}
+}
+function renderWorld(eye,tgt,dt){
+  gl.viewport(0,0,cv.width,cv.height);setEnv(eye,tgt,S.mode==='week'?40:34);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);curBuf=null;
+  SHADOWS=[];gl.disable(gl.BLEND);gl.depthMask(true);
+  const d=curWx();
+  if(S.map==='village'){draw(MS.village,m4.I());draw(MS.cracks,m4.I());S.inst.forEach(g=>drawGen(g,dt));
+    if(S.stage!=='prologue'&&S.stage!=='tour'){const r=genDay(S.inst,d).ratio;for(const id in VILL){const h=VILL[id].house,X=h.x/U,Z=h.y/U-1.1;[-1,1].forEach(s=>draw(MS.box,C(Tm(X+s*.98,1.2,Z+1.075),Sm(.6,.5,.02)),[1,.9,.55],1,[r*.9,r*.75,r*.3]));}}}
+  else{draw(MS.isle,m4.I());
+    [[1820,520],[1880,740],[1810,960]].forEach(([x,y],i)=>drawTurbine(x,y,Math.max(0,hIsle(x,y)),'iw'+i,3.2+i*.3,dt,.85));
+    drawWheel(650,300,0,'ih',2,dt);
+    {const lv=seaLevel(),a=spin('it',2.4,dt);const H=C(Tm(1700/U,lv-.8,1300/U),Sm(.32));draw(MS.buoy,C(Tm(1700/U,lv,1300/U),RZ(Math.sin(T*1.3)*.06)));for(let i=0;i<3;i++)draw(MS.blade,C(H,RZ(a+i*2.094)));}
+    draw(MS.bioT,C(Tm(760/U,0,1120/U),Sm(.8)));draw(MS.sph,C(Tm(760/U+1.16,.84,1120/U),Sm(.13)),[1,.9,.5],1,[.7,.5,.2]);if(Math.random()<dt*2)part(760/U,1.3,1120/U,0,.6,0,'#ffffff',.06,1.2,true);
+    if(Math.random()<dt*1.5)part(1180/U+.6,.7,560/U,0,.5,0,'#ffffff',.08,1.4,true);}
+  const chars=S.map==='village'?VILL:ISLE;
+  for(const id in chars){const v=chars[id];if(v.hidden)continue;drawVillager(v,{sad:S.map==='village'&&S.gloom>.5});}
+  if(!P.hidden&&S.mode!=='title')drawPlayer({x:P.x,y:P.y,ang:P.ang,moving:P.moving,walkT:P.walkT,action:P.action,sad:false});
+  PARTS.forEach(p=>{if(p.map!==S.map)return;const s=p.size*clamp(p.life/p.max*1.5,0,1);if(p.col==='heart')draw(MS.sph,C(Tm(p.x,p.y,p.z),Sm(s,s*.9,s*.5)),hex('#ff6f91'),1,[.3,.05,.1]);else draw(MS.box,C(Tm(p.x,p.y,p.z),RY(p.rot),RX(p.rot*.7),Sm(s)),p.col);});
+  gl.enable(gl.BLEND);gl.depthMask(false);
+  SHADOWS.forEach(([x,y,r,h])=>draw(MS.disc,C(Tm(x/U,h+.03,y/U),Sm(r,1,r*.85)),[0,0,0],.2));
+  const wk=S.map==='village'?WX.water[d.water][2]:1.2;
+  if(S.map==='village'){drawFall(FALLV.x,FALLV.y,2.6,1.3,wk);draw(MS.disc,C(Tm(POOLV.x/U,-.15,POOLV.y/U),Sm(POOLV.rx/U,1,POOLV.ry/U)),hex('#4fc3e8'),.8,[.05,.12,.16]);drawStrip(STREAMV,.7,-.12);}
+  else{drawFall(FALLI.x,FALLI.y,2.8,1.6,wk);draw(MS.disc,C(Tm(POOLI.x/U,-.15,POOLI.y/U),Sm(POOLI.rx/U,1,POOLI.ry/U)),hex('#4fc3e8'),.8,[.05,.12,.16]);drawStrip(STREAMI,.8,-.12);}
+  const lv=seaLevel();draw(MS.sea,C(Tm(Math.round(tgt[0]/2.4)*2.4,lv,Math.round(tgt[2]/2.4)*2.4)),hex('#4fb8e0'),.84,[.03,.08,.12]);
+  drawWeather(tgt[0],tgt[2]);
+  gl.depthMask(true);gl.disable(gl.BLEND);
+}
+function gameCamera(){const h=groundH(S.map,cam.x,cam.y);const tx=cam.x/U,tz=cam.y/U;
+  if(S.mode==='week')return{eye:[tx,h+21,tz+22],tgt:[tx,h,tz-2]};
+  return{eye:[tx,h+12.5,tz+13.5],tgt:[tx,h+.8,tz]};}
+function render(dt){
+  if(!gl)return;let c;
+  if(S.mode==='title'){const a=T*.08;S.map='isle';c={eye:[25+Math.sin(a)*20,16,22+Math.cos(a)*16],tgt:[25,0,18]};}
+  else c=gameCamera();
+  renderWorld(c.eye,c.tgt,dt);drawOverlay();
+}
+
+/* ============ 오버레이(2D) ============ */
+function bubble(c,x,y,t){const b=Math.sin(T*6)*3;c.save();c.translate(x,y+b);rr(c,-16,-36,32,32,12);c.fillStyle='#fff';c.fill();c.beginPath();c.moveTo(-5,-5);c.lineTo(5,-5);c.lineTo(0,3);c.closePath();c.fill();c.fillStyle=t==='!'?'#ff5a3c':'#ff6f91';c.font='25px Jua, sans-serif';c.textAlign='center';c.fillText(t,0,-11);c.restore();}
+function prompt(c,x,y,label){c.save();c.font='17px Jua, sans-serif';const tw=c.measureText(label).width+50;c.translate(x,y);rr(c,-tw/2,-18,tw,34,17);c.fillStyle='rgba(255,251,234,.96)';c.fill();
+  circ(c,-tw/2+18,-1,12);c.fillStyle='#58b84a';c.fill();c.fillStyle='#fff';c.textAlign='center';c.fillText('A',-tw/2+18,5);c.fillStyle='#6b5434';c.textAlign='left';c.fillText(label,-tw/2+36,5);c.restore();}
+function tag(c,x,y,txt,bg,fg='#fff'){c.font='15px Jua, sans-serif';c.textAlign='center';const tw=c.measureText(txt).width+16;rr(c,x-tw/2,y-12,tw,24,10);c.fillStyle=bg;c.fill();c.fillStyle=fg;c.fillText(txt,x,y+5);}
+const ISIGNS=[[380,560,'☀️ 햇살 언덕'],[1700,640,'💨 바람 해안'],[610,420,'💧 물레 폭포'],[1500,1080,'🌊 밀물 바닷길'],[1240,560,'🔥 따끈 온돌집'],[620,1210,'🌱 꼬순 농장'],[1000,385,'🦉 마을 회관'],[1090,1480,'⛵ 부두']];
+function drawOverlay(){
+  const c=o2;c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,VW,VH);
+  if(S.mode==='title'||S.mode==='end')return;
+  const d=curWx();
+  if(d.wind==='strong'||d.wind==='storm'){c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=2.5;for(let i=0;i<(d.wind==='storm'?14:8);i++){const x=((i*173)+T*(d.wind==='storm'?520:360))%(VW+200)-100,y=80+(i*97)%(VH*.6);c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+40,y-10,x+80,y);c.stroke();}}
+  if(S.mode==='week')return;
+  if(S.map==='isle'){ISIGNS.forEach(([x,y,t])=>{const p=proj(x/U,1.4,y/U);if(p)tag(c,p.x,p.y,t,'rgba(185,135,85,.95)','#fff6d8');});
+    if(S.stage==='tour')for(const id in ISLE){const v=ISLE[id];const want=v.chief?(GORDER.every(t=>S.visited[t])&&!S.chiefDone):!S.visited[v.spot];if(want){const p=proj(v.x/U,v.chief?2.7:2.45,v.y/U);if(p)bubble(c,p.x,p.y,'!');}}}
+  else{if(S.stage==='install')SITES.forEach(s=>{const g=instAt(s.id),h=Math.max(0,hVil(s.x,s.y));const p=proj(s.x/U,h+1.75,s.y/U+.2);if(!p)return;if(g)tag(c,p.x,p.y,`${s.id} · ${GEN[g.t].short}`,GEN[g.t].col);else tag(c,p.x,p.y,`⚡ ${s.id}`,'rgba(224,160,32,.95)');});
+    if(S.stage==='prologue'&&!S.letter){const b=VILL.bori;const p=proj(b.x/U,2.75,b.y/U);if(p)bubble(c,p.x,p.y,'!');}
+    if(S.stage==='install'){const b=VILL.bori;const p=proj(b.x/U,2.75,b.y/U);if(p&&S.inst.length)bubble(c,p.x,p.y,'♥');}}
+  if(S.mode!=='play')return;
+  const tgt=questTarget();
+  if(tgt){const p=proj(tgt.x/U,tgt.h+.3,tgt.y/U);
+    if(p){const by=p.y+Math.sin(T*5)*6;c.fillStyle='#ff9f1c';c.strokeStyle='#fff';c.lineWidth=3;c.beginPath();c.moveTo(p.x-13,by-18);c.lineTo(p.x+13,by-18);c.lineTo(p.x,by);c.closePath();c.stroke();c.fill();}
+    const m=70;if(!p||p.x<m||p.x>VW-m||p.y<m+40||p.y>VH-m){const pp=p||{x:VW/2,y:VH+200};const ax=clamp(pp.x,m,VW-m),ay=clamp(pp.y,m+90,VH-m-40),an=Math.atan2(pp.y-ay,pp.x-ax);
+      c.save();c.translate(ax,ay);circ(c,0,0,26);c.fillStyle='rgba(255,251,234,.95)';c.fill();c.rotate(an);c.fillStyle='#ff9f1c';c.beginPath();c.moveTo(16,0);c.lineTo(-6,-11);c.lineTo(-2,0);c.lineTo(-6,11);c.closePath();c.fill();c.restore();}}
+  if(!busy()){const t=nearest();if(t){const p=proj((t.px||t.x)/U,t.h,(t.py||t.y)/U);if(p)prompt(c,p.x,p.y-(t.type==='site'?26:0),t.label);}}
+}
+
+/* ============ 학급 현황판 동기화 ============ */
+/* ▼ Firebase 설정 (도토리 마을 이야기 1편과 같은 프로젝트를 써요). 비워 두면 같은 기기 안에서만 현황판이 동작합니다. */
+const FIREBASE_CONFIG={
+  apiKey:"AIzaSyBQW1yD8M1b3R8ar10Xt0aYaUy7gZSDlDM",
+  authDomain:"resource-village.firebaseapp.com",
+  projectId:"resource-village",
+  storageBucket:"resource-village.firebasestorage.app",
+  messagingSenderId:"378935144904",
+  appId:"1:378935144904:web:1a414b7da82888d7b1d0fd"
+};
+const COLL='resourceVillage',PREFIX='RE2__'; // 1편과 겹치지 않도록 반 코드 앞에 RE2__를 붙여요
+const SYNC={mode:'local',db:null,ready:null};
+function loadScript(src){return new Promise((ok,no)=>{const e=document.createElement('script');e.src=src;e.onload=ok;e.onerror=no;document.head.appendChild(e);});}
+function classKey(sch,cl){return PREFIX+(sch.replace(/\s+/g,'')+'__'+cl.replace(/\s+/g,'')).replace(/[\/.#$\[\]]/g,'-');}
+function initSync(){
+  if(SYNC.ready)return SYNC.ready;
+  SYNC.ready=(async()=>{if(!FIREBASE_CONFIG.apiKey)return;try{const v='10.12.2';await loadScript(`https://www.gstatic.com/firebasejs/${v}/firebase-app-compat.js`);await loadScript(`https://www.gstatic.com/firebasejs/${v}/firebase-firestore-compat.js`);
+    if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);SYNC.db=firebase.firestore();SYNC.mode='firebase';}catch(e){console.warn('Firebase 연결 실패, 로컬 모드',e);}})();
+  return SYNC.ready;
+}
+const stu=cls=>SYNC.db.collection(COLL).doc(cls).collection('students');
+function lsGet(cls){try{return JSON.parse(localStorage.getItem('re2_class_'+cls)||'{}');}catch(e){return{};}}
+function lsSet(cls,o){try{localStorage.setItem('re2_class_'+cls,JSON.stringify(o));}catch(e){}}
+async function syncWrite(cls,id,data){await initSync();
+  if(SYNC.mode==='firebase'){try{await stu(cls).doc(id).set(data,{merge:true});}catch(e){console.warn(e);}}
+  else{const o=lsGet(cls);o[id]=Object.assign(o[id]||{},data);lsSet(cls,o);}}
+async function syncGet(cls,id){await initSync();
+  if(SYNC.mode==='firebase'){try{const d=await Promise.race([stu(cls).doc(id).get(),wait(3500).then(()=>null)]);return d&&d.exists?d.data():null;}catch(e){return null;}}
+  return lsGet(cls)[id]||null;}
+async function syncListen(cls,cb){await initSync();
+  if(SYNC.mode==='firebase')return stu(cls).onSnapshot(sn=>{const a=[];sn.forEach(d=>a.push(Object.assign({id:d.id},d.data())));cb(a);},e=>console.warn(e));
+  const f=()=>{const o=lsGet(cls);cb(Object.keys(o).map(k=>Object.assign({id:k},o[k])));};f();const iv=setInterval(f,1500);addEventListener('storage',f);return()=>{clearInterval(iv);removeEventListener('storage',f);};}
+async function syncClear(cls){await initSync();
+  if(SYNC.mode==='firebase'){const sn=await stu(cls).get();const b=SYNC.db.batch();sn.forEach(d=>{if(d.id!=='_settings')b.delete(d.ref);});await b.commit();}
+  else{const o=lsGet(cls);const k=o._settings;lsSet(cls,k?{_settings:k}:{});}}
+let MYID=null;
+function myId(){if(MYID)return MYID;try{MYID=localStorage.getItem('re2_id');}catch(e){}if(!MYID){MYID='s'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);try{localStorage.setItem('re2_id',MYID);}catch(e){}}return MYID;}
+let repT=null;
+function report(now){if(!S.cls||S.mode==='title')return;clearTimeout(repT);if(now)sendReport();else repT=setTimeout(sendReport,2000);}
+const instStr=a=>(a||[]).map(g=>`${GEN[g.t].short}@${SITES[g.site-1].name}`);
+function sendReport(){
+  const r=genDay(S.inst,curWx());
+  syncWrite(S.cls,myId(),{name:S.name,school:S.school,cls:S.clsName,stage:S.stage,map:S.map,cards:S.cards.length,visited:GORDER.filter(t=>S.visited[t]).length,
+    budget:S.budget,budget0:S.budget0,inst:instStr(S.inst),ratioNow:pct(r.ratio),weekDay:SIM?SIM.day+1:0,
+    best:S.best?{avg:pct(S.best.avg),min:pct(S.best.min),cost:S.best.cost,inst:instStr(S.best.inst),mode:S.best.mode,days:S.best.days}:null,
+    last:S.last?{avg:pct(S.last.avg),min:pct(S.last.min),cost:S.last.cost}:null,tries:S.tries,
+    read:S.read.length,quizAns:S.quizAns||[],quizRight:S.quizRight||0,quizBest:S.quizBest||0,quizLast:S.quizLast==null?null:S.quizLast,started:S.started||Date.now(),updated:Date.now()});
+}
+
+/* ============ 교사 현황판 화면 ============ */
+const STAGE={prologue:['📜 이야기 시작','#a77b54'],tour:['🧭 탐방 중','#7cc46a'],install:['🔧 발전기 설치 중','#f2a046'],week:['📅 일주일 운영 중','#5c9bd5'],result:['📊 결과 보는 중','#7e6bc4'],review:['⚡ 카드 복습 중','#e0a020'],quiz:['🧠 퀴즈 푸는 중','#3d8fd6'],done:['✅ 완료','#3f9e46']};
+async function teacherMode(){
+  document.body.classList.add('teacher');$('tdash').classList.remove('hidden');
+  if(!await askPass('교사 현황판 비밀번호를 입력하세요.')){location.hash='';location.reload();return;}
+  let sch='',cl='';try{sch=localStorage.getItem('re2_sch')||'';cl=localStorage.getItem('re2_cls')||'';}catch(e){}let cls=classKey(sch,cl);
+  let unsub=null,DATA=[],SET=null;
+  $('tdash').innerHTML=`<div class="hd"><h1>🌞 도토리 마을 이야기 2 · 교사 현황판</h1><span class="conn" id="tdConn">연결 중…</span>
+    <div class="ctl">🏫 <input id="tdSch" value="${sch}" placeholder="학교 이름" style="width:150px"> <input id="tdCls" value="${cl}" placeholder="반" style="width:90px"><button class="sbtn" id="tdGo">보기</button><button class="sbtn red" id="tdClr">현황 초기화</button><button class="sbtn" id="tdBack" style="background:#cbbd98;box-shadow:0 3px 0 #a99a74">게임으로</button></div></div>
+    <div class="setb" id="tdSet"></div><div class="sum" id="tdSum"></div><div class="grid" id="tdGrid"></div>
+    <h2>🏆 발전기 조합 비교 <small>(가장 좋았던 도전 기준 · 발표·토의용)</small></h2><div id="tdRank"></div>
+    <h2>🧠 퀴즈 문항별 정답률</h2><div class="qr" id="tdQ"></div>`;
+  await initSync();
+  $('tdConn').textContent=SYNC.mode==='firebase'?'🟢 실시간 연결(Firebase)':'🟠 이 기기에서만 보기 (Firebase 설정 필요)';$('tdConn').style.background=SYNC.mode==='firebase'?'#3f9e46':'#e0832b';
+  const ago=t=>{const s=Math.round((Date.now()-t)/1000);return s<60?`${s}초 전`:s<3600?`${Math.floor(s/60)}분 전`:`${Math.floor(s/3600)}시간 전`;};
+  const drawSet=()=>{const st=SET||{};$('tdSet').innerHTML=sch&&cl?`⚙️ 이 반 설정 · 마을 예산 <input id="tsB" type="number" min="500" step="100" value="${st.budget||BUDGET_DEFAULT}" style="width:100px">도토리 · 기본 날씨 <select id="tsW"><option value="fixed" ${st.weather!=='random'?'selected':''}>📅 고정 (모두 같은 날씨)</option><option value="random" ${st.weather==='random'?'selected':''}>🎲 랜덤</option></select><button class="sbtn" id="tsSave">설정 저장</button><span class="hint">학생이 시작할 때 적용돼요. (기본: 3,000도토리 · 고정)</span>`:'';
+    const b=$('tsSave');if(b)b.onclick=async()=>{const v=Math.max(500,Math.round(+$('tsB').value||BUDGET_DEFAULT));SET={isSettings:true,budget:v,weather:$('tsW').value,updated:Date.now()};await syncWrite(cls,'_settings',SET);b.textContent='✔ 저장했어요';setTimeout(()=>b.textContent='설정 저장',1600);};};
+  const draw_=()=>{
+    const L=DATA.filter(d=>d.id!=='_settings').sort((a,b)=>(a.name||'').localeCompare(b.name||'','ko'));
+    const cnt={};L.forEach(d=>cnt[d.stage]=(cnt[d.stage]||0)+1);
+    const wb=L.filter(d=>d.best);const avgR=wb.length?Math.round(wb.reduce((s,d)=>s+d.best.avg,0)/wb.length):'-';
+    const qd=L.filter(d=>d.stage==='done');const avgQ=qd.length?(qd.reduce((s,d)=>s+(d.quizLast||0),0)/qd.length).toFixed(1):'-';
+    $('tdSum').innerHTML=`<div class="chipS">👧 전체 <b>${L.length}</b></div>`+Object.keys(STAGE).filter(k=>cnt[k]).map(k=>`<div class="chipS" style="color:${STAGE[k][1]}">${STAGE[k][0]} <b>${cnt[k]}</b></div>`).join('')+`<div class="chipS">🌱 평균 비율 <b>${avgR}${avgR==='-'?'':'%'}</b></div><div class="chipS">🧠 퀴즈 평균 <b>${avgQ}</b> / ${QUIZ.length}</div>`;
+    $('tdGrid').innerHTML=L.length?L.map(d=>{const st=STAGE[d.stage]||STAGE.prologue,off=Date.now()-(d.updated||0)>150000&&d.stage!=='done';
+      let dt='';if(d.stage==='prologue')dt='도토리 마을 이야기를 듣는 중';else if(d.stage==='tour')dt=`에너지 카드 ${d.visited||0}/6 모음`;else if(d.stage==='install')dt=`남은 예산 ${fmtN(d.budget)}도토리 · 지금 비율 ${d.ratioNow}%<br>${(d.inst||[]).join(', ')||'아직 설치 안 함'}`;
+      else if(d.stage==='week')dt=`${d.weekDay}일째 운영 중 · ${(d.inst||[]).join(', ')}`;else if(d.stage==='result')dt=d.last?`평균 ${d.last.avg}% · 가장 낮은 날 ${d.last.min}%`:'';else if(d.stage==='review')dt=`카드 ${d.read}/8장 읽음`;else if(d.stage==='quiz')dt=`${(d.quizAns||[]).length}/${QUIZ.length}문제 풂 · ${d.quizRight}개 맞힘`;else if(d.stage==='done')dt=`퀴즈 ${d.quizLast}/${QUIZ.length}점 (최고 ${d.quizBest}점)`;
+      const prog={prologue:.05,tour:.1+(d.visited||0)/6*.3,install:.5,week:.6,result:.7,review:.8,quiz:.9,done:1}[d.stage]||0;
+      const dots=(d.quizAns&&d.quizAns.length)?`<div class="dots">${QUIZ.map((_,i)=>`<span class="${d.quizAns[i]===true?'qo':d.quizAns[i]===false?'qx':''}">${i+1}</span>`).join('')}</div>`:'';
+      return `<div class="sc ${off?'off':''}"><div class="nm">${d.map==='isle'?'🌞':'🏡'} ${d.name}</div><span class="st" style="background:${st[1]}">${st[0]}</span><div class="dt">${dt}</div>
+        <div class="pb"><i style="width:${prog*100}%"></i></div><div class="ft"><span>⚡ 카드 ${d.cards||0}/8</span><span>🌱 최고 ${d.best?d.best.avg+'%':'-'}</span><span>🔄 ${d.tries||0}번</span><span>⏱ ${off?'연결 끊김? ':''}${ago(d.updated||0)}</span></div>${dots}</div>`;}).join('')
+      :`<div class="empty">아직 들어온 학생이 없어요.<br>학생들이 시작 화면에서 <b>${sch}</b> / <b>${cl}</b>을(를) 똑같이 입력하면 여기에 나타나요.</div>`;
+    const R=wb.slice().sort((a,b)=>b.best.avg-a.best.avg);
+    $('tdRank').innerHTML=R.length?`<table class="rk"><tr><th>순위</th><th>이름</th><th>발전기 조합 (자리)</th><th>쓴 예산</th><th>평균 비율</th><th>가장 낮은 날</th><th>날씨</th></tr>${R.map((d,i)=>`<tr><td>${i+1}</td><td>${d.name}</td><td class="cb">${d.best.inst.join('<br>')}</td><td>${fmtN(d.best.cost)}</td><td><b>${d.best.avg}%</b></td><td>${d.best.min}%</td><td>${d.best.mode==='random'?'🎲':'📅'}</td></tr>`).join('')}</table>`:'<div class="empty">일주일 운영을 마친 학생이 아직 없어요.</div>';
+    const withAns=L.filter(d=>d.quizAns&&d.quizAns.length);
+    $('tdQ').innerHTML=QUIZ.map((q,i)=>{const a=withAns.filter(d=>d.quizAns[i]!==undefined&&d.quizAns[i]!==null),r=a.filter(d=>d.quizAns[i]===true).length,pc=a.length?Math.round(r/a.length*100):0;const tx=q.q.replace(/<[^>]+>/g,'');
+      return `<div class="qi">${i+1}. ${tx.length>36?tx.slice(0,36)+'…':tx}<div class="b"><i style="width:${pc}%"></i></div>${a.length?`정답률 ${pc}% (${r}/${a.length}명)`:'아직 푼 학생 없음'}</div>`;}).join('');
+  };
+  const go=async()=>{sch=$('tdSch').value.trim();cl=$('tdCls').value.trim();if(unsub){unsub();unsub=null;}DATA=[];SET=null;
+    if(!sch||!cl){$('tdGrid').innerHTML='<div class="empty">🏫 학교 이름과 반을 입력하고 [보기]를 눌러 주세요.<br><small>학생들이 시작 화면에 입력한 것과 똑같이 입력해야 해요. (띄어쓰기는 상관없어요)</small></div>';$('tdSum').innerHTML='';$('tdRank').innerHTML='';drawSet();return;}
+    cls=classKey(sch,cl);try{localStorage.setItem('re2_sch',sch);localStorage.setItem('re2_cls',cl);}catch(e){}drawSet();
+    unsub=await syncListen(cls,a=>{DATA=a;const s=a.find(d=>d.id==='_settings');if(s&&JSON.stringify(s)!==JSON.stringify(SET)&&!document.activeElement.closest('#tdSet')){SET=s;drawSet();}draw_();});};
+  $('tdGo').onclick=go;$('tdBack').onclick=()=>{location.hash='';location.reload();};
+  $('tdClr').onclick=async()=>{if(!sch||!cl)return;if(!await askPass(`${sch} ${cl} 반 현황을 모두 지울까요? 비밀번호를 입력하세요.`))return;await syncClear(cls);DATA=DATA.filter(d=>d.id==='_settings');draw_();};
+  setInterval(()=>{if(sch&&cl)draw_();},5000);go();
+}
+$('tBtn').onclick=()=>{location.hash='teacher';location.reload();};
+try{const c=localStorage.getItem('re2_cls')||localStorage.getItem('rv_cls');if(c)$('clsIn').value=c;const h=localStorage.getItem('re2_sch')||localStorage.getItem('rv_sch');if(h)$('schIn').value=h;}catch(e){}
+
+/* ============ 시작 ============ */
+async function startGame(){
+  if(S.mode!=='title')return;
+  initAudio();if(AC&&AC.state==='suspended')AC.resume();
+  const sch=$('schIn').value.trim(),cl=$('clsIn').value.trim();
+  if(!sch||!cl){toast('🏫 학교 이름과 반을 모두 입력해 주세요!',2600);($('schIn').value.trim()?$('clsIn'):$('schIn')).focus();return;}
+  S.name=$('nameIn').value.trim()||'주민';S.school=sch;S.clsName=cl;S.cls=classKey(sch,cl);try{localStorage.setItem('re2_sch',sch);localStorage.setItem('re2_cls',cl);}catch(e){}
+  $('startBtn').disabled=true;$('startBtn').textContent='불러오는 중…';
+  const st=await syncGet(S.cls,'_settings');if(st){if(st.budget)S.budget0=S.budget=Math.max(500,+st.budget);if(st.weather==='random'){S.setWeather='random';S.weekMode='random';S.week=randomWeek();}}
+  S.stage='prologue';S.started=Date.now();S.map='village';P.x=1000;P.y=900;P.ang=Math.PI;cam.x=P.x;cam.y=P.y;S.gloom=S.gloomT=.78;
+  $('title').classList.add('hidden');S.mode='play';
+  ['clock','menuBtn','bookBtn'].forEach(id=>$(id).classList.remove('hidden'));updateBookBtn();
+  if(isTouch())$('ctrl').classList.remove('hidden');
+  updateQuestUI();report(true);setInterval(()=>report(true),60000);
+  BGM.mode='sad';bgmStart();await wait(500);
+  S.lock=true;
+  await say(NARR,['…지난 이야기.','도토리 마을 주민들은 물, 나무, 광물을 아낌없이 써 버렸어요.','연못은 바닥을 드러냈고, 숲에는 그루터기만 남았어요.','이제 광산의 석탄도 얼마 남지 않아, 마을에는 전기가 자꾸 끊겨요.']);
+  const b=VILL.bori;b.frozen=true;b.x=1000;b.y=820;b.ang=0;P.ang=Math.PI;
+  await say(b,['{name}! 큰일이야… 석탄이 거의 다 떨어졌대.','오늘 밤에도 전기가 끊길지 몰라, 깡총…','앗, 그런데 이것 좀 봐! 바다 건너 바람햇살 마을에서 편지가 왔어!']);
+  await showLetter();
+  await say(b,['쓸수록 줄어드는 석탄 말고, «계속 쓸 수 있는 에너지»가 있대!','{name}, 네가 바람햇살 마을에 가서 배워 와 줄래?'],true);
+  await choose(['좋아, 다녀올게!']);
+  await say(b,['고마워, 깡총! 남쪽 바닷가 부두에 배가 있어.','아래쪽으로 쭉 내려가면 돼!']);
+  b.frozen=false;S.letter=true;S.lock=false;updateQuestUI();report();toast('⛵ 남쪽 부두로 가서 배를 타요 · 이동: 방향키 / 조이스틱',4000);
+}
+$('startBtn').onclick=startGame;
+function tickClock(){const d=new Date();let h=d.getHours(),m=d.getMinutes();const ap=h<12?'오전':'오후';h=h%12||12;$('clkT').textContent=`${ap} ${h}:${String(m).padStart(2,'0')}`;$('clkD').textContent=`${d.getMonth()+1}월 ${d.getDate()}일 (${'일월화수목금토'[d.getDay()]})`;}
+tickClock();setInterval(tickClock,10000);
+let last=performance.now();
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;update(dt);if(S.mode!=='end')render(dt);requestAnimationFrame(loop);}
+if(location.hash==='#teacher'){teacherMode();}
+else if(gl){initGL();buildDyn();(document.fonts&&document.fonts.ready?Promise.race([document.fonts.ready,wait(1500)]):Promise.resolve()).then(()=>requestAnimationFrame(loop));}
+
+/* ============ 대사 강조(«중요한 말») ============ */
+function hlParse(line){let txt='',mask=[],on=false;for(const ch of line){if(ch==='«'){on=true;continue}if(ch==='»'){on=false;continue}txt+=ch;mask.push(on);}return{txt,mask};}
+const escH=c=>c==='<'?'&lt;':c==='>'?'&gt;':c==='&'?'&amp;':c;
+function hlHTML(line,n){const p=hlParse(line);let h='',on=false;const m=Math.min(n==null?p.txt.length:n,p.txt.length);
+  for(let i=0;i<m;i++){if(p.mask[i]&&!on){h+='<span class="hl">';on=true;}else if(!p.mask[i]&&on){h+='</span>';on=false;}h+=escH(p.txt[i]);}if(on)h+='</span>';return h;}
+function dlgTick(dt){if(!DLG||!DLG.typing)return;const p=hlParse(DLG.lines[DLG.i]);DLG.acc+=dt*34;
+  while(DLG.acc>=1&&DLG.pos<p.txt.length){DLG.acc-=1;DLG.pos++;const ch=p.txt[DLG.pos-1];if(DLG.pos%2===1&&ch.trim()&&!'.…,!?'.includes(ch))blip(DLG.sp.pitch||300);}
+  $('dText').innerHTML=hlHTML(DLG.lines[DLG.i],DLG.pos);if(DLG.pos>=p.txt.length)finishLine();}
+function finishLine(){DLG.typing=false;$('dText').innerHTML=hlHTML(DLG.lines[DLG.i]);if(DLG.keep&&DLG.i===DLG.lines.length-1){DLG.waitingChoice=true;DLG.res();return;}$('dNx').style.visibility='visible';}
+
+/* ============ 배 타고 가는 장면 ============ */
+let SAIL=null;
+const CAPT=Object.assign({},ISLE.mulgyeol,{id:'capt',frozen:true,hidden:false});
+const GULLS=[0,1,2].map(i=>({ph:i*2.1,r:3+i*1.2,h:3.6+i*.5}));
+function buildBoatMesh(){const g=new Geo();boat(g,0,0);MS.boat=mkMesh(g);}
+function groundH(map,x,y){if(S.mode==='sail'&&SAIL)return SAIL.h;if(onPier(map,x,y))return .35;return map==='isle'?Math.max(0,hIsle(x,y)):Math.max(0,hVil(x,y));}
+const SPD=3.4;
+function sailPos(){const t=SAIL.t;return{bx:Math.sin(t*.45)*.7,bz:-t*SPD};}
+function drawDest(z,toIsle,dt){
+  const lv=seaLevel();
+  draw(MS.disc,C(Tm(0,lv+.03,z),Sm(19,1,13)),hex('#efdfae'));
+  draw(MS.hemi,C(Tm(0,lv-.6,z-1),Sm(16,toIsle?3.6:3,11)),toIsle?hex('#7ed05a'):hex('#9fb27a'));
+  const tr=toIsle?[[-9,-3],[-6,1],[7,-2],[10,1],[-3,-6],[4,-7]]:[[-8,-2],[6,-3],[9,1]];
+  tr.forEach(([x,dz],i)=>{const y=lv+2.2;draw(MS.cylT,C(Tm(x,y-.8,z+dz),Sm(.3,1.4,.3)),hex('#9c6b3f'));draw(MS.sph,C(Tm(x,y+1.2,z+dz),Sm(1.3,1.1,1.3)),toIsle?hex('#3f9e46'):hex('#6f8f45'));});
+  if(toIsle){[[-2,-4],[3,-5]].forEach(([x,dz],i)=>{const B=C(Tm(x,lv+2.8,z+dz),Sm(.8));draw(MS.tower,B);const a=spin('sl'+i,3,dt);const H=C(B,Tm(0,5.2,.62));for(let k=0;k<3;k++)draw(MS.blade,C(H,RZ(a+k*2.094)));});
+    draw(MS.panelTop,C(Tm(-5,lv+3.2,z+1),RX(.5)));draw(MS.panelTop,C(Tm(5,lv+3.0,z+1.5),RX(.5)));}
+  else{[[-3,'#f28db0'],[2,'#5c9bd5']].forEach(([x,col])=>{draw(MS.box,C(Tm(x,lv+3.2,z-2),Sm(2.2,1.5,1.6)),hex('#fff6ec'));draw(MS.prism,C(Tm(x,lv+3.95,z-2),Sm(2.7,1,2.1)),hex(col));});}
+}
+function renderSail(dt){
+  SAIL.t+=dt;const {bx,bz}=sailPos(),lv=seaLevel(),bob=Math.sin(T*2.2)*.08;
+  SAIL.h=lv+.55+bob;
+  const ex=bx+9.5-Math.min(SAIL.t,8)*.35,eye=[ex,lv+5.6,bz+8.5],tgt=[bx,lv+1.2,bz-2.5];
+  gl.viewport(0,0,cv.width,cv.height);setEnv(eye,tgt,36);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);curBuf=null;SHADOWS=[];gl.disable(gl.BLEND);gl.depthMask(true);
+  draw(MS.boat,C(Tm(bx,lv+1.25+bob,bz),RZ(Math.sin(T*1.7)*.05),RX(Math.sin(T*1.3)*.03)));
+  drawPlayer({x:bx*U,y:(bz+.35)*U,ang:Math.PI-.5,moving:false,walkT:0,action:null,sad:false});
+  CAPT.x=bx*U;CAPT.y=(bz+1.35)*U;CAPT.ang=Math.PI;drawVillager(CAPT);
+  const oa=Math.sin(T*3);[-1,1].forEach(s=>draw(MS.box,C(Tm(bx+s*.5,SAIL.h+.75,bz+1.35),RZ(s*.5),RX(oa*.6),Tm(0,-.75,0),Sm(.06,1.6,.06)),hex('#8b5e34')));
+  drawDest(-SAIL.dur*SPD-17,SAIL.toIsle,dt);
+  drawDest(16,!SAIL.toIsle,dt);
+  GULLS.forEach((g,i)=>{const a=T*.9+g.ph,X=bx+Math.cos(a)*g.r,Z=bz-1+Math.sin(a)*g.r*.7,Y=lv+g.h+Math.sin(T*2+i)*.3;const B=C(Tm(X,Y,Z),RY(-a));draw(MS.sph,C(B,Sm(.15,.13,.3)),[1,1,1]);draw(MS.sph,C(B,Tm(0,.1,.28),Sm(.11)),[1,1,1]);draw(MS.cone,C(B,Tm(0,.08,.42),RX(Math.PI/2),Sm(.04,.14,.03)),hex('#ffb300'));draw(MS.box,C(B,Tm(0,0,-.32),Sm(.14,.03,.16)),hex('#90a4ae'));
+    [-1,1].forEach(s=>draw(MS.box,C(B,RZ(s*(.35+Math.sin(T*9+i)*.45)),Tm(s*.3,0,0),Sm(.55,.03,.18)),hex('#cfd8dc')));});
+  if(Math.random()<dt*24)part(bx+(Math.random()-.5)*.9,lv+.08,bz+2.2,(Math.random()-.5)*.7,.15,.5+Math.random()*.6,'#ffffff',.13,1.4,true);
+  PARTS.forEach(p=>{if(p.map!=='sail')return;const s=p.size*clamp(p.life/p.max*1.5,0,1);draw(MS.box,C(Tm(p.x,p.y,p.z),RY(p.rot),Sm(s,s*.4,s)),p.col);});
+  gl.enable(gl.BLEND);gl.depthMask(false);
+  draw(MS.sea,C(Tm(Math.round(tgt[0]/2.4)*2.4,lv,Math.round(tgt[2]/2.4)*2.4)),hex('#4fb8e0'),.84,[.03,.08,.12]);
+  for(let i=0;i<3;i++){const ph=(T*.9+i/3)%1;draw(MS.disc,C(Tm(bx,lv+.03,bz+1.6+ph*4),Sm(.8+ph*1.6,1,.5+ph*.8)),[1,1,1],.35*(1-ph),[.4,.4,.4]);}
+  drawWeather(tgt[0],tgt[2]);
+  gl.depthMask(true);gl.disable(gl.BLEND);
+  const c=o2;c.setTransform(DPR,0,0,DPR,0,0);c.clearRect(0,0,VW,VH);
+}
+function render(dt){
+  if(!gl)return;
+  if(S.mode==='sail'&&SAIL){renderSail(dt);return}
+  let c;if(S.mode==='title'){const a=T*.08;S.map='isle';c={eye:[25+Math.sin(a)*20,16,22+Math.cos(a)*16],tgt:[25,0,18]};}else c=gameCamera();
+  renderWorld(c.eye,c.tgt,dt);drawOverlay();
+}
+const SAILCAP={
+  to:[[0,'⛵ 바다 건너 바람햇살 마을로!'],[2.4,'물결: ♪ 철썩철썩~ 파도를 넘어~ 바람 따라 햇살 따라~ ♪'],[5.6,'물결: 저기 보이는구나… 바람개비가 빙글빙글 도는 섬이 바람햇살 마을이란다.']],
+  back:[[0,'⛵ 배운 것을 가득 안고 도토리 마을로!'],[2.4,'물결: ♪ 철썩철썩~ 집으로 가는 길~ 에너지 카드 가득 품에 안고~ ♪'],[5.6,'물결: 도토리 마을에도 바람과 햇살이 가득하길 바란단다… 천천히, 천천히.']]
+};
+async function sail(){
+  S.trans=true;sfx('door');$('fade').style.opacity=1;await wait(650);
+  const toIsle=S.map==='village';
+  ['quest','ctrl'].forEach(id=>$(id).classList.add('hidden'));$('hud').classList.add('hidden');
+  const prevMap=S.map;S.map='isle';SAIL={t:0,dur:8.2,toIsle,h:0};S.mode='sail';S.gloomT=0;S.gloom=toIsle?.4:0;BGM.mode='happy';
+  for(let i=PARTS.length-1;i>=0;i--)PARTS.splice(i,1);
+  const origPart=part;
+  part=function(x,y,z,vx,vy,vz,col,size,life,float){origPart(x,y,z,vx,vy,vz,col,size,life,float);PARTS[PARTS.length-1].map=S.mode==='sail'?'sail':S.map;};
+  $('toast').style.opacity=0;const clk=$('clkM').textContent;$('clkM').textContent='⛵ 바다 위';
+  $('fade').style.opacity=0;const cap=$('caption');const lines=SAILCAP[toIsle?'to':'back'];
+  for(let i=0;i<lines.length;i++){const nt=(lines[i+1]?lines[i+1][0]:SAIL.dur)-lines[i][0];cap.textContent=lines[i][1];cap.style.opacity=1;if(i)blip(190);await wait(nt*1000-250);cap.style.opacity=0;await wait(250);}
+  $('fade').style.opacity=1;await wait(650);
+  $('clkM').textContent=clk;part=origPart;S.mode='play';SAIL=null;S.map=prevMap;PARTS.length=0;
+  if(toIsle){S.map='isle';S.stage='tour';P.x=1000;P.y=1380;P.ang=Math.PI;$('clkM').textContent='🌞 바람햇살 마을';BGM.mode='happy';S.gloomT=S.gloom=0;const o=ISLE.owl;o.x=1000;o.y=1300;o.ang=0;}
+  else{S.map='village';S.stage='install';P.x=1000;P.y=1680;P.ang=Math.PI;$('clkM').textContent='🏡 도토리 마을';BGM.mode='sad';S.gloom=S.gloomT=.78;const b=VILL.bori;b.x=1000;b.y=1600;b.ang=0;}
+  if(isTouch())$('ctrl').classList.remove('hidden');
+  cam.x=P.x;cam.y=P.y;updateQuestUI();updateHUD();report(true);
+  await wait(300);$('fade').style.opacity=0;await wait(500);S.trans=false;
+  S.lock=true;
+  if(toIsle){const o=ISLE.owl;o.frozen=true;await say(o,['어서 오게, 도토리 마을 친구! 나는 바람햇살 마을의 촌장 부엉이라네.','우리 마을에는 여섯 가지 재생 에너지 발전소가 있지.','마을 곳곳의 주민들에게 배우고, 에너지 카드 6장을 모두 모아 오게.','다 모으면 마을 회관으로 오게나. 부엉부엉!']);
+    $('fade').style.opacity=1;await wait(500);o.x=o.home.x;o.y=o.home.y;o.frozen=false;$('fade').style.opacity=0;toast('🧭 주민들을 찾아가 에너지 카드를 모아요! 오른쪽 위 ⚡ 버튼으로 언제든 볼 수 있어요',4200);}
+  else{const b=VILL.bori;b.frozen=true;await say(b,['{name}! 돌아왔구나, 깡총!','바람햇살 마을 촌장님이 마을 예산을 보내 주셨다고? 고마워!','마을 곳곳에 ⚡ 후보지 표지판을 세워 뒀어. 모두 10곳이야.','자리를 살펴보고, 알맞은 발전기를 골라 설치해 줘!','화면 위쪽에는 마을 전기 가운데 «재생 에너지가 몇 %»인지 보여 줄게.','목표는 «일주일 평균 50% 이상»! 다 설치하면 광장에 있는 나에게 말해 줘.']);
+    b.home={x:1000,y:840};b.x=1000;b.y=840;b.frozen=false;updateHUD();toast('🔧 ⚡ 표지판에 다가가 Ⓐ를 누르면 자리를 살펴볼 수 있어요',4200);}
+  S.lock=false;
+}
+if(gl&&MS.sea)buildBoatMesh();
+
+</script>
+</body>
+</html>
