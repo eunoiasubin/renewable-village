@@ -332,7 +332,7 @@ body.teacher>*:not(#tdash):not(#pass){display:none!important}
   <div class="box">
     <label for="nameIn">너의 이름을 알려 줘!</label>
     <input id="nameIn" maxlength="6" placeholder="이름" autocomplete="off">
-    <div style="display:flex;gap:8px;width:100%"><input id="schIn" maxlength="14" placeholder="학교 이름 (예: 평대초)" autocomplete="off" style="font-size:18px;flex:1.4;min-width:0"><input id="clsIn" maxlength="10" placeholder="반 (예: 5-1)" autocomplete="off" style="font-size:18px;flex:1;min-width:0"></div>
+    <div style="display:flex;gap:8px;width:100%"><input id="schIn" maxlength="14" placeholder="학교 이름 (예: ㅇㅇ초)" autocomplete="off" style="font-size:18px;flex:1.4;min-width:0"><input id="clsIn" maxlength="10" placeholder="반 (예: 5-1)" autocomplete="off" style="font-size:18px;flex:1;min-width:0"></div>
     <button class="btn" id="startBtn">시작하기</button>
     <div class="hint">이동: 방향키 / WASD · 행동: 스페이스 또는 엔터 · 에너지 카드: N<br>태블릿: 왼쪽 화면을 끌어 이동 · Ⓐ 버튼으로 행동</div>
   </div>
@@ -1192,7 +1192,7 @@ function askRemove(cur){const g=GEN[cur.t],back=Math.round(g.price*.8);sfx('open
   $('iYes').onclick=()=>{S.inst=S.inst.filter(x=>x!==cur);S.budget+=back;sfx('hammer');const s=SITES[cur.site-1];for(let i=0;i<14;i++)part(s.gx/U,1,s.gy/U,(Math.random()-.5)*3,1+Math.random()*2,(Math.random()-.5)*3,'#cdb48a',.16,.8);closeSite();toast(`🔧 철거했어요. ${fmtN(back)}도토리를 돌려받았어요`);updateQuestUI();updateHUD();report();};$('iNo').onclick=renderSite;}
 function doInstall(site,t){const g=GEN[t];closeSite();S.budget-=g.price;updateHUD();
   faceTo(site.gx,site.gy);P.action={kind:'craft',t:0,dur:1.6,hits:0,site,gt:t};sfx('open');}
-function finishInstall(a){const site=a.site,g=GEN[a.gt];const inst={site:site.id,t:a.gt,c:site.f[a.gt],born:T};S.inst.push(inst);sfx('done');
+function finishInstall(a){const site=a.site,g=GEN[a.gt];const inst={site:site.id,t:a.gt,c:site.f[a.gt],born:T};S.inst.push(inst);unstick(site);sfx('done');
   for(let i=0;i<18;i++)part(site.gx/U,1.5,site.gy/U,(Math.random()-.5)*3,2+Math.random()*2,(Math.random()-.5)*3,i%2?'#ffd23f':'#fff3a0',.12,.9);
   const r=genDay(S.inst,curWx());toast(`⚡ ${g.short} 설치 완료! 오늘 재생 에너지 비율 ${pct(r.ratio)}%`,3200);updateQuestUI();updateHUD();report();
   if(BGM.mode==='sad'){BGM.mode='happy';}
@@ -1292,6 +1292,15 @@ async function sail(){
   else{const b=VILL.bori;b.frozen=true;await say(b,['{name}! 돌아왔구나, 깡총!','바람햇살 마을 촌장님이 마을 예산을 보내 주셨다고? 고마워!','마을 곳곳에 ⚡ 후보지 표지판을 세워 뒀어. 모두 10곳이야.','자리를 살펴보고, 알맞은 발전기를 골라 설치해 줘!','화면 위쪽에는 마을 전기 가운데 재생 에너지가 몇 %인지 보여 줄게.','목표는 일주일 평균 50% 이상! 다 설치하면 광장에 있는 나에게 말해 줘.']);
     b.home={x:1000,y:840};b.x=1000;b.y=840;b.frozen=false;updateHUD();toast('🔧 ⚡ 표지판에 다가가 Ⓐ를 누르면 자리를 살펴볼 수 있어요',4200);}
   S.lock=false;
+}
+
+/* 설치한 발전기 안에 캐릭터가 갇히지 않도록 밖으로 밀어내기 */
+function unstick(site){
+  const free=(x,y)=>!solid(x,y,14);
+  if(free(P.x,P.y))return;
+  let ax=P.x-site.gx,ay=P.y-site.gy;if(Math.hypot(ax,ay)<1){ax=0;ay=1;}const L=Math.hypot(ax,ay);ax/=L;ay/=L;
+  const dirs=[[ax,ay],[0,1],[1,0],[-1,0],[0,-1],[.7,.7],[-.7,.7],[.7,-.7],[-.7,-.7]];
+  for(let d=10;d<=220;d+=6)for(const [dx,dy] of dirs){const x=P.x+dx*d,y=P.y+dy*d;if(free(x,y)){P.x=x;P.y=y;cam.x=lerp(cam.x,x,.5);cam.y=lerp(cam.y,y,.5);return;}}
 }
 
 /* ============ 일주일 운영 ============ */
@@ -1484,7 +1493,7 @@ function update(dt){
     let mx=(KEYS.ArrowRight||KEYS.KeyD?1:0)-(KEYS.ArrowLeft||KEYS.KeyA?1:0)+JOY.x,my=(KEYS.ArrowDown||KEYS.KeyS?1:0)-(KEYS.ArrowUp||KEYS.KeyW?1:0)+JOY.y;
     const m=Math.hypot(mx,my);
     if(m>.15){mx/=Math.max(1,m);my/=Math.max(1,m);const spd=230*Math.min(1,m),nx=P.x+mx*spd*dt,ny=P.y+my*spd*dt;
-      if(!solid(nx,P.y,14))P.x=nx;if(!solid(P.x,ny,14))P.y=ny;P.moving=true;P.walkT+=dt;
+      if(solid(P.x,P.y,14)){P.x=clamp(nx,60,W_-60);P.y=ny;}else{if(!solid(nx,P.y,14))P.x=nx;if(!solid(P.x,ny,14))P.y=ny;}P.moving=true;P.walkT+=dt;
       const ta=Math.atan2(mx,my);let da=ta-P.ang;while(da>Math.PI)da-=Math.PI*2;while(da<-Math.PI)da+=Math.PI*2;P.ang+=da*Math.min(1,dt*14);
       if(T-lastStep>.28){lastStep=T;sfx('step');}}
   }
@@ -1498,7 +1507,7 @@ function update(dt){
     if(d<100&&S.mode==='play'){v.moving=false;v.ang=Math.atan2(P.x-v.x,P.y-v.y);continue;}
     v.wt-=dt;if(v.wt<=0){v.wt=2+Math.random()*4;const an=Math.random()*Math.PI*2,rad=Math.random()*(S.map==='isle'?40:70);v.tx=v.home.x+Math.cos(an)*rad;v.ty=v.home.y+Math.abs(Math.sin(an))*rad*.6+10;}
     const dx=v.tx-v.x,dy=v.ty-v.y,dd=Math.hypot(dx,dy);
-    if(dd>4){const nx=v.x+dx/dd*55*dt,ny=v.y+dy/dd*55*dt;if(!solid(nx,ny,12)){v.x=nx;v.y=ny;v.moving=true;v.walkT+=dt;v.ang=Math.atan2(dx,dy);}else{v.tx=v.x;v.ty=v.y;v.moving=false;}}else v.moving=false;
+    if(dd>4){const nx=v.x+dx/dd*55*dt,ny=v.y+dy/dd*55*dt;if(!solid(nx,ny,12)||solid(v.x,v.y,12)){v.x=nx;v.y=ny;v.moving=true;v.walkT+=dt;v.ang=Math.atan2(dx,dy);}else{v.tx=v.x;v.ty=v.y;v.moving=false;}}else v.moving=false;
   }
   for(let i=PARTS.length-1;i>=0;i--){const p=PARTS[i];p.life-=dt;if(p.life<=0){PARTS.splice(i,1);continue;}p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;if(p.float){p.vx*=.97;p.vz*=.97;}else p.vy-=9*dt;p.rot+=dt*5;}
   if(S.mode==='week')weekUpdate(dt);
